@@ -1,7 +1,11 @@
 # config.py - Model Router & Romanian-Aware Configuration
 import streamlit as st
 from typing import List, Dict, Any
+from googletrans import Translator
 import os
+import random
+
+translator = Translator()
 
 class Config:
     """Central configuration with Romanian-optimized models"""
@@ -27,25 +31,46 @@ class Config:
 
     @staticmethod
     def make_intro_text(scale: int) -> str:
-        historical = ("Vlad Țepeș, domnitor al Țării Românești între 1448 și 1476, "
-                     "a consolidat cetăți și respect prin metode dure dar eficiente.")
-        legendary = ("Se spune că umbrele nopții tremură la numele său și că putea "
-                    "chema creaturi din întunericul cel mai adânc.")
-        ratio = scale / 10.0
-        hist_words = historical.split()
-        leg_words = legendary.split()
-        num_hist = max(5, int(len(hist_words)*(1-ratio)))
-        num_leg = max(5, int(len(leg_words)*ratio))
-        mixed = " ".join(hist_words[:num_hist] + leg_words[:num_leg])
+        # Propoziții istorice
+        historical_sentences = [
+            "Vlad Țepeș, domnitor al Țării Românești, a condus cu o mână de fier între anii 1448 și 1476.",
+            "Cetățile de la poalele Carpaților au fost întărite sub domnia lui, pentru a apăra țara de invazii.",
+            "Metodele sale dure i-au adus atât respect, cât și teamă în rândul dușmanilor și al supușilor.",
+            "Târgoviște era inima puterii, locul unde deciziile puteau schimba soarta unui întreg popor.",
+            "Cronici vechi îl descriu ca pe un strateg necruțător, dar drept."
+        ]
+
+        # Propoziții legendare
+        legendary_sentences = [
+            "Se spune că umbrele nopții prindeau viață în prezența lui.",
+            "Bătrânii șoptesc că putea chema creaturi ascunse în bezna pădurilor.",
+            "Legenda afirmă că aerul se răcea brusc când Vlad se mânia.",
+            "Unii credeau că străvechi spirite îl protejau în luptă.",
+            "Se povestește că sângele dușmanilor îi întărea puterea."
+        ]
+
+        # Transformăm scale într-un raport 0-1
+        ratio = min(max(scale / 10.0, 0), 1)
+
+        # Număr de propoziții istorice vs legendare
+        num_hist = max(1, int((1 - ratio) * 3) + 2)  # minim 2
+        num_leg = max(1, int(ratio * 3) + 1)         # minim 1
+
+        # Alegem propoziții random
+        chosen_hist = random.sample(historical_sentences, num_hist)
+        chosen_leg = random.sample(legendary_sentences, num_leg)
+
+        # Le mixăm
+        mixed_sentences = chosen_hist + chosen_leg
+        random.shuffle(mixed_sentences)
+
+        mixed_text = " ".join(mixed_sentences)
+
+        # Intro narativ
         return (
-            f"**Țara Românească, 1456. "
-            f"{mixed}\n\n"
-            "*Te afli la marginea cetății Târgoviște, pe o noapte rece de toamnă. "
-            "Flăcările torțelor joacă în vânt, proiectând umbre lungi pe zidurile "
-            "de piatră. Porțile de lemn masiv se ridică cu un scârțâit, iar în aer "
-            "plutește miros de lemn ars și pământ reavăn. Fiecare alegere poate "
-            "naște legendă sau poate fi înscrisă în cronici...*\n\n"
-            "**Ce vrei să faci?**"
+        "Țara Românească, 1456. "
+        + mixed_text
+        + "\n\n"        
         )
 
     @staticmethod
@@ -63,19 +88,35 @@ class Config:
             "\nRăspunde în română medievală scurt și captivant. "
             "Maxim 3 propoziții. Nu repeta textul."
         )
-        return context + char_info + instructions + "\nNARATOR: "
+        return context + char_info + instructions + "\nNARATOR: "    
 
     @staticmethod
     def generate_image_prompt(text: str, location: str) -> str:
+        # Extragem ultimele 3 propoziții sau primele 150 caractere
         short = " ".join(text.split(".")[-3:]).strip()
         if len(short) < 20:
             short = text[:150]
+
+        def translate_to_english(text: str) -> str:
+            """Traduce textul românesc în engleză pentru Stable Diffusion"""
+            try:
+                return translator.translate(text, src='ro', dest='en').text
+            except Exception as e:
+                print(f"⚠️ Eroare traducere: {e}")
+                return text  # Fallback la română
+        # **TRADUCERE în engleză**
+        short_en = translate_to_english(short)
+        location_en = translate_to_english(location)
+        
+        # Construim promptul în engleză
         prompt = (
             f"Romanian medieval Wallachia 1456, Vlad Tepes era, atmospheric, "
-            f"dark fantasy, {location}, {short}, highly detailed, oil-on-canvas, "
+            f"dark fantasy, {location_en}, {short_en}, highly detailed, oil-on-canvas, "
             f"warm candle-light, 4k, vintage parchment look"
         )
+        
         return prompt[:195]
+
 
 class ModelRouter:
     def __init__(self):
