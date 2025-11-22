@@ -19,6 +19,7 @@ IMAGE_MODELS: List[str] = [
 client = InferenceClient(
     provider="nscale",
     api_key=os.environ["HF_TOKEN"],   # ← asigură-te că există
+    timeout=120
 )
 
 def generate_scene_image(text: str, is_initial: bool = False) -> Optional[bytes]:
@@ -102,36 +103,3 @@ def generate_fallback_image(text: str, is_initial: bool) -> bytes:
         buffer = BytesIO(); img.save(buffer, format='PNG')
         return buffer.getvalue()
 
-
-def apply_vintage_effect(image_bytes: bytes) -> bytes:
-    try:
-        img = Image.open(BytesIO(image_bytes))
-        img = ImageOps.grayscale(img)
-        img = img.filter(ImageFilter.SMOOTH)
-        img = ImageOps.colorize(img, black="#1a0f0b", white="#e8d8c3", mid="#5a3921")
-        img = add_vignette(img)
-        buffer = BytesIO()
-        img.save(buffer, format='PNG')
-        return buffer.getvalue()
-    except Exception as e:
-        st.warning(f"⚠️ Filtrul vintage a eșuat: {e}")
-        return image_bytes
-
-
-def add_vignette(img: Image.Image) -> Image.Image:
-    try:
-        width, height = img.size
-        vignette = Image.new('L', (width, height), 0)
-        draw = ImageDraw.Draw(vignette)
-        center_x, center_y = width / 2, height / 2
-        max_dist = (center_x ** 2 + center_y ** 2) ** 0.5
-        for y in range(height):
-            for x in range(width):
-                dist = ((x - center_x) ** 2 + (y - center_y) ** 2) ** 0.5
-                intensity = int(255 * (dist / max_dist) * 0.25)
-                vignette.putpixel((x, y), intensity)
-        shadow = Image.new('RGB', img.size, '#000000')
-        img = Image.composite(img, shadow, vignette)
-        return img
-    except:
-        return img
