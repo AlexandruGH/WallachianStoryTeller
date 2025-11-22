@@ -37,10 +37,11 @@ SYSTEM_PROMPT = (
 
 class ModelRouter:
     def __init__(self):
-        self.api_models = [
-            "meta-llama/Llama-3.1-8B-Instruct:novita",
-            "meta-llama/Llama-3.1-70B-Instruct:fireworks-ai",
-            "Qwen/Qwen2.5-VL-72B-Instruct:nebius"
+        self.api_models = [            
+            "meta-llama/Llama-3.3-70B-Instruct:groq",
+            "Qwen/Qwen2.5-VL-72B-Instruct:nebius",
+            "meta-llama/Llama-3.1-8B-Instruct:novita"
+            
         ]
         self.current_index = 0
     def get_next_api_model(self):
@@ -86,45 +87,28 @@ def validate_hf_token():
 
 def clean_ai_response(text: str) -> str:
     if not text: return ""
-    markers = ["<|im_start|>", "<|im_end|>", "user", "assistant", "system", "System:", "User:", "Assistant:"]
+    markers = ["<|im_start|>", "<|im_end|>", "user", "assistant", "system", "System:", "User:", "Assistant:", "*"]
     for m in markers: text = text.replace(m, "")
     return text.strip()
-
-def extract_prompts_from_formatted_prompt(fp: str):
-    parts = fp.split("<|im_start|>")
-    system_block = next(p for p in parts if p.startswith("system"))
-    user_block = next(p for p in parts if p.startswith("user"))
-    system_text = system_block.replace("system\n", "").replace("<|im_end|>", "").strip()
-    user_text = user_block.replace("user\n", "").replace("<|im_end|>", "").strip()
-    return system_text, user_text
 
 def generate_with_api(prompt: str) -> str:
     token = get_hf_token()
     if not token:
         return "api_fail"
 
-    formatted_prompt = (
-        f"<|im_start|>system\n{SYSTEM_PROMPT}<|im_end|>\n"
-        f"<|im_start|>user\n{prompt}<|im_end|>\n"
-        f"<|im_start|>assistant\n"
-    )
-
     # ⇢  folosim PRIMUL model din listă până când obținem eroare
     model = model_router.api_models[0]
     api_url = "https://router.huggingface.co/v1/chat/completions"
-    system_prompt, user_prompt = extract_prompts_from_formatted_prompt(formatted_prompt)
 
     payload = {
         "model": model,
         "messages": [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_prompt}
+            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "user", "content": prompt}
         ],
         "max_tokens": 300,
         "temperature": 0.85,
-        "top_p": 0.92,
-        "repetition_penalty": 1.2,
-        "return_full_text": False
+        "top_p": 0.92
     }
 
     try:
