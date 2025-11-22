@@ -1,11 +1,9 @@
 # config.py - Model Router & Romanian-Aware Configuration
 import streamlit as st
 from typing import List, Dict, Any
-from googletrans import Translator
+from deep_translator import GoogleTranslator
 import os
 import random
-
-translator = Translator()
 
 class Config:
     """Central configuration with Romanian-optimized models"""
@@ -19,7 +17,7 @@ class Config:
     LOCAL_MODEL = "EleutherAI/gpt-neo-1.3B"
 
     IMAGE_MODEL = "stabilityai/stable-diffusion-2-1"
-    IMAGE_INTERVAL = 4
+    IMAGE_INTERVAL = 3
     IMAGE_NEGATIVE = "modern, cartoon, anime, text, watermark, lowres, blurry, extra limbs"
 
     @staticmethod
@@ -99,8 +97,8 @@ class Config:
 
         def translate_to_english(text: str) -> str:
             """Traduce textul românesc în engleză pentru Stable Diffusion"""
-            try:
-                return translator.translate(text, src='ro', dest='en').text
+            try:        
+                return GoogleTranslator(source='ro', target='en').translate(text)
             except Exception as e:
                 print(f"⚠️ Eroare traducere: {e}")
                 return text  # Fallback la română
