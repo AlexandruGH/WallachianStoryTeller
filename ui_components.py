@@ -15,7 +15,7 @@ import os
 import re
 import pdfkit
 import requests
-from elevenlabs.client import ElevenLabs
+#from elevenlabs.client import ElevenLabs
 
 
 def get_api_token() -> Optional[str]:
@@ -33,45 +33,45 @@ def get_api_token() -> Optional[str]:
     return None
 
 # Cache client pentru viteză
-@st.cache_resource(show_spinner=False)
-def get_eleven_client():
-    key = os.getenv("ELEVEN_API_KEY")
-    if not key:
-        st.error("🔑 **ELEVEN_API_KEY lipsește din .env**")
-        st.stop()
-    return ElevenLabs(api_key=key)
+# @st.cache_resource(show_spinner=False)
+# def get_eleven_client():
+#     key = os.getenv("ELEVEN_API_KEY")
+#     if not key:
+#         st.error("🔑 **ELEVEN_API_KEY lipsește din .env**")
+#         st.stop()
+#     return ElevenLabs(api_key=key)
 
-def clean_text_for_tts(text: str) -> str:
-    """Șterge markdown și caractere pe care le citește literal."""
-    text = re.sub(r"\*\*|\*|`|\"|'|_", "", text)  # Șterge *, **, `, ", ', _
-    text = re.sub(r"\n+", " ", text)              # Newlines → spațiu
-    return text.strip()
+# def clean_text_for_tts(text: str) -> str:
+#     """Șterge markdown și caractere pe care le citește literal."""
+#     text = re.sub(r"\*\*|\*|`|\"|'|_", "", text)  # Șterge *, **, `, ", ', _
+#     text = re.sub(r"\n+", " ", text)              # Newlines → spațiu
+#     return text.strip()
 
-def medieval_tts(text: str) -> bytes:
-    """ElevenLabs: voce Adam (masculin profund) în română."""
-    text = clean_text_for_tts(text)
-    client = get_eleven_client()
+# def medieval_tts(text: str) -> bytes:
+#     """ElevenLabs: voce Adam (masculin profund) în română."""
+#     text = clean_text_for_tts(text)
+#     client = get_eleven_client()
 
-    # Adam = JBFqnCBsd6RMkjVDRZzb (deep male)
-    audio = client.text_to_speech.convert(
-        text=text,
-        voice_id="JBFqnCBsd6RMkjVDRZzb",
-        model_id="eleven_multilingual_v2",
-        output_format="mp3_44100_128",
-    )
+#     # Adam = JBFqnCBsd6RMkjVDRZzb (deep male)
+#     audio = client.text_to_speech.convert(
+#         text=text,
+#         voice_id="JBFqnCBsd6RMkjVDRZzb",
+#         model_id="eleven_multilingual_v2",
+#         output_format="mp3_44100_128",
+#     )
 
-    # Convert generator to bytes
-    return b"".join(audio)
+#     # Convert generator to bytes
+#     return b"".join(audio)
 
-def speak(text: str):
-    """Butonul apasă și vorbește."""
-    mp3 = medieval_tts(text)
-    if mp3:
-        b64 = base64.b64encode(mp3).decode()
-        html = f"""<audio autoplay style="width:100%;">
-          <source src="data:audio/mp3;base64,{b64}" type="audio/mp3">
-        </audio>"""
-        st.components.v1.html(html, height=0)
+# def speak(text: str):
+#     """Butonul apasă și vorbește."""
+#     mp3 = medieval_tts(text)
+#     if mp3:
+#         b64 = base64.b64encode(mp3).decode()
+#         html = f"""<audio autoplay style="width:100%;">
+#           <source src="data:audio/mp3;base64,{b64}" type="audio/mp3">
+#         </audio>"""
+#         st.components.v1.html(html, height=0)
 
 def inject_css():
     """Inject medieval CSS with HIGH VISIBILITY & WIDER LAYOUT"""
@@ -289,10 +289,10 @@ def display_story(story: List[Dict]):
             unsafe_allow_html=True
         )
         # ------- TTS button for AI messages only -------
-        if msg["role"] == "ai":
-            # Butonul de ascultat
-            if st.button("🔊 Ascultă", key=f"tts_{msg.get('turn', 0)}_{hash(msg['text'][:20])}"):
-                speak(msg["text"])
+        #if msg["role"] == "ai":
+        #    # Butonul de ascultat
+        #    if st.button("🔊 Ascultă", key=f"tts_{msg.get('turn', 0)}_{hash(msg['text'][:20])}"):
+        #        speak(msg["text"])
         # Afisează imaginea (fără caption) imediat sub text
         if msg["role"] == "ai" and msg.get("image") is not None:
             col_spacer1, col_img, col_spacer2 = st.columns([1, 3, 1])
