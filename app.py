@@ -1,10 +1,19 @@
+import os, sys, shutil
+# If ffmpeg is NOT in PATH, then try local folder
+if not shutil.which("ffmpeg"):
+    local_ffmpeg = os.path.abspath("ffmpeg/bin")
+    if os.path.isfile(os.path.join(local_ffmpeg, "ffmpeg.exe")):
+        os.environ["PATH"] = local_ffmpeg + os.pathsep + os.environ["PATH"]
+from dotenv import load_dotenv
+load_dotenv(override=True) # SINGURUL apel necesar
+# Suppress pydub's warning
+os.environ["PYDUB_NO_WARN"] = "1"
 import streamlit as st
 from typing import Optional, Dict, Any, List
 import time
 import random
 import json
 import uuid
-import os
 import re
 import requests
 import threading

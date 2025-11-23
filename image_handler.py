@@ -18,24 +18,25 @@ IMAGE_MODELS: List[str] = [
 # client unic pentru toate apelurile
 client = InferenceClient(
     provider="nscale",
-    api_key=os.environ["HF_TOKEN"],   # ← asigură-te că există
+    api_key=os.getenv("HF_TOKEN"),   # ← asigură-te că există
     timeout=120
 )
 
 def generate_scene_image(text: str, is_initial: bool = False) -> Optional[bytes]:
-    token = Config.get_api_token()
+    token = os.getenv("HF_TOKEN")
     if not token:
         st.info("🔒 Mod offline – generăm imagine de rezervă...")
         return generate_fallback_image(text, is_initial)
 
     location = st.session_state.character.get("location", "Târgoviște")
-    prompt = Config.generate_image_prompt(text, location)
-    
-    # Încercăm fiecare model
+
+    # >>> NEW: let the LLM write the prompt <<<
+    prompt = Config.generate_image_prompt_llm(text, location)
+
+    # rest identical to before
     for model in IMAGE_MODELS:
         try:
-            with st.spinner(f"🎨 Artistul medievale lucrează..."):
-                # Generează direct PIL.Image
+            with st.spinner("🎨 Artistul medievale lucrează..."):
                 pil_img = client.text_to_image(
                     prompt,
                     model=model,
@@ -43,15 +44,13 @@ def generate_scene_image(text: str, is_initial: bool = False) -> Optional[bytes]
                     num_inference_steps=30,
                     guidance_scale=7.5,
                 )
-            
             if pil_img:
                 print(f"✅ Imagine generată cu succes folosind {model}")
                 return pil_to_bytes(pil_img)
-            
         except Exception as e:
             st.warning(f"⚠️ Model {model} a eșuat: {e}")
             continue
-    
+
     st.error("❌ Toate modelele de imagine au eșuat.")
     return generate_fallback_image(text, is_initial)
 

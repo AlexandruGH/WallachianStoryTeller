@@ -4,6 +4,7 @@ from typing import List, Dict, Any
 from deep_translator import GoogleTranslator
 import os
 import random
+import requests
 
 class Config:
     """Central configuration with Romanian-optimized models"""
@@ -19,13 +20,7 @@ class Config:
     IMAGE_MODEL = "stabilityai/stable-diffusion-2-1"
     IMAGE_INTERVAL = 3
     IMAGE_NEGATIVE = "modern, cartoon, anime, text, watermark, lowres, blurry, extra limbs"
-
-    @staticmethod
-    def get_api_token() -> str:
-        try:
-            return st.secrets["HF_API_TOKEN"]
-        except (FileNotFoundError, KeyError):
-            return os.getenv("HF_API_TOKEN", "")
+    
 
     @staticmethod
     def make_intro_text(scale: int) -> str:
@@ -51,8 +46,8 @@ class Config:
         ratio = min(max(scale / 10.0, 0), 1)
 
         # Număr de propoziții istorice vs legendare
-        num_hist = max(1, int((1 - ratio) * 3) + 2)  # minim 2
-        num_leg = max(1, int(ratio * 3) + 1)         # minim 1
+        num_hist = max(1, int((1 - ratio) * 3))  
+        num_leg = max(1, int(ratio * 3))         
 
         # Alegem propoziții random
         chosen_hist = random.sample(historical_sentences, num_hist)
@@ -114,6 +109,69 @@ class Config:
         )
         
         return prompt[:195]
+    
+    @staticmethod
+    def generate_image_prompt_llm(text: str, location: str) -> str:
+        """
+        Ask the SAME Groq endpoint we use for narration to write a short
+        Stable-Diffusion prompt in English, grounded in the *exact* place
+        and current narrative moment.
+        """
+        token = os.getenv("GROQ_API_KEY") or st.secrets.get("GROQ_API_KEY", "")
+        if not token:
+            # fallback to old method if somehow no key
+            return Config.generate_image_prompt(text, location)
+
+        system = (
+            "You are an assistant that writes short, highly detailed prompts "
+            "for Stable-Diffusion in English. "
+            "Include: time of day, number of people in the image, context, weather, "
+            "camera angle and any information usefull for image generation. Keep it under 200 characters."
+        )
+
+        user = (
+            f"Story fragment: {text}\n"
+            f"Exact place: {location}\n"
+            "Write one English Stable-Diffusion prompt."
+        )
+
+        payload = {
+            "model": "llama-3.3-70b-versatile",
+            "messages": [
+                {"role": "system", "content": system},
+                {"role": "user", "content": user}
+            ],
+            "temperature": 0.75,
+            "max_tokens": 60,
+            "stream": False
+        }
+
+        try:
+            r = requests.post(
+                "https://api.groq.com/openai/v1/chat/completions",
+                headers={
+                    "Authorization": f"Bearer {token}",
+                    "Content-Type": "application/json"
+                },
+                json=payload,
+                timeout=15
+            )
+            r.raise_for_status()
+            llm_prompt = r.json()["choices"][0]["message"]["content"].strip()
+            # 🔧 CLEAN: remove quotes and trailing period
+            llm_prompt = llm_prompt.replace('"', '')
+            if llm_prompt.endswith('.'):
+                llm_prompt = llm_prompt[:-1]
+            prompt = (
+            f"Romanian medieval Wallachia 1456, Vlad Tepes era, atmospheric, "
+            f"dark fantasy, {llm_prompt}, highly detailed, oil-on-canvas, "
+            f"warm candle-light, 4k, vintage parchment look"
+        )
+            return prompt
+        except Exception as e:
+            print("LLM image-prompt failed:", e)
+            # graceful fallback
+            return Config.generate_image_prompt(text, location)
 
 
 class ModelRouter:
