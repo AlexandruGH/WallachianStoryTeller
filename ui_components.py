@@ -305,7 +305,7 @@ def display_story(story: List[Dict]):
 def render_header():
     """Render main title header"""
     st.markdown('<h1 class="main-header">WALLACHIA</h1>', unsafe_allow_html=True)
-    st.markdown('<p class="subtitle">Aventura în Secolul XV al lui Vlad Țepeș</p>', unsafe_allow_html=True)
+    st.markdown('<p class="subtitle">Aventura în Secolul XV pe timpul domniei lui Vlad Țepeș</p>', unsafe_allow_html=True)
 
 def render_sidebar(character: Dict) -> int:
     """
