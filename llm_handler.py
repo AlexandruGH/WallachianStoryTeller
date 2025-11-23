@@ -8,7 +8,7 @@ import threading
 import time
 import random
 import re
-from huggingface_hub import get_token
+import json
 from streamlit.runtime.scriptrunner import add_script_run_ctx
 from dotenv import load_dotenv
 
@@ -35,22 +35,6 @@ SYSTEM_PROMPT = (
     "Oferă mereu 2-3 opțiuni clare de acțiune jucătorului la final, precedate de "
 )
 
-class ModelRouter:
-    def __init__(self):
-        self.api_models = [            
-            "meta-llama/Llama-3.3-70B-Instruct:groq",
-            "Qwen/Qwen2.5-VL-72B-Instruct:nebius",
-            "meta-llama/Llama-3.1-8B-Instruct:novita"
-            
-        ]
-        self.current_index = 0
-    def get_next_api_model(self):
-        model = self.api_models[self.current_index]
-        self.current_index = (self.current_index + 1) % len(self.api_models)
-        return model
-
-model_router = ModelRouter()
-
 @st.cache_resource(show_spinner=True)
 def load_local_model():
     try:
@@ -62,27 +46,26 @@ def load_local_model():
     except Exception as e:
         return None, None
 
-def get_hf_token():
-    token = os.getenv("HF_TOKEN")
+def get_groq_token():
+    token = os.getenv("GROQ_API_KEY")
     if token: return token
     try:
-        if "HF_TOKEN" in st.secrets:
-            token = st.secrets["HF_TOKEN"]
-            os.environ["HF_TOKEN"] = token
+        if "GROQ_API_KEY" in st.secrets:
+            token = st.secrets["GROQ_API_KEY"]
+            os.environ["GROQ_API_KEY"] = token
             return token
     except: pass
-    token = get_token()
-    return token
+    return None
 
-def validate_hf_token():
-    token = get_hf_token()
+def validate_groq_token():
+    token = get_groq_token()
     if not token:
-        st.error("🔑 **HF_TOKEN lipsește!**")
+        st.error("🔑 **GROQ_API_KEY lipsește!**")
         st.info("Adaugă-l în fișierul `.env` (local) sau în `Secrets` (Cloud):")
-        st.code("HF_TOKEN=hf_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", language="bash")
+        st.code("GROQ_API_KEY=gsk_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", language="bash")
         return False
-    if not token.startswith("hf_"):
-        st.warning("⚠️ Tokenul nu pare valid (trebuie să înceapă cu 'hf_')")
+    if not token.startswith("gsk_"):
+        st.warning("⚠️ Tokenul nu pare valid (trebuie să înceapă cu 'gsk_')")
     return True
 
 def clean_ai_response(text: str) -> str:
@@ -92,13 +75,12 @@ def clean_ai_response(text: str) -> str:
     return text.strip()
 
 def generate_with_api(prompt: str) -> str:
-    token = get_hf_token()
+    token = get_groq_token()
     if not token:
         return "api_fail"
 
-    # ⇢  folosim PRIMUL model din listă până când obținem eroare
-    model = model_router.api_models[0]
-    api_url = "https://router.huggingface.co/v1/chat/completions"
+    api_url = "https://api.groq.com/openai/v1/chat/completions"
+    model = "openai/gpt-oss-120b"#"llama-3.3-70b-versatile"
 
     payload = {
         "model": model,
@@ -106,69 +88,75 @@ def generate_with_api(prompt: str) -> str:
             {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": prompt}
         ],
-        "max_tokens": 300,
-        "temperature": 0.85,
-        "top_p": 0.92
+        "temperature": 1,
+        "max_completion_tokens": 1024,
+        "top_p": 1,
+        "stream": True,
+        "stop": None
     }
 
     try:
         print(f"🌐 Apel API: {model}")
         response = requests.post(
             api_url,
-            headers={"Authorization": f"Bearer {token}"},
+            headers={
+                "Authorization": f"Bearer {token}",
+                "Content-Type": "application/json"
+            },
             json=payload,
-            timeout=25
+            timeout=30,
+            stream=True
         )
 
         if response.status_code == 200:
-            data = response.json()
-            raw_text = data["choices"][0]["message"]["content"]
-            cleaned = clean_ai_response(raw_text)
+            full_response = ""
+            for line in response.iter_lines():
+                if line:
+                    line_str = line.decode('utf-8')
+                    if line_str.startswith('data: '):
+                        data_str = line_str[6:]
+                        if data_str == '[DONE]':
+                            break
+                        try:
+                            data = json.loads(data_str)
+                            choices = data.get('choices', [])
+                            if choices:
+                                delta = choices[0].get('delta', {})
+                                content = delta.get('content')
+                                if content:
+                                    full_response += content
+                        except json.JSONDecodeError as e:
+                            print(f"⚠️ Eroare la parsarea JSON: {e}")
+                            continue
+            
+            cleaned = clean_ai_response(full_response)
             if len(cleaned) > 10:
                 print(f"✅ Succes: {model}")
                 return cleaned
-            print(f"⚠️ Răspuns prea scurt, încerc fallback...")
+            print(f"⚠️ Răspuns prea scurt, folosim fallback...")
+            return "api_fail"
         elif response.status_code == 401:
             st.error("❌ Token invalid! Status 401")
             return "api_fail"
         elif response.status_code == 503:
             print(f"⚠️ Model ocupat (503): {model}")
             time.sleep(2)
+            return "api_fail"
+        else:
+            print(f"⚠️ Status code neașteptat: {response.status_code}")
+            return "api_fail"
     except requests.exceptions.Timeout:
         print(f"⏱️ Timeout: {model}")
+        return "api_fail"
     except Exception as e:
         print(f"❌ Excepție la {model}: {e}")
-
-    # ⇢  doar DACĂ primul model a eșuat trecem la următorul
-    st.warning("⚠️ Primul model a eșuat – activăm fallback...")
-    for _ in range(1, len(model_router.api_models)):
-        model = model_router.get_next_api_model()
-        payload["model"] = model
-        try:
-            response = requests.post(
-                api_url,
-                headers={"Authorization": f"Bearer {token}"},
-                json=payload,
-                timeout=25
-            )
-            if response.status_code == 200:
-                data = response.json()
-                raw_text = data["choices"][0]["message"]["content"]
-                cleaned = clean_ai_response(raw_text)
-                if len(cleaned) > 10:
-                    print(f"✅ Succes fallback: {model}")
-                    return cleaned
-        except:
-            continue
-
-    print("❌ Toate modelele API au eșuat!")
-    return "api_fail"
+        return "api_fail"
 
 def generate_local(prompt: str) -> str:
     tokenizer, model = load_local_model()
     if not tokenizer or not model:
         st.error("❌ Modelul local nu este disponibil. Instalează `distilgpt2` manual.")
-        return "Conexiunea cu tărâmul magic s-a întrerupt. (Verifică Token-ul HF)"
+        return "Conexiunea cu tărâmul magic s-a întrerupt. (Verifică Token-ul)"
     try:
         context_prompt = f"Fantasy story: {prompt}"
         inputs = tokenizer(context_prompt, return_tensors="pt", truncation=True, max_length=512)
@@ -183,7 +171,7 @@ def generate_local(prompt: str) -> str:
 
 def generate_story_text(prompt: str, use_api: bool = True) -> str:
     if use_api:
-        if validate_hf_token():
+        if validate_groq_token():
             res = generate_with_api(prompt)
             if res != "api_fail": return res
             st.warning("⚠️ API a eșuat complet. Folosesc modelul local...")
@@ -222,9 +210,9 @@ def generate_story_text_with_progress(prompt: str, use_api: bool = True) -> str:
     progress_container.empty()
     if result_container["error"]:
         st.error(f"🧙 NARATOR: **CRITICAL ERROR**: {result_container['error']}")
-        return "Conexiunea cu tărâmul magic s-a întrerupt. (Verifică Token-ul HF)"
+        return "Conexiunea cu tărâmul magic s-a întrerupt. (Verifică Token-ul)"
     final = result_container["text"]
     if not final or final in ["api_fail", ""]:
-        st.error("🧙 NARATOR: **CRITICAL ERROR**: No model available. Check HF_TOKEN and internet.")
-        return "Conexiunea cu tărâmul magic s-a întrerupt. (Verifică Token-ul HF)"
+        st.error("🧙 NARATOR: **CRITICAL ERROR**: No model available. Check GROQ_API_KEY and internet.")
+        return "Conexiunea cu tărâmul magic s-a întrerupt. (Verifică Token-ul)"
     return final

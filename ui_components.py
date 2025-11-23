@@ -1,15 +1,69 @@
 # ui_components.py - UI with HIGH VISIBILITY & WIDER CONTENT
 import streamlit as st
+from gtts import gTTS
+from pydub import AudioSegment
 from typing import List, Dict
+from typing import Optional  # ✅ ACEASTĂ LINIE LIPSEȘTE
 from io import BytesIO
 from PIL import Image
+import io
+import shutil
+import base64
 import json
 import time
 import uuid
 import base64
 import os
 import pdfkit
+import requests
 
+
+def get_api_token() -> Optional[str]:
+    """Obține token-ul din mediu sau Secrets (cloud)."""
+    token = os.getenv("HF_TOKEN")
+    if token:
+        return token
+    try:
+        if "HF_TOKEN" in st.secrets:
+            token = st.secrets["HF_TOKEN"]
+            os.environ["HF_TOKEN"] = token
+            return token
+    except:
+        pass
+    return None
+
+def medieval_tts(text: str, lang: str = "ro") -> bytes:
+    """Return MP3 bytes: gTTS → slower + pitch-lower + reverb (works on ALL pydub)."""
+    # 1. vanilla Google TTS
+    tts = gTTS(text, lang=lang, slow=False)
+    buf = io.BytesIO(); tts.write_to_fp(buf); buf.seek(0)
+    voice = AudioSegment.from_file(buf, format="mp3")
+
+    # 2. slow-down + pitch-down (manual, no speed_change)
+    voice = voice._spawn(voice.raw_data, overrides={
+        "frame_rate": int(voice.frame_rate * 0.92)
+    }).set_frame_rate(voice.frame_rate)
+
+    # 3. reverb: delay 80 ms, decay -18 dB (manual, no delay_by)
+    delay_ms = 80
+    decay_db = -18
+    silence = AudioSegment.silent(duration=delay_ms)
+    rev = silence + voice.apply_gain(decay_db)
+    rev = rev[:len(voice)]  # crop to original length
+    voice = voice.overlay(rev)
+
+    # 4. export
+    out = io.BytesIO(); voice.export(out, format="mp3", bitrate="96k")
+    return out.getvalue()
+
+def speak(text: str):
+    mp3 = medieval_tts(text)
+    b64 = base64.b64encode(mp3).decode()
+    html = f"""<audio autoplay style="width:100%;">
+      <source src="data:audio/mp3;base64,{b64}" type="audio/mp3">
+    </audio>"""
+    st.components.v1.html(html, height=0)
+    
 def inject_css():
     """Inject medieval CSS with HIGH VISIBILITY & WIDER LAYOUT"""
     st.markdown(
@@ -221,11 +275,14 @@ def display_story(story: List[Dict]):
         # Afisează mesajul text
         st.markdown(
             f'<div class="message-box {role_class}">'
-            f'<strong>{role_icon} {role_name}):</strong><br/>{msg["text"]}'
+            f'<strong>{role_icon} {role_name}:</strong><br/>{msg["text"]}'
             f'</div>',
             unsafe_allow_html=True
         )
-        
+        # ------- TTS button for AI messages only -------
+        if msg["role"] == "ai":
+            if st.button("🔊 Ascultă", key=f"tts_{msg.get('turn', 0)}_{hash(msg['text'][:20])}"):
+                speak(msg["text"])
         # Afisează imaginea (fără caption) imediat sub text
         if msg["role"] == "ai" and msg.get("image") is not None:
             col_spacer1, col_img, col_spacer2 = st.columns([1, 3, 1])
