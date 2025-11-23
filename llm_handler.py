@@ -10,19 +10,7 @@ import random
 import re
 import json
 from streamlit.runtime.scriptrunner import add_script_run_ctx
-from dotenv import load_dotenv
 
-load_dotenv()
-
-def load_env_file():
-    possible_paths = ['.env', os.path.join(os.path.dirname(__file__), '.env'), os.path.join(os.getcwd(), '.env')]
-    for env_path in possible_paths:
-        if os.path.exists(env_path):
-            load_dotenv(env_path)
-            return True
-    return False
-
-load_env_file()
 
 if os.name == 'nt':
     os.environ["HF_HOME"] = "D:/huggingface_cache"

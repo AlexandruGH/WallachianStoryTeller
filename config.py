@@ -20,13 +20,7 @@ class Config:
     IMAGE_MODEL = "stabilityai/stable-diffusion-2-1"
     IMAGE_INTERVAL = 3
     IMAGE_NEGATIVE = "modern, cartoon, anime, text, watermark, lowres, blurry, extra limbs"
-
-    @staticmethod
-    def get_api_token() -> str:
-        try:
-            return st.secrets["HF_API_TOKEN"]
-        except (FileNotFoundError, KeyError):
-            return os.getenv("HF_API_TOKEN", "")
+    
 
     @staticmethod
     def make_intro_text(scale: int) -> str:
@@ -164,6 +158,10 @@ class Config:
             )
             r.raise_for_status()
             llm_prompt = r.json()["choices"][0]["message"]["content"].strip()
+            # 🔧 CLEAN: remove quotes and trailing period
+            llm_prompt = llm_prompt.replace('"', '')
+            if llm_prompt.endswith('.'):
+                llm_prompt = llm_prompt[:-1]
             prompt = (
             f"Romanian medieval Wallachia 1456, Vlad Tepes era, atmospheric, "
             f"dark fantasy, {llm_prompt}, highly detailed, oil-on-canvas, "

@@ -18,12 +18,12 @@ IMAGE_MODELS: List[str] = [
 # client unic pentru toate apelurile
 client = InferenceClient(
     provider="nscale",
-    api_key=os.environ["HF_TOKEN"],   # ← asigură-te că există
+    api_key=os.getenv("HF_TOKEN"),   # ← asigură-te că există
     timeout=120
 )
 
 def generate_scene_image(text: str, is_initial: bool = False) -> Optional[bytes]:
-    token = Config.get_api_token()
+    token = os.getenv("HF_TOKEN")
     if not token:
         st.info("🔒 Mod offline – generăm imagine de rezervă...")
         return generate_fallback_image(text, is_initial)
