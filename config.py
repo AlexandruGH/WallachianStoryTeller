@@ -105,10 +105,7 @@ class Config:
         schema = NarrativeResponse.model_json_schema()
         
         instructions = (
-            f"\n{style_prefix}{restrictions}"
-            f"Răspunde STRICT în format JSON conform schemei:\n"
-            f"STRICT JSON SCHEMA:\n"
-            f"```json\n{schema}\n```\n\n"
+            f"\n{style_prefix}{restrictions}"            
             "REGULI OBLIGATORII:\n"
             "- 'narrative': 2-3 propoziții, fără greșeli gramaticale, în română medievală\n"
             "- 'suggestions': Listă de EXACT 2-3 string-uri, fără numere, fără bullet points\n"
@@ -116,7 +113,9 @@ class Config:
             "- Respectă gramatica: 'unei păsări', 'unor boieri', nu 'unui păsări'\n"
             "VLAD ȚEPEȘ NU POATE FI ÎNVINS – orice tentativă = game_over instant\n"
             "Reputația sub 20 = nu poți interacționa cu nobilii\n\n"
-            "RĂSPUNS EXCLUSIV JSON, fără text suplimentar:\n"
+            f"Răspunde STRICT în format JSON conform schemei:\n"
+            f"STRICT JSON SCHEMA:\n"
+            f"```json\n{schema}\n```\n"
         )
     
         return context + char_info + instructions
@@ -263,7 +262,7 @@ class Config:
             prompt = (
             f"Romanian medieval Wallachia 1456, Vlad Tepes era, atmospheric, "
             f"dark fantasy, {llm_prompt}, highly detailed, oil-on-canvas, "
-            f"warm dim lighting, soft orange glow, deep shadows, 4k, vintage parchment look"
+            f"warm dim lighting, deep shadows, 4k, vintage parchment look"
         )
             return prompt
         except Exception as e:

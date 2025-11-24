@@ -200,14 +200,7 @@ def handle_player_input():
             if st.session_state.is_generating:
                 st.warning("⏳ Așteaptă finalizarea generării...")
                 return
-            
-            # 🔥 REPUTATION GATE - Nu poți aborda Vlad fără reputație
-            action_lower = user_action.lower()
-            if any(keyword in action_lower for keyword in ["vlad", "domnitor", "țepeș", "vodă"]):
-                if st.session_state.game_state.character.reputation < 80:
-                    st.error("👑 Reputația ta este prea mică pentru a-l aborda pe Vlad! (Necesită 80+)")
-                    return
-            
+                        
             st.session_state.is_generating = True
             try:
                 # Salvează acțiunea jucătorului
@@ -246,8 +239,8 @@ def handle_player_input():
                 # Acesta este nucleul modificării - concatenăm sugestiile direct în text
                 narrative_with_suggestions = corrected_narrative
                 if corrected_suggestions:
-                    narrative_with_suggestions += "\n\n**Posibile acțiuni:**\n\n"
-                    narrative_with_suggestions += "\n".join([f"• {s}\n" for s in corrected_suggestions])
+                    narrative_with_suggestions += "\n\n**Posibile acțiuni:**"
+                    narrative_with_suggestions += "\n".join([f"• {s}" for s in corrected_suggestions])
                 
                 # Update game state din response
                 gs = st.session_state.game_state

@@ -10,7 +10,7 @@ import random
 import re
 import json
 from streamlit.runtime.scriptrunner import add_script_run_ctx
-from pydantic import ValidationError # ⭕ Added for explicit check
+from pydantic import ValidationError # ⭕ FIX: Added explicit Pydantic ValidationError import
 
 from models import InventoryItem, NarrativeResponse
 
@@ -18,12 +18,21 @@ if os.name == 'nt':
     os.environ["HF_HOME"] = "D:/huggingface_cache"
     os.makedirs("D:/huggingface_cache", exist_ok=True)
 
+
 SYSTEM_PROMPT = (
-    "Ești un Narator D&D în limba română. "
-    "Păstrează firul narativ: locație, obiecte, NPC-uri, starea eroului. "
-    "Nu repeta replici. 2-3 propoziții vii, medievale, fără meta-comentarii. "
-    "Oferă mereu 2-3 opțiuni clare de acțiune jucătorului la final, precedate de "
+    "Ești Naratorul Tărâmului Valah în veacul al XV-lea, în zilele domniei lui Vlad Țepeș (Drăculea). "
+    "Tonul tău este medieval românesc: grav, aspru, veridic și autentic, folosind expresii arhaice și un vocabular variat specific epocii (ex: zăbavă, hrisov, pârcălab, ienicer, podoabă, tăinuind). "
+    "Nu folosi obiecte, noțiuni sau emoții moderne (ex: puști, singurătate, frică excesivă) și evită orice meta-comentariu. "
+
+    "Mecanica narativă și coerența: "
+    "1. **Anti-Repetiție Strictă:** Variează structura propozițiilor, descrierile (vânt/umbre) și verbele. Nu repeta descrieri similare în două răspunsuri consecutive. "
+    "2. **Realism Medieval:** Respectă coerența locurilor (cetăți, sate, codri, mănăstiri, drumuri de negoț) și a personajelor (boieri, călăreți ai curții, țărani, monahi, negustori). "
+    "3. **Firul Narativ:** Povestea se leagă de isprăvi domnești, slujbe trimise de Vlad Vodă, sau întâlniri ce dezvăluie secrete și primejdii ale vremii (ex: atacuri otomane, comploturi boierești, legende locale). "
+    "4. **Descriere Scenă:** Păstrează firul narativ: locație, obiecte găsite/pierdute, NPC-uri, starea eroului. "
+    "5. **Lungime și Stil:** Scrie **strict 2-4 propoziții** vii, direct legate de acțiunea jucătorului, evitând pasajele lungi sau divagațiile. "
+    "6. **Opțiuni:** Oferă **mereu 2-3 opțiuni clare** de acțiune jucătorului la final. Fă-le concise și distincte."
 )
+
 
 @st.cache_resource(show_spinner=True)
 def load_local_model():
@@ -115,7 +124,7 @@ def fix_romanian_grammar(text: str) -> str:
 def generate_with_api(prompt: str, use_api: bool = True) -> NarrativeResponse:
     """
     Generează răspuns folosind Groq API și returnează obiect Pydantic validat.
-    Forcează format JSON și aplică corecții automate.
+    Forcează format JSON și aplică corecții automate, cu 2 retry-uri pe erori JSON.
     """
     token = get_groq_token()
     if not token:
@@ -125,141 +134,131 @@ def generate_with_api(prompt: str, use_api: bool = True) -> NarrativeResponse:
         )
 
     api_url = "https://api.groq.com/openai/v1/chat/completions"
-    model = "llama-3.3-70b-versatile"
-
-    payload = {
-        "model": model,
-        "messages": [
-            {
-                "role": "system", 
-                "content": (
-                    "Ești un sistem JSON de joc D&D. Returnează EXCLUSIV JSON valid conform schemei, "
-                    "fără markdown, fără comentarii, fără text suplimentar. "
-                    "Asigură-te că 'narrative' este în română medievală corectă."
-                )
-            },
-            {"role": "user", "content": prompt}
-        ],
-        "temperature": 0.8,
-        "max_tokens": 1024,
-        "stream": False,
-        # 🔥 Forcează LLM-ul să returneze JSON valid
-        "response_format": {"type": "json_object"}
-    }
-
-    try:
-        response = requests.post(
-            api_url,
-            headers={
-                "Authorization": f"Bearer {token}",
-                "Content-Type": "application/json"
-            },
-            json=payload,
-            timeout=45
-        )
-        
-        if response.status_code == 200:
-            data = response.json()
-            content = data["choices"][0]["message"]["content"].strip()
-            
-            # 🔥 Elimină codeblocks dacă LLM le adaugă (defensive)
-            content = re.sub(r'```json\s*', '', content)
-            content = re.sub(r'```\s*', '', content)
-            content = content.strip()
-            
-            # Parse JSON
-            import json
-            try:
-                json_data = json.loads(content)
-                
-                # 🔥 Corectează greșeli gramaticale în narrative
-                if "narrative" in json_data:
-                    json_data["narrative"] = fix_romanian_grammar(json_data["narrative"]) # romanian grammar fix removed
-                
-                # 🔥 Convertește dicts la InventoryItem objects
-                if "items_gained" in json_data and isinstance(json_data["items_gained"], list):
-                    items_gained = []
-                    for item_dict in json_data["items_gained"]:
-                        # Asigură câmpuri required cu valori default
-                        item_dict.setdefault("type", "diverse")
-                        item_dict.setdefault("value", 0)
-                        item_dict.setdefault("quantity", 1)
-                        items_gained.append(InventoryItem(**item_dict))
-                    json_data["items_gained"] = items_gained
-                
-                print(f"\n{'='*40} LLM RAW RESPONSE {'='*40}")
-                print(f"JSON primit: {json.dumps(json_data, ensure_ascii=False, indent=2)}")
-                print(f"Câmp 'suggestions' există: {'suggestions' in json_data}")
-                if 'suggestions' in json_data:
-                    print(f"Valoare sugestii: {json_data['suggestions']}")
-                print(f"{'='*90}\n")
-                # 🔥 Validează și returnează Pydantic model
-                return NarrativeResponse(**json_data)
-                
-            except json.JSONDecodeError as e:
-                print(f"❌ JSON Decode Error: {e}")
-                print(f"📄 Raw content: {content[:300]}...")
-                return NarrativeResponse(
-                    narrative="LLM-ul a returnat format invalid. Încerc fallback manual...",
-                    game_over=False
-                )
-            except ValidationError as e: # ⭕ Use specific Pydantic exception
-                print(f"❌ Pydantic Validation Error: {e}")
-                print(f"📄 JSON data: {json_data}")
-                return NarrativeResponse(
-                    narrative="Datele returnate nu respectă schema jocului.",
-                    game_over=False
-                )
-            except Exception as e: # ⭕ Catch all other exceptions during parsing/validation
-                print(f"❌ Unexpected Error during Pydantic/Data processing: {e}")
-                import traceback
-                traceback.print_exc()
-                return NarrativeResponse(
-                    narrative="Eroare neașteptată în procesarea datelor.",
-                    game_over=False
-                )
-        
-        # 🔥 Handle specific API errors
-        elif response.status_code == 401:
-            st.error("❌ Token invalid! Status 401 - Verifică GROQ_API_KEY")
-            return NarrativeResponse(
-                narrative="Autentificare eșuată. Token-ul API este invalid sau expirat.",
-                game_over=True
-            )
-        elif response.status_code == 429:
-            st.warning("⚠️ Rate limit atins. Folosim modelul local...")
-            return NarrativeResponse(
-                narrative="API-ul este ocupat. Încerc din nou...",
-                game_over=False
-            )
-        elif response.status_code == 503:
-            print(f"⚠️ Service Unavailable (503): {model}")
-            time.sleep(2)
-            return NarrativeResponse(
-                narrative="Serviciul este temporar indisponibil.",
-                game_over=False
-            )
-        else:
-            print(f"⚠️ Unexpected status code: {response.status_code}")
-            return NarrativeResponse(
-                narrative=f"Eroare server: {response.status_code}",
-                game_over=False
-            )
+    model = "openai/gpt-oss-120b"
+    max_retries = 3  # Încercarea inițială + 2 reîncercări
     
-    except requests.exceptions.Timeout:
-        print(f"⏱️ Timeout la {model} (45s)")
-        return NarrativeResponse(
-            narrative="Cererea a expirat. Verifică conexiunea la internet.",
-            game_over=False
-        )
-    except Exception as e:
-        print(f"❌ Excepție neașteptată: {e}")
-        import traceback
-        traceback.print_exc()
-        return NarrativeResponse(
-            narrative="Ceva a tulburat liniștea tărâmului...",
-            game_over=False
-        )
+    for attempt in range(max_retries):
+        payload = {
+            "model": model,
+            "messages": [
+                {
+                    "role": "system", 
+                    "content": (
+                        "Ești un sistem JSON de joc D&D. Returnează EXCLUSIV JSON valid conform schemei, "
+                        "fără markdown, fără comentarii, fără text suplimentar. "
+                        "Asigură-te că 'narrative' este în română medievală corectă."
+                    )
+                },
+                {"role": "user", "content": prompt}
+            ],
+            "temperature": 0.8,
+            "max_tokens": 1024,
+            "stream": False,
+            "response_format": {"type": "json_object"}
+        }
+
+        try:
+            response = requests.post(
+                api_url,
+                headers={
+                    "Authorization": f"Bearer {token}",
+                    "Content-Type": "application/json"
+                },
+                json=payload,
+                timeout=45
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                content = data["choices"][0]["message"]["content"].strip()
+                
+                content = re.sub(r'```json\s*', '', content)
+                content = re.sub(r'```\s*', '', content)
+                content = content.strip()
+                
+                # Parse JSON
+                try:
+                    json_data = json.loads(content)
+                    
+                    if "narrative" in json_data:
+                        json_data["narrative"] = fix_romanian_grammar(json_data["narrative"])
+                    
+                    if "items_gained" in json_data and isinstance(json_data["items_gained"], list):
+                        items_gained = []
+                        for item_dict in json_data["items_gained"]:
+                            item_dict.setdefault("type", "diverse")
+                            item_dict.setdefault("value", 0)
+                            item_dict.setdefault("quantity", 1)
+                            items_gained.append(InventoryItem(**item_dict))
+                        json_data["items_gained"] = items_gained
+                    
+                    print(f"\n{'='*40} LLM RAW RESPONSE {'='*40}")
+                    print(f"JSON RAW Content: {content}") 
+                    print(f"Câmp 'suggestions' există: {'suggestions' in json_data}")
+                    if 'suggestions' in json_data:
+                        print(f"Valoare sugestii: {json_data['suggestions']}")
+                    print(f"{'='*90}\n")
+                    
+                    # 🔥 Validează și returnează Pydantic model - SUCCESS EXIT POINT
+                    return NarrativeResponse(**json_data)
+                    
+                except json.JSONDecodeError as e:
+                    print(f"❌ JSON Decode Error: {e} - Reîncercare {attempt + 1}/{max_retries - 1}...")
+                    time.sleep(1) # Pauză scurtă înainte de reîncercare
+                    continue # Mergi la următoarea încercare
+                    
+                except ValidationError as e:
+                    print(f"❌ Pydantic Validation Error: {e} - Reîncercare {attempt + 1}/{max_retries - 1}...")
+                    print(f"📄 JSON data (Validation Failed): {json_data}") 
+                    time.sleep(1) # Pauză scurtă înainte de reîncercare
+                    continue # Mergi la următoarea încercare
+
+                except Exception as e:
+                    print(f"❌ Unexpected Error during Pydantic/Data processing: {e}")
+                    import traceback
+                    traceback.print_exc()
+                    break # Ieși din buclă la eroare neașteptată
+            
+            # 🔥 Handle specific API errors (401, 429, 503) - These should break or return immediately
+            elif response.status_code == 401:
+                st.error("❌ Token invalid! Status 401 - Verifică GROQ_API_KEY")
+                return NarrativeResponse(narrative="Autentificare eșuată. Token-ul API este invalid sau expirat.", game_over=True)
+            elif response.status_code == 429:
+                st.warning("⚠️ Rate limit atins.")
+                if attempt < max_retries - 1:
+                    time.sleep(random.randint(2, 5))
+                    continue
+                else:
+                    return NarrativeResponse(narrative="API-ul este ocupat.", game_over=False)
+            elif response.status_code == 503:
+                print(f"⚠️ Service Unavailable (503): {model}")
+                if attempt < max_retries - 1:
+                    time.sleep(2)
+                    continue
+                else:
+                    return NarrativeResponse(narrative="Serviciul este temporar indisponibil.", game_over=False)
+            else:
+                print(f"⚠️ Unexpected status code: {response.status_code}")
+                break # Ieși din buclă la alte erori HTTP
+        
+        except requests.exceptions.Timeout:
+            print(f"⏱️ Timeout la {model} (45s)")
+            if attempt < max_retries - 1:
+                time.sleep(2)
+                continue
+            else:
+                return NarrativeResponse(narrative="Cererea a expirat. Verifică conexiunea la internet.", game_over=False)
+        except Exception as e:
+            print(f"❌ Excepție neașteptată în REQUEST: {e}")
+            import traceback
+            traceback.print_exc()
+            break # Ieși din buclă la erori de rețea sau altele
+            
+    # Dacă bucla s-a terminat fără succes (din cauza JSON/Pydantic errors sau break)
+    return NarrativeResponse(
+        narrative="Naratorul este epuizat. Nu a putut genera un răspuns valid după multiple încercări.",
+        game_over=False
+    )
     
 def generate_narrative_with_progress(prompt: str, use_api: bool = True) -> NarrativeResponse:
     """
