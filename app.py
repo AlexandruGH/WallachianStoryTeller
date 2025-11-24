@@ -1,13 +1,13 @@
 import os, sys, shutil
 # If ffmpeg is NOT in PATH, then try local folder
-if not shutil.which("ffmpeg"):
-    local_ffmpeg = os.path.abspath("ffmpeg/bin")
-    if os.path.isfile(os.path.join(local_ffmpeg, "ffmpeg.exe")):
-        os.environ["PATH"] = local_ffmpeg + os.pathsep + os.environ["PATH"]
+#if not shutil.which("ffmpeg"):
+#    local_ffmpeg = os.path.abspath("ffmpeg/bin")
+#    if os.path.isfile(os.path.join(local_ffmpeg, "ffmpeg.exe")):
+#        os.environ["PATH"] = local_ffmpeg + os.pathsep + os.environ["PATH"]
 from dotenv import load_dotenv
 load_dotenv(override=True) # SINGURUL apel necesar
 # Suppress pydub's warning
-os.environ["PYDUB_NO_WARN"] = "1"
+#os.environ["PYDUB_NO_WARN"] = "1"
 import streamlit as st
 from typing import Optional, Dict, Any, List
 import time
@@ -21,31 +21,53 @@ from streamlit.runtime.scriptrunner import add_script_run_ctx
 
 # Import module
 from config import Config, ModelRouter
-from llm_handler import generate_story_text_with_progress
 from character import CharacterSheet, roll_dice, update_stats
 from ui_components import inject_css, render_header, render_sidebar, display_story
-
+from llm_handler import fix_romanian_grammar, generate_narrative_with_progress, generate_with_api, generate_story_text_with_progress
+from models import GameState, CharacterStats, InventoryItem, ItemType, NarrativeResponse
 # =========================
 # — Session State Initialization
 # =========================
 def init_session():
-    """Initialize all session state variables"""
-    if "story" not in st.session_state:
-        intro = Config.make_intro_text(5)
+    """Initialize all session state variables with Pydantic models"""
+    if "game_state" not in st.session_state:
+        # ⭕ DEFINIM italic_flavour AICI - variabila locală necesară
         italic_flavour = (
-           "*Te afli la marginea cetății Târgoviște, pe o noapte rece de toamnă. "
+            "*Te afli la marginea cetății Târgoviște, pe o noapte rece de toamnă. "
             "Flăcările torțelor dansează în vânt, proiectând umbre lungi pe zidurile masive. "
             "Porțile de stejar se ridică încet, cu un scârțâit apăsat, iar aerul miroase "
             "a fum, fier și pământ ud. În depărtare se aud cai și voci ale străjerilor. "
             "Fiecare decizie poate naște o legendă sau poate rămâne doar o filă de cronică...*\n\n"
         )
-        st.session_state.story = [
-            {"role": "ai", "text": f"{intro}{italic_flavour}**Ce vrei să faci?**", "turn": 0, "image": None}
-        ]
+        
+        # Inițializăm game_state cu Pydantic
+        st.session_state.game_state = GameState(
+            character=CharacterStats(),
+            inventory=[
+                InventoryItem(name="Pumnal valah", type=ItemType.weapon, value=3, quantity=1),
+                InventoryItem(name="Hartă ruptă", type=ItemType.misc, value=0, quantity=1),
+                InventoryItem(name="5 galbeni", type=ItemType.currency, value=5, quantity=1),
+            ],
+            story=[
+                {
+                    "role": "ai", 
+                    "text": f"{Config.make_intro_text(5)}{italic_flavour}**Ce vrei să faci?**", 
+                    "turn": 0, 
+                    "image": None
+                }
+            ],
+            turn=0,
+            last_image_turn=-10
+        )
+    
+    # Restul variabilelor session_state (compatibilitate)
+    if "story" not in st.session_state:
+        st.session_state.story = st.session_state.game_state.story
     if "turn" not in st.session_state:
-        st.session_state.turn = 0
+        st.session_state.turn = st.session_state.game_state.turn
     if "character" not in st.session_state:
-        st.session_state.character = CharacterSheet().to_dict()
+        # Compatibilitate cu cod vechi - poți elimina gradual aceste variabile
+        st.session_state.character = st.session_state.game_state.character.model_dump()
     if "is_generating" not in st.session_state:
         st.session_state.is_generating = False
     if "settings" not in st.session_state:
@@ -60,15 +82,18 @@ def init_session():
         st.session_state.last_image_turn = -10
     if "image_worker_active" not in st.session_state:
         st.session_state.image_worker_active = False
-    # 🔧 PROTEJĂM INPUT UTILIZATOR
     if "user_input_buffer" not in st.session_state:
         st.session_state.user_input_buffer = ""
+    if "legend_scale" not in st.session_state:
+        st.session_state.legend_scale = 5
+    if "is_game_over" not in st.session_state:
+        st.session_state.is_game_over = False
 
 # =========================
 # — Main Application
 # =========================
 def main():
-    """Main app logic"""
+    """Main app logic - inițializează și pornește jocul"""
     st.set_page_config(
         page_title="Wallachia - D&D Adventure",
         page_icon="⚔️",
@@ -78,20 +103,27 @@ def main():
     inject_css()
     init_session()
 
+    # 🔥 Verifică fallback pe API după 3 eșecuri
     if st.session_state.settings.get("api_fail_count", 0) > 3:
         st.warning("⚠️ API a eșuat de 3+ ori. Se trece în modul local automat.")
         st.session_state.settings["use_api_fallback"] = False
 
     render_header()
-    legend_scale = render_sidebar(st.session_state.character)
 
-    # Verificăm dacă trebuie să pornim thread-ul de imagine
+    # ⭕ CRITICAL: Salvăm legend_scale în session_state pentru a fi accesibil peste tot
+    # render_sidebar primește GameState și returnează valoarea slider-ului
+    legend_scale = render_sidebar(st.session_state.game_state)
+    st.session_state.legend_scale = legend_scale  # 🔥 STOCHEM PENTRU acces global
+
+    # 🔥 Pornește worker-ul de imagini dacă există elemente în coadă
     start_image_worker()
     
+    # Layout: coloane centrate pentru story
     col_left, col_center, col_right = st.columns([0.5, 4, 0.5])
     with col_center:
-        display_story(st.session_state.story)
+        display_story(st.session_state.game_state.story)
 
+    # 🔥 Procesează input-ul jucătorului (folosește legend_scale din session_state)
     handle_player_input()
 
 def start_image_worker():
@@ -124,32 +156,30 @@ def background_image_gen():
         st.session_state.image_worker_active = False
         # 🔧 FĂRĂ st.rerun() aici! Streamlit va detecta automat modificarea
 
+
+
 def handle_player_input():
-    """Procesează acțiuni, arată sugestii, PROTEJEAZĂ INPUT-UL"""
-    import re
+    """Procesează acțiunile jucătorului și APPEND sugestii la textul narativ"""
+    from models import InventoryItem, ItemType
+    
+    # 🔥 GAME OVER CHECK - BLOCHEAZĂ ORICE ACȚIUNE DACĂ PLAYER-UL ESTE MORT
+    if st.session_state.game_state.character.health <= 0:
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            st.error("💀 **Ești mort! Aventura s-a încheiat.**")
+            if st.button("🔄 Începe o nouă aventură", use_container_width=True):
+                init_session()
+                st.rerun()
+        return  # Oprește executarea restului funcției
 
     col_left, col_centre, col_right = st.columns([0.5, 4, 0.5])
     with col_centre:
-        # Sugestii pentru turul 0
-        if st.session_state.turn == 0 and len(st.session_state.story) == 1:
-            st.markdown(
-                '<div class="suggestions-box" style="text-align:center;">'
-                "<b>🕯️  Câteva idei ca să începi:</b><br/>"
-                "1. Intră în cetate și caută un loc de odihnă la hanul “La Trei Coroane”.<br/>"
-                "2. Strigă după straja de la poartă să afli știri despre Vlad.<br/>"
-                "3. Explorezi drumul comercial către Rucăr în noapte."
-                "</div>",
-                unsafe_allow_html=True,
-            )
-
-        # Butoane de acțiune
+        # Formular pentru input
         with st.form(key="action_form", clear_on_submit=True):
-            # 🔧 INPUT CU VALOARE PROTEJATĂ
             user_action = st.text_input(
                 "🗡️ Ce vrei să faci?",
                 placeholder="Scrie acțiunea ta...",
                 key="input_action",
-                value=st.session_state.user_input_buffer  # Restaurează valoarea
             )
             c1, c2, c3 = st.columns([2, 1, 1])
             with c1:
@@ -165,66 +195,129 @@ def handle_player_input():
                     "🏥 Vindecă", use_container_width=True
                 )
 
-        # Procesăm acțiunile
+        # Procesăm acțiunea principală
         if submitted and user_action and user_action.strip():
             if st.session_state.is_generating:
                 st.warning("⏳ Așteaptă finalizarea generării...")
                 return
             
+            # 🔥 REPUTATION GATE - Nu poți aborda Vlad fără reputație
+            action_lower = user_action.lower()
+            if any(keyword in action_lower for keyword in ["vlad", "domnitor", "țepeș", "vodă"]):
+                if st.session_state.game_state.character.reputation < 80:
+                    st.error("👑 Reputația ta este prea mică pentru a-l aborda pe Vlad! (Necesită 80+)")
+                    return
+            
             st.session_state.is_generating = True
             try:
-                # Salvăm acțiunea și curățăm buffer-ul
-                current_turn = st.session_state.turn
-                st.session_state.story.append(
+                # Salvează acțiunea jucătorului
+                current_turn = st.session_state.game_state.turn
+                st.session_state.game_state.story.append(
                     {"role": "user", "text": user_action, "turn": current_turn, "image": None}
                 )
-                st.session_state.user_input_buffer = ""  # Curățăm buffer-ul după submit
                 
-                prompt = Config.build_dnd_prompt(st.session_state.story, st.session_state.character)
-                use_api = st.session_state.settings.get("use_api_fallback", True)
-                ai_text = generate_story_text_with_progress(prompt, use_api=use_api)
-                
-                if "api_rate_limit_hit" in ai_text:
-                    st.session_state.settings["use_api_fallback"] = False
-                    st.session_state.settings["api_fail_count"] = (
-                        st.session_state.settings.get("api_fail_count", 0) + 1
-                    )
-                    ai_text = generate_story_text_with_progress(prompt, use_api=False)
-                else:
-                    st.session_state.settings["api_fail_count"] = 0
-                
-                update_stats(st.session_state.character, user_action, ai_text)
-                
-                # Adăugăm răspunsul AI (folosind turn-ul curent)
-                st.session_state.story.append(
-                    {"role": "ai", "text": ai_text, "turn": current_turn, "image": None}
+                # Obține legend scale și construiește prompt
+                legend_scale = st.session_state.get("legend_scale", 5)
+                prompt = Config.build_dnd_prompt(
+                    st.session_state.game_state.story,
+                    st.session_state.game_state.character.model_dump(),
+                    legend_scale
                 )
                 
-                # Coadă imagine pentru acest răspuns
+                # Generează răspuns cu animație de progres
+                response: NarrativeResponse = generate_narrative_with_progress(prompt)
+                
+                # Corectează greșelile gramaticale
+                corrected_narrative = fix_romanian_grammar(response.narrative)
+                corrected_suggestions = [
+                    fix_romanian_grammar(s) for s in response.suggestions 
+                    if s and len(s) > 5
+                ]
+                
+                # Fallback sugestii dacă LLM nu returnează
+                if not corrected_suggestions:
+                    corrected_suggestions = [
+                        "Cauți un loc sigur pentru odihnă.",
+                        "Cerți informații de la un localnic.",
+                        "Explorezi zona cu atenție."
+                    ]
+                
+                # 🔥 🔥 🔥 APPEND SUGESTII LA NARRATIV 🔥 🔥 🔥
+                # Acesta este nucleul modificării - concatenăm sugestiile direct în text
+                narrative_with_suggestions = corrected_narrative
+                if corrected_suggestions:
+                    narrative_with_suggestions += "\n\n**Posibile acțiuni:**\n\n"
+                    narrative_with_suggestions += "\n".join([f"• {s}\n" for s in corrected_suggestions])
+                
+                # Update game state din response
+                gs = st.session_state.game_state
+                gs.character.health = max(0, min(100, gs.character.health + (response.health_change or 0)))
+                gs.character.reputation = max(0, min(100, gs.character.reputation + (response.reputation_change or 0)))
+                gs.character.gold = max(0, gs.character.gold + (response.gold_change or 0))
+                
+                # Update inventory
+                for item in response.items_gained:
+                    existing = next((i for i in gs.inventory if i.name == item.name), None)
+                    if existing:
+                        existing.quantity += item.quantity
+                    else:
+                        gs.inventory.append(item)
+                gs.inventory = [i for i in gs.inventory if i.name not in response.items_lost]
+                
+                # Update locație
+                if response.location_change:
+                    gs.character.location = response.location_change
+                    st.toast(f"📍 Locație nouă: {response.location_change}", icon="🗺️")
+                
+                # Adaugă efecte de status
+                if response.status_effects:
+                    gs.character.status_effects.extend(response.status_effects)
+                
+                # 🔥 ADĂUGĂ TEXTUL COMBINAT (NARRATIV + SUGESTII) LA STORY
+                st.session_state.game_state.story.append({
+                    "role": "ai",
+                    "text": narrative_with_suggestions,  # AICI este textul final cu sugestii incluse
+                    "turn": current_turn,
+                    "image": None
+                })
+                
+                # 🔥 DEBUG CONSOLĂ - Șterge sau comentează după testare
+                print(f"\n{'='*60}")
+                print(f"📤 NARRATIV FINAL (cu sugestii):")
+                print(narrative_with_suggestions)
+                print(f"{'='*60}\n")
+                
+                # Coadă imagine
                 if (current_turn - st.session_state.last_image_turn) >= Config.IMAGE_INTERVAL:
-                    st.session_state.image_queue.append((ai_text, current_turn))
+                    st.session_state.image_queue.append((corrected_narrative, current_turn))
                     st.session_state.last_image_turn = current_turn
                 
-                st.session_state.turn += 1
+                # Increment turn și verifică game over
+                gs.turn += 1
+                if response.game_over or gs.character.health <= 0:
+                    st.error("💀 **Aventura s-a încheiat.**")
+                    st.session_state.is_game_over = True
                 
+                # Rerun pentru a afișa noul conținut
+                st.rerun()
+
             except Exception as e:
-                st.error(f"❌ Eroare: {e}")
+                st.error(f"❌ Eroare în procesare: {e}")
+                import traceback
+                traceback.print_exc()
             finally:
                 st.session_state.is_generating = False
-            
-            # 🔧 RERUN Imediat pentru a afișa noul text
-            st.rerun()
 
+        # Butoane secundare (zaruri și vindecare)
         elif dice_clicked:
             result = roll_dice()
             st.toast(f"🎲 Ai dat: {result}!", icon="⚔️")
             time.sleep(0.5)
 
         elif heal_clicked:
-            char = CharacterSheet.from_dict(st.session_state.character)
+            gs = st.session_state.game_state
             heal = roll_dice(8) + 5
-            char.heal(heal)
-            st.session_state.character = char.to_dict()
+            gs.character.health = min(100, gs.character.health + heal)
             st.toast(f"❤️ Te-ai vindecat cu {heal} puncte!", icon="✨")
             time.sleep(0.5)
 

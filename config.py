@@ -5,6 +5,7 @@ from deep_translator import GoogleTranslator
 import os
 import random
 import requests
+from models import NarrativeResponse
 
 class Config:
     """Central configuration with Romanian-optimized models"""
@@ -67,22 +68,119 @@ class Config:
         )
 
     @staticmethod
-    def build_dnd_prompt(story: List[Dict], character: Dict) -> str:
-        context = "\n".join([
-            f"{m['role'].upper()}: {m['text']}"
-            for m in story[-4:]
-        ])
+    def build_dnd_prompt(story: List[Dict], character: Dict, legend_scale: int = 5) -> str:
+        """Construiește prompt pentru LLM cu schema Pydantic integrată"""
+        # Calcul raport legend vs istoric
+        ratio = legend_scale / 10.0
+        
+        if ratio < 0.3:
+            style_prefix = "Stil STRICT ISTORIC. Fără magie, fără creaturi fantastice. "
+        elif ratio > 0.7:
+            style_prefix = "Stil LEGENDAR VAMPIRIC. Umbre, mister, folklore întunecat. "
+        else:
+            style_prefix = "Stil echilibrat istoric și legendar. "
+        
+        # Context narativ
+        context = "\n".join([f"{m['role'].upper()}: {m['text']}" for m in story[-4:]])
+        
+        # Info caracter
         char_info = (
-            f"\n\nSTATISTICI: Viață={character['health']} | "
+            f"\n\nSTATISTICI CRITICE: Viață={character['health']} | "
             f"Reputație={character['reputation']} | "
-            f"Locație={character['location']}\n"
+            f"Locație={character['location']} | "
+            f"Galbeni={character.get('gold', 0)} | "
+            f"Puterea ta este {'SLABĂ' if character['reputation'] < 30 else 'MEDIĂ' if character['reputation'] < 60 else 'CRESCUTĂ'}\n"
         )
+        
+        # Restricții
+        restrictions = ""
+        if character['reputation'] < 20:
+            restrictions = "Jucătorul are reputație FOARTE JOSĂ. Este tratat cu suspiciune. Nu poate intra în audiență la boieri. "
+        elif character['reputation'] < 50:
+            restrictions = "Jucătorul are reputație MEDIE. Poate interacționa cu negustori și soldați, dar nu cu înalta nobilime. "
+        else:
+            restrictions = "Jucătorul are reputație BUNĂ. Poate cere audiențe, dar ȚEPEȘ este INACCESIBIL direct fără motiv întemeiat. "
+        
+        # Schema Pydantic
+        schema = NarrativeResponse.model_json_schema()
+        
         instructions = (
-            "\nRăspunde în română medievală scurt și captivant. "
-            "Maxim 3 propoziții. Nu repeta textul."
+            f"\n{style_prefix}{restrictions}"
+            f"Răspunde STRICT în format JSON conform schemei:\n"
+            f"STRICT JSON SCHEMA:\n"
+            f"```json\n{schema}\n```\n\n"
+            "REGULI OBLIGATORII:\n"
+            "- 'narrative': 2-3 propoziții, fără greșeli gramaticale, în română medievală\n"
+            "- 'suggestions': Listă de EXACT 2-3 string-uri, fără numere, fără bullet points\n"
+            "  EXEMPLU: [\"Cere audiență la curte.\", \"Caută informații în târg.\", \"Explorezi adâncul pădurii.\"]\n"
+            "- Respectă gramatica: 'unei păsări', 'unor boieri', nu 'unui păsări'\n"
+            "VLAD ȚEPEȘ NU POATE FI ÎNVINS – orice tentativă = game_over instant\n"
+            "Reputația sub 20 = nu poți interacționa cu nobilii\n\n"
+            "RĂSPUNS EXCLUSIV JSON, fără text suplimentar:\n"
         )
-        return context + char_info + instructions + "\nNARATOR: "    
+    
+        return context + char_info + instructions
+    
+    @staticmethod
+    def generate_image_prompt_llm(text: str, location: str) -> str:
+        """Generează prompt pentru Stable Diffusion folosind LLM"""
+        token = os.getenv("GROQ_API_KEY") or st.secrets.get("GROQ_API_KEY", "")
+        if not token:
+            return Config.generate_image_prompt(text, location)
 
+        system = (
+            "You are an assistant that writes short, highly detailed prompts "
+            "for Stable-Diffusion in English. "
+            "Include: time of day, number of people, context, weather, camera angle, lighting style. "
+            "Keep it under 200 characters. DO NOT include object names like 'candle'. "
+            "Describe LIGHTING EFFECTS only: 'warm dim lighting', 'soft glow', 'moonlight'."
+        )
+
+        user = (
+            f"Story fragment: {text}\n"
+            f"Exact place: {location}\n"
+            "Write one English Stable-Diffusion prompt with lighting effects, no objects."
+        )
+
+        payload = {
+            "model": "llama-3.3-70b-versatile",
+            "messages": [
+                {"role": "system", "content": system},
+                {"role": "user", "content": user}
+            ],
+            "temperature": 0.75,
+            "max_tokens": 60,
+            "stream": False
+        }
+
+        try:
+            r = requests.post(
+                "https://api.groq.com/openai/v1/chat/completions",
+                headers={
+                    "Authorization": f"Bearer {token}",
+                    "Content-Type": "application/json"
+                },
+                json=payload,
+                timeout=15
+            )
+            r.raise_for_status()
+            llm_prompt = r.json()["choices"][0]["message"]["content"].strip()
+            llm_prompt = llm_prompt.replace('"', '')
+            if llm_prompt.endswith('.'):
+                llm_prompt = llm_prompt[:-1]
+            
+            # Prompt final cu descriere de iluminare, nu obiecte
+            prompt = (
+                f"Romanian medieval Wallachia 1456, Vlad Tepes era, atmospheric, "
+                f"dark fantasy, {llm_prompt}, highly detailed, oil-on-canvas, "
+                f"warm dim lighting, soft orange glow, deep shadows, 4k, vintage parchment look"
+            )
+            return prompt
+        except Exception as e:
+            print("LLM image-prompt failed:", e)
+            # Fallback la metoda veche
+            return Config.generate_image_prompt(text, location)
+        
     @staticmethod
     def generate_image_prompt(text: str, location: str) -> str:
         # Extragem ultimele 3 propoziții sau primele 150 caractere
@@ -165,7 +263,7 @@ class Config:
             prompt = (
             f"Romanian medieval Wallachia 1456, Vlad Tepes era, atmospheric, "
             f"dark fantasy, {llm_prompt}, highly detailed, oil-on-canvas, "
-            f"warm candle-light, 4k, vintage parchment look"
+            f"warm dim lighting, soft orange glow, deep shadows, 4k, vintage parchment look"
         )
             return prompt
         except Exception as e:

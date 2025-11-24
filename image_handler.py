@@ -22,36 +22,59 @@ client = InferenceClient(
     timeout=120
 )
 
+def get_hf_tokens() -> List[str]:
+    """Citește toate token-urile HF disponibile"""
+    tokens = []
+    # Token principal
+    if os.getenv("HF_TOKEN"):
+        tokens.append(os.getenv("HF_TOKEN"))
+    
+    # Tokeni secundari (HF_TOKEN1, HF_TOKEN2, etc)
+    i = 1
+    while True:
+        token = os.getenv(f"HF_TOKEN{i}")
+        if token:
+            tokens.append(token)
+            i += 1
+        else:
+            break
+    
+    return tokens
+
 def generate_scene_image(text: str, is_initial: bool = False) -> Optional[bytes]:
-    token = os.getenv("HF_TOKEN")
-    if not token:
+    tokens = get_hf_tokens()
+    if not tokens:
         st.info("🔒 Mod offline – generăm imagine de rezervă...")
         return generate_fallback_image(text, is_initial)
 
     location = st.session_state.character.get("location", "Târgoviște")
-
-    # >>> NEW: let the LLM write the prompt <<<
     prompt = Config.generate_image_prompt_llm(text, location)
 
-    # rest identical to before
-    for model in IMAGE_MODELS:
-        try:
-            with st.spinner("🎨 Artistul medievale lucrează..."):
-                pil_img = client.text_to_image(
-                    prompt,
-                    model=model,
-                    negative_prompt=Config.IMAGE_NEGATIVE,
-                    num_inference_steps=30,
-                    guidance_scale=7.5,
+    # Încercăm FIECARE token
+    for token in tokens:
+        for model in IMAGE_MODELS:
+            try:
+                client = InferenceClient(
+                    provider="nscale",
+                    api_key=token,
+                    timeout=120
                 )
-            if pil_img:
-                print(f"✅ Imagine generată cu succes folosind {model}")
-                return pil_to_bytes(pil_img)
-        except Exception as e:
-            st.warning(f"⚠️ Model {model} a eșuat: {e}")
-            continue
+                with st.spinner("🎨 Artistul medievale lucrează..."):
+                    pil_img = client.text_to_image(
+                        prompt,
+                        model=model,
+                        negative_prompt=Config.IMAGE_NEGATIVE,
+                        num_inference_steps=30,
+                        guidance_scale=7.5,
+                    )
+                if pil_img:
+                    print(f"✅ Imagine generată cu succes folosind {model} cu token {tokens.index(token)+1}")
+                    return pil_to_bytes(pil_img)
+            except Exception as e:
+                st.warning(f"⚠️ Token {tokens.index(token)+1} / Model {model} a eșuat: {e}")
+                continue
 
-    st.error("❌ Toate modelele de imagine au eșuat.")
+    st.error("❌ Toate token-urile și modelele de imagine au eșuat.")
     return generate_fallback_image(text, is_initial)
 
 # ---------- helper ----------
