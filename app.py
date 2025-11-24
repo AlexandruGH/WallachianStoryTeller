@@ -68,8 +68,14 @@ def init_session():
     if "character" not in st.session_state:
         # Compatibilitate cu cod vechi - poți elimina gradual aceste variabile
         st.session_state.character = st.session_state.game_state.character.model_dump()
+    if "story_history" not in st.session_state:
+        st.session_state.story_history = []  # ⬅️ FIX: Inițializarea listei de istoric
+    
     if "is_generating" not in st.session_state:
-        st.session_state.is_generating = False
+        st.session_state.is_generating = False # Inițializarea flag-ului de procesare
+        
+    if "prompt_cache" not in st.session_state:
+        st.session_state.prompt_cache = "" # Cache pentru prompturi
     if "settings" not in st.session_state:
         st.session_state.settings = {
             "use_api_fallback": True,
@@ -209,17 +215,31 @@ def handle_player_input():
                     {"role": "user", "text": user_action, "turn": current_turn, "image": None}
                 )
                 
-                # Obține legend scale și construiește prompt
+                # 1. PREGĂTIREA DATELOR (Extragem datele simple din Session State)
                 legend_scale = st.session_state.get("legend_scale", 5)
-                prompt = Config.build_dnd_prompt(
-                    st.session_state.game_state.story,
-                    st.session_state.game_state.character.model_dump(),
-                    legend_scale
+                gs_data = st.session_state.game_state
+
+                # Verificăm dacă e obiect sau dict și extragem datele necesare pentru config
+                if hasattr(gs_data, 'character'):
+                    # Dacă e obiect Pydantic
+                    character_data = gs_data.character.model_dump()
+                    story_data = gs_data.story
+                else:
+                    # Dacă e deja dicționar (cum îl face uneori Streamlit)
+                    character_data = gs_data['character']
+                    story_data = gs_data['story']
+
+                # 2. CONSTRUIREA PROMPTULUI (Returnează un string)
+                # Aici se apelează funcția din config.py
+                full_prompt_text = Config.build_dnd_prompt(
+                    story=story_data, 
+                    character=character_data, 
+                    legend_scale=legend_scale
                 )
-                
-                # Generează răspuns cu animație de progres
-                response: NarrativeResponse = generate_narrative_with_progress(prompt)
-                
+
+                # 3. GENERAREA NARAȚIUNII (Se apelează API-ul cu textul construit mai sus)
+                # Aici se apelează funcția din llm_handler.py
+                response = generate_narrative_with_progress(full_prompt_text)
                 # Corectează greșelile gramaticale
                 corrected_narrative = fix_romanian_grammar(response.narrative)
                 corrected_suggestions = [

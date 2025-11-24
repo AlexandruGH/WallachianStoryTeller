@@ -1,4 +1,5 @@
 # config.py - Model Router & Romanian-Aware Configuration
+import re
 import streamlit as st
 from typing import List, Dict, Any
 from deep_translator import GoogleTranslator
@@ -69,10 +70,13 @@ class Config:
 
     @staticmethod
     def build_dnd_prompt(story: List[Dict], character: Dict, legend_scale: int = 5) -> str:
-        """Construiește prompt pentru LLM cu schema Pydantic integrată"""
+        """Construiește prompt pentru LLM folosind structuri de date simple (dict/list)"""
+        from models import NarrativeResponse # Import local
+        
         # Calcul raport legend vs istoric
         ratio = legend_scale / 10.0
         
+        # Selectare prefix stil
         if ratio < 0.3:
             style_prefix = "Stil STRICT ISTORIC. Fără magie, fără creaturi fantastice. "
         elif ratio > 0.7:
@@ -80,30 +84,41 @@ class Config:
         else:
             style_prefix = "Stil echilibrat istoric și legendar. "
         
-        # Context narativ
+        # Construire context narativ din ultimele replici
         context = "\n".join([f"{m['role'].upper()}: {m['text']}" for m in story[-4:]])
         
-        # Info caracter
+        # Construire Info caracter (Accesăm prin CHEI de dicționar ['key'], nu prin punct .attr)
+        # Verificăm existența cheilor cu .get() pentru siguranță
+        char_health = character.get('health', 100)
+        char_rep = character.get('reputation', 20)
+        char_gold = character.get('gold', 0)
+        char_loc = character.get('location', 'Târgoviște')
+        
+        power_desc = 'SLABĂ'
+        if char_rep >= 60: power_desc = 'CRESCUTĂ'
+        elif char_rep >= 30: power_desc = 'MEDIE'
+
         char_info = (
-            f"\n\nSTATISTICI CRITICE: Viață={character['health']} | "
-            f"Reputație={character['reputation']} | "
-            f"Locație={character['location']} | "
-            f"Galbeni={character.get('gold', 0)} | "
-            f"Puterea ta este {'SLABĂ' if character['reputation'] < 30 else 'MEDIĂ' if character['reputation'] < 60 else 'CRESCUTĂ'}\n"
+            f"\n\nSTATISTICI CRITICE: Viață={char_health} | "
+            f"Reputație={char_rep} | "
+            f"Locație={char_loc} | "
+            f"Galbeni={char_gold} | "
+            f"Puterea ta este {power_desc}\n"
         )
         
-        # Restricții
+        # Restricții bazate pe reputație
         restrictions = ""
-        if character['reputation'] < 20:
+        if char_rep < 20:
             restrictions = "Jucătorul are reputație FOARTE JOSĂ. Este tratat cu suspiciune. Nu poate intra în audiență la boieri. "
-        elif character['reputation'] < 50:
+        elif char_rep < 50:
             restrictions = "Jucătorul are reputație MEDIE. Poate interacționa cu negustori și soldați, dar nu cu înalta nobilime. "
         else:
             restrictions = "Jucătorul are reputație BUNĂ. Poate cere audiențe, dar ȚEPEȘ este INACCESIBIL direct fără motiv întemeiat. "
         
-        # Schema Pydantic
+        # Schema JSON
         schema = NarrativeResponse.model_json_schema()
         
+        # Construire instrucțiuni finale
         instructions = (
             f"\n{style_prefix}{restrictions}"            
             "REGULI OBLIGATORII:\n"
