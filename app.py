@@ -23,7 +23,7 @@ from streamlit.runtime.scriptrunner import add_script_run_ctx
 from config import Config, ModelRouter
 from character import CharacterSheet, roll_dice, update_stats
 from ui_components import inject_css, render_header, render_sidebar, display_story
-from llm_handler import fix_romanian_grammar, generate_narrative_with_progress, generate_with_api, generate_story_text_with_progress
+from llm_handler import fix_romanian_grammar, generate_narrative_with_progress
 from models import GameState, CharacterStats, InventoryItem, ItemType, NarrativeResponse
 # =========================
 # — Session State Initialization
