@@ -18,7 +18,7 @@ import re
 import requests
 import threading
 from streamlit.runtime.scriptrunner import add_script_run_ctx
-
+import uuid
 # Import module
 from config import Config, ModelRouter
 from character import CharacterSheet, roll_dice, update_stats
@@ -30,6 +30,8 @@ from models import GameState, CharacterStats, InventoryItem, ItemType, Narrative
 # =========================
 def init_session():
     """Initialize all session state variables with Pydantic models"""
+    if "session_id" not in st.session_state:
+        st.session_state.session_id = str(uuid.uuid4())[:8]  # ⭕ GENEREAZĂ ID UNIC
     if "game_state" not in st.session_state:
         # ⭕ DEFINIM italic_flavour AICI - variabila locală necesară
         italic_flavour = (
@@ -39,7 +41,7 @@ def init_session():
             "a fum, fier și pământ ud. În depărtare se aud cai și voci ale străjerilor. "
             "Fiecare decizie poate naște o legendă sau poate rămâne doar o filă de cronică...*\n\n"
         )
-        
+        print(f"[SESSION {st.session_state.session_id}] 🎮 NEW SESSION INITIALIZED")  # ⭕ LOG
         # Inițializăm game_state cu Pydantic
         st.session_state.game_state = GameState(
             character=CharacterStats(),
@@ -206,7 +208,7 @@ def handle_player_input():
             if st.session_state.is_generating:
                 st.warning("⏳ Așteaptă finalizarea generării...")
                 return
-                        
+            print(f"[SESSION {st.session_state.session_id}] 📝 USER ACTION: {user_action}")  # ⭕ LOG USER INPUT
             st.session_state.is_generating = True
             try:
                 # Salvează acțiunea jucătorului
@@ -236,7 +238,7 @@ def handle_player_input():
                     character=character_data, 
                     legend_scale=legend_scale
                 )
-
+                print(f"[SESSION {st.session_state.session_id}] 🤖 LLM PROMPT: {full_prompt_text[:200]}...")  # ⭕ LOG PROMPT
                 # 3. GENERAREA NARAȚIUNII (Se apelează API-ul cu textul construit mai sus)
                 # Aici se apelează funcția din llm_handler.py
                 response = generate_narrative_with_progress(full_prompt_text)
@@ -246,7 +248,7 @@ def handle_player_input():
                     fix_romanian_grammar(s) for s in response.suggestions 
                     if s and len(s) > 5
                 ]
-                
+                print(f"[SESSION {st.session_state.session_id}] ✅ LLM RESPONSE: {corrected_narrative[:250]} | Suggestions: {corrected_suggestions}")  # ⭕ LOG RĂSPUNS
                 # Fallback sugestii dacă LLM nu returnează
                 if not corrected_suggestions:
                     corrected_suggestions = [
@@ -310,12 +312,13 @@ def handle_player_input():
                 if response.game_over or gs.character.health <= 0:
                     st.error("💀 **Aventura s-a încheiat.**")
                     st.session_state.is_game_over = True
-                
+                print(f"[SESSION {st.session_state.session_id}] 🔄 STORY UPDATED - TURN {gs.turn}")  # ⭕ LOG STORY UPDATE
                 # Rerun pentru a afișa noul conținut
                 st.rerun()
 
             except Exception as e:
                 st.error(f"❌ Eroare în procesare: {e}")
+                print(f"[SESSION {st.session_state.session_id}] ❌ ERROR: {e}")  # ⭕ LOG ERORI
                 import traceback
                 traceback.print_exc()
             finally:

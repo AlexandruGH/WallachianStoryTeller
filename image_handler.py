@@ -27,6 +27,10 @@ client = InferenceClient(
     timeout=120
 )
 
+def get_session_id():
+    """Obține ID-ul de sesiune din Streamlit session_state"""
+    return st.session_state.get('session_id', 'UNKNOWN_SESSION')
+
 def get_hf_tokens() -> List[str]:
     """Citește TOATE token-urile HF: HF_TOKEN, HF_TOKEN1, HF_TOKEN2, etc."""
     tokens = []
@@ -62,11 +66,13 @@ def generate_scene_image(text: str, is_initial: bool = False) -> Optional[bytes]
     La fiecare request se rotește la următorul token. Dacă un token eșuează,
     se încearcă automat următorul din listă.
     """
+    session_id = get_session_id()  # ⭕ OBTINE ID SESIUNE
     tokens = get_hf_tokens()
     if not tokens:
+        print(f"[SESSION {session_id}] 🔒 NO HF TOKENS - OFFLINE MODE")  # ⭕ LOG
         st.info("🔒 Mod offline – generăm imagine de rezervă...")
         return generate_fallback_image(text, is_initial)
-
+    print(f"[SESSION {session_id}] 🎨 GENERATING IMAGE: {text[:100]}...")  # ⭕ LOG PROMPT
     # Rotation logic: determinăm token-ul de start pentru acest request
     global _hf_token_index
     with _hf_token_lock:
@@ -85,7 +91,7 @@ def generate_scene_image(text: str, is_initial: bool = False) -> Optional[bytes]
         # Afișăm doar dacă avem mai multe token-uri
         if len(tokens) > 1:
             st.toast(f"🎨 Folosind token-ul HF {token_index + 1}/{len(tokens)}", icon="🔄")
-        
+        print(f"[SESSION {session_id}] 🎨 USING HF TOKEN {token_index + 1}")  # ⭕ LOG TOKEN
         # Încercăm fiecare model cu acest token
         for model in IMAGE_MODELS:
             try:
@@ -94,7 +100,8 @@ def generate_scene_image(text: str, is_initial: bool = False) -> Optional[bytes]
                     api_key=token,
                     timeout=120
                 )
-                with st.spinner("🎨 Artistul medievale lucrează..."):
+                print(f"[SESSION {session_id}] ✅ Token {token_index + 1}, Model {model}, IMAGE Prompt: {prompt}")  # ⭕ LOG
+                with st.spinner("🎨 Artistul medieval lucrează..."):
                     pil_img = client.text_to_image(
                         prompt,
                         model=model,
@@ -103,15 +110,17 @@ def generate_scene_image(text: str, is_initial: bool = False) -> Optional[bytes]
                         guidance_scale=7.5,
                     )
                 if pil_img:
-                    print(f"✅ Imagine generată cu succes folosind {model} cu token {token_index + 1}")
+                    print(f"[SESSION {session_id}] ✅ IMAGE SUCCESS (Token {token_index + 1}, Model {model})")  # ⭕ LOG
                     return pil_to_bytes(pil_img)
             except Exception as e:
+                print(f"[SESSION {session_id}] ❌ IMAGE FAIL (Token {token_index + 1}, Model {model}): {e}")  # ⭕ LOG
                 st.warning(f"⚠️ Token {token_index + 1} / Model {model} a eșuat: {e}")
                 continue  # Trecem la următorul model
         
         # Dacă toate modelele au eșuat pentru acest token, continuăm cu următorul token
     
     # Dacă toate token-urile și modelele au eșuat
+    print(f"[SESSION {session_id}] ❌ ALL IMAGE TOKENS FAILED")  # ⭕ LOG
     st.error("❌ Toate token-urile și modelele de imagine au eșuat.")
     return generate_fallback_image(text, is_initial)
 
