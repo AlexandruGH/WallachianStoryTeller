@@ -40,6 +40,9 @@ SYSTEM_PROMPT = (
     "6. **Opțiuni (FĂRĂ REPETIȚIE):** Oferă **mereu 2-3 opțiuni clare** de acțiune jucătorului la final. **Nu repeta aceleași opțiuni** dacă nu au fost alese, ci continuă logic firul narativ." # <--- ADĂUGATĂ REGULĂ ANTI-REPETIȚIE AICI
 )
 
+def get_session_id():
+    """Obține ID-ul de sesiune din Streamlit session_state"""
+    return st.session_state.get('session_id', 'UNKNOWN_SESSION')
 
 def get_all_groq_tokens() -> List[str]:
     """Obține TOATE cheile Groq din mediu: GROQ_API_KEY, GROQ_API_KEY1, GROQ_API_KEY2, etc."""
@@ -163,13 +166,15 @@ def generate_with_api(prompt: str, use_api: bool = True) -> NarrativeResponse:
     La fiecare request se rotește la următoarea cheie. Dacă o cheie eșuează,
     se încearcă automat următoarea din listă.
     """
+    session_id = get_session_id()  # ⭕ OBTINE ID SESIUNE
     tokens = get_all_groq_tokens()
     if not tokens:
+        print(f"[SESSION {session_id}] 🔑 NO GROQ TOKENS FOUND")  # ⭕ LOG
         return NarrativeResponse(
             narrative="Conexiunea cu tărâmul magic s-a întrerupt. (Verifică GROQ_API_KEY în .env)",
             game_over=True
         )
-
+    print(f"[SESSION {session_id}] 🔑 USING TOKEN: {tokens[start_index][:10]}...")  # ⭕ LOG TOKEN
     api_url = "https://api.groq.com/openai/v1/chat/completions"
     model = "openai/gpt-oss-120b"
     max_retries_per_key = 1  # Doar 1 încercare per cheie înainte de a roti
@@ -239,18 +244,19 @@ def generate_with_api(prompt: str, use_api: bool = True) -> NarrativeResponse:
                                 items_gained.append(InventoryItem(**item_dict))
                             json_data["items_gained"] = items_gained
                         
-                        print(f"\n{'='*40} LLM RAW RESPONSE {'='*40}")
-                        print(f"JSON RAW Content: {content}") 
-                        print(f"Câmp 'suggestions' există: {'suggestions' in json_data}")
-                        if 'suggestions' in json_data:
-                            print(f"Valoare sugestii: {json_data['suggestions']}")
-                        print(f"{'='*90}\n")
-                        
+                        #print(f"\n{'='*40} LLM RAW RESPONSE {'='*40}")
+                        #print(f"JSON RAW Content: {content}") 
+                        #rint(f"Câmp 'suggestions' există: {'suggestions' in json_data}")
+                        #if 'suggestions' in json_data:
+                        #    print(f"Valoare sugestii: {json_data['suggestions']}")
+                        #print(f"{'='*90}\n")
+                        print(f"[SESSION {session_id}] ✅ SUCCESS WITH TOKEN {token_index + 1}")  # ⭕ LOG SUCCES
                         # Returnăm răspunsul validat
                         return NarrativeResponse(**json_data)
                         
                     except json.JSONDecodeError as e:
-                        print(f"❌ JSON Decode Error: {e}")
+                        print(f"[SESSION {session_id}] ❌ TOKEN {token_index + 1} JSON Decode Error: {e}")  # ⭕ LOG
+                        
                         if attempt < max_retries_per_key - 1:
                             time.sleep(1)
                             continue
@@ -259,8 +265,7 @@ def generate_with_api(prompt: str, use_api: bool = True) -> NarrativeResponse:
                             break
                             
                     except ValidationError as e:
-                        print(f"❌ Pydantic Validation Error: {e}")
-                        print(f"📄 JSON data (Validation Failed): {json_data}")
+                        print(f"[SESSION {session_id}] ❌ TOKEN {token_index + 1} Pydantic Validation Error: {e} {json_data}")  # ⭕ LOG
                         if attempt < max_retries_per_key - 1:
                             time.sleep(1)
                             continue
@@ -269,34 +274,36 @@ def generate_with_api(prompt: str, use_api: bool = True) -> NarrativeResponse:
                             break
 
                     except Exception as e:
-                        print(f"❌ Unexpected Error during Pydantic/Data processing: {e}")
+                        print(f"[SESSION {session_id}] ❌ TOKEN {token_index + 1} Unexpected Error during Pydantic/Data processing: {e}")  # ⭕ LOG
                         import traceback
                         traceback.print_exc()
                         break
                 
                 # Handle specific API errors
                 elif response.status_code == 401:
+                    print(f"[SESSION {session_id}] ❌ TOKEN {token_index + 1} INVALID (401)")  # ⭕ LOG
                     st.error(f"❌ Cheia {token_index + 1} este invalidă (401)!")
                     break  # Trecem la următoarea cheie
                 elif response.status_code == 429:
+                    print(f"[SESSION {session_id}] ⚠️ TOKEN {token_index + 1} RATE LIMITED (429)")  # ⭕ LOG
                     st.warning(f"⚠️ Rate limit atins pentru cheia {token_index + 1} (429).")
                     break  # Trecem la următoarea cheie
                 elif response.status_code == 503:
-                    print(f"⚠️ Service Unavailable (503): {model}")
+                    print(f"[SESSION {session_id}] ⚠️ TOKEN {token_index + 1} Service Unavailable (503): {model}")  # ⭕ LOG
                     break  # Trecem la următoarea cheie
                 else:
-                    print(f"⚠️ Unexpected status code: {response.status_code}")
+                    print(f"[SESSION {session_id}] ⚠️ TOKEN {token_index + 1} Unexpected status code: {model}")  # ⭕ LOG
                     break
             
             except requests.exceptions.Timeout:
-                print(f"⏱️ Timeout la {model} (45s) cu cheia {token_index + 1}")
+                print(f"[SESSION {session_id}] ⏱️ TIMEOUT TOKEN {token_index + 1}")  # ⭕ LOG
                 break  # Trecem la următoarea cheie
             except Exception as e:
-                print(f"❌ Excepție neașteptată cu cheia {token_index + 1}: {e}")
+                print(f"[SESSION {session_id}] ❌ Unknown EXCEPTION TOKEN {token_index + 1}: {e}")  # ⭕ LOG
                 import traceback
                 traceback.print_exc()
                 break
-    
+    print(f"[SESSION {session_id}] ❌ ALL TOKENS FAILED")  # ⭕ LOG
     # Dacă am epuizat toate cheile
     return NarrativeResponse(
         narrative=f"Toate conexiunile magice au eșuat. (Verifică {len(tokens)} GROQ_API_KEY în .env)",
