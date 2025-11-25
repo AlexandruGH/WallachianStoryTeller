@@ -5,6 +5,7 @@ from huggingface_hub import InferenceClient
 from io import BytesIO
 import requests
 from typing import Optional, List
+import threading
 import time
 import os
 from config import Config
@@ -15,6 +16,10 @@ IMAGE_MODELS: List[str] = [
 ]
 # ===============================================================
 
+# Thread-safe rotation pentru HF tokens
+_hf_token_index = 0
+_hf_token_lock = threading.Lock()
+
 # client unic pentru toate apelurile
 client = InferenceClient(
     provider="nscale",
@@ -23,35 +28,65 @@ client = InferenceClient(
 )
 
 def get_hf_tokens() -> List[str]:
-    """Citește toate token-urile HF disponibile"""
+    """Citește TOATE token-urile HF: HF_TOKEN, HF_TOKEN1, HF_TOKEN2, etc."""
     tokens = []
     # Token principal
-    if os.getenv("HF_TOKEN"):
-        tokens.append(os.getenv("HF_TOKEN"))
+    token = os.getenv("HF_TOKEN")
+    if token and token.strip():
+        tokens.append(token.strip())
     
-    # Tokeni secundari (HF_TOKEN1, HF_TOKEN2, etc)
+    # Tokeni secundari (HF_TOKEN1, HF_TOKEN2, ...)
     i = 1
     while True:
         token = os.getenv(f"HF_TOKEN{i}")
-        if token:
-            tokens.append(token)
+        if token and token.strip():
+            tokens.append(token.strip())
             i += 1
         else:
             break
     
-    return tokens
+    # Elimină duplicate păstrând ordinea
+    seen = set()
+    unique_tokens = []
+    for token in tokens:
+        if token not in seen:
+            seen.add(token)
+            unique_tokens.append(token)
+    
+    return unique_tokens
+
 
 def generate_scene_image(text: str, is_initial: bool = False) -> Optional[bytes]:
+    """
+    Generează imagine cu rotație inteligentă a token-urilor HF.
+    La fiecare request se rotește la următorul token. Dacă un token eșuează,
+    se încearcă automat următorul din listă.
+    """
     tokens = get_hf_tokens()
     if not tokens:
         st.info("🔒 Mod offline – generăm imagine de rezervă...")
         return generate_fallback_image(text, is_initial)
 
+    # Rotation logic: determinăm token-ul de start pentru acest request
+    global _hf_token_index
+    with _hf_token_lock:
+        start_index = _hf_token_index
+        # Incrementăm pentru următorul request
+        _hf_token_index = (_hf_token_index + 1) % len(tokens)
+    
     location = st.session_state.character.get("location", "Târgoviște")
     prompt = Config.generate_image_prompt_llm(text, location)
 
-    # Încercăm FIECARE token
-    for token in tokens:
+    # Încercăm fiecare token începând de la index-ul rotit
+    for i in range(len(tokens)):
+        token_index = (start_index + i) % len(tokens)
+        token = tokens[token_index]
+        
+        # Afișăm doar dacă avem mai multe token-uri
+        if len(tokens) > 1:
+            st.toast(f"🎨 Folosind token-ul HF {token_index + 1}/{len(tokens)}", icon="🔄")
+        
+        # Încercăm fiecare model cu acest token
         for model in IMAGE_MODELS:
             try:
                 client = InferenceClient(
@@ -68,12 +103,15 @@ def generate_scene_image(text: str, is_initial: bool = False) -> Optional[bytes]
                         guidance_scale=7.5,
                     )
                 if pil_img:
-                    print(f"✅ Imagine generată cu succes folosind {model} cu token {tokens.index(token)+1}")
+                    print(f"✅ Imagine generată cu succes folosind {model} cu token {token_index + 1}")
                     return pil_to_bytes(pil_img)
             except Exception as e:
-                st.warning(f"⚠️ Token {tokens.index(token)+1} / Model {model} a eșuat: {e}")
-                continue
-
+                st.warning(f"⚠️ Token {token_index + 1} / Model {model} a eșuat: {e}")
+                continue  # Trecem la următorul model
+        
+        # Dacă toate modelele au eșuat pentru acest token, continuăm cu următorul token
+    
+    # Dacă toate token-urile și modelele au eșuat
     st.error("❌ Toate token-urile și modelele de imagine au eșuat.")
     return generate_fallback_image(text, is_initial)
 

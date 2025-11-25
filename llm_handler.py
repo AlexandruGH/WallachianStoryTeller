@@ -5,6 +5,7 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 import torch
 import requests
 import threading
+from typing import List, Optional
 import time
 import random
 import re
@@ -19,12 +20,15 @@ if os.name == 'nt':
     os.makedirs("D:/huggingface_cache", exist_ok=True)
 
 
-# llm_handler.py
+# Thread-safe rotation pentru Groq API keys
+_groq_key_index = 0
+_groq_key_lock = threading.Lock()
 
+# llm_handler.py
 SYSTEM_PROMPT = (
     "Ești Naratorul Tărâmului Valah în veacul al XV-lea, în zilele domniei lui Vlad Țepeș (Drăculea). "
-    "Tonul tău este medieval românesc: grav, aspru, veridic și autentic, folosind expresii arhaice și un vocabular variat specific epocii (ex: zăbavă, hrisov, pârcălab, ienicer, podoabă, tăinuind). "
-    "DIALOG DIRECT & FORMAL: Când adresez o întrebare unui personaj, mai ales NPC-uri majore ca Vlad Țepeș, oferă prioritar replica în **GHILIMELE** duble (\"\") și contextul naratorului."
+    "Tonul tău este medieval românesc: grav, aspru, veridic și autentic, folosind expresii arhaice și un vocabular variat specific epocii. "
+    "DIALOG DIRECT & FORMAL: Când adresez o întrebare unui personaj, mai ales NPC-uri majore ca Vlad Țepeș, favorizează dialogul în locul narațiunii și oferă prioritar replica în **GHILIMELE** duble (\"\") alături de contextul naratorului."
     "Nu folosi obiecte, noțiuni sau emoții moderne (ex: puști, singurătate, frică excesivă) și evită orice meta-comentariu. "
 
     "\n\n**MECANICA NARATIVĂ ȘI DIALOGUL:**"
@@ -35,6 +39,36 @@ SYSTEM_PROMPT = (
     "5. **Lungime și Stil:** Scrie strict 2-4 propoziții vii, direct legate de acțiunea jucătorului, evitând pasajele lungi sau divagațiile. "
     "6. **Opțiuni (FĂRĂ REPETIȚIE):** Oferă **mereu 2-3 opțiuni clare** de acțiune jucătorului la final. **Nu repeta aceleași opțiuni** dacă nu au fost alese, ci continuă logic firul narativ." # <--- ADĂUGATĂ REGULĂ ANTI-REPETIȚIE AICI
 )
+
+
+def get_all_groq_tokens() -> List[str]:
+    """Obține TOATE cheile Groq din mediu: GROQ_API_KEY, GROQ_API_KEY1, GROQ_API_KEY2, etc."""
+    tokens = []
+    # Cheia principală
+    token = os.getenv("GROQ_API_KEY")
+    if token and token.strip():
+        tokens.append(token.strip())
+    
+    # Chei secundare (GROQ_API_KEY1, GROQ_API_KEY2, ...)
+    i = 1
+    while True:
+        token = os.getenv(f"GROQ_API_KEY{i}")
+        if token and token.strip():
+            tokens.append(token.strip())
+            i += 1
+        else:
+            break
+    
+    # Elimină duplicate păstrând ordinea
+    seen = set()
+    unique_tokens = []
+    for token in tokens:
+        if token not in seen:
+            seen.add(token)
+            unique_tokens.append(token)
+    
+    return unique_tokens
+
 
 @st.cache_resource(show_spinner=True)
 def load_local_model():
@@ -125,140 +159,150 @@ def fix_romanian_grammar(text: str) -> str:
 
 def generate_with_api(prompt: str, use_api: bool = True) -> NarrativeResponse:
     """
-    Generează răspuns folosind Groq API și returnează obiect Pydantic validat.
-    Forcează format JSON și aplică corecții automate, cu 2 retry-uri pe erori JSON.
+    Generează răspuns folosind Groq API cu rotație inteligentă de chei.
+    La fiecare request se rotește la următoarea cheie. Dacă o cheie eșuează,
+    se încearcă automat următoarea din listă.
     """
-    token = get_groq_token()
-    if not token:
+    tokens = get_all_groq_tokens()
+    if not tokens:
         return NarrativeResponse(
             narrative="Conexiunea cu tărâmul magic s-a întrerupt. (Verifică GROQ_API_KEY în .env)",
             game_over=True
         )
 
     api_url = "https://api.groq.com/openai/v1/chat/completions"
-    model = "openai/gpt-oss-120b"#"llama-3.3-70b-versatile"
-    max_retries = 3  # Încercarea inițială + 2 reîncercări
+    model = "openai/gpt-oss-120b"
+    max_retries_per_key = 1  # Doar 1 încercare per cheie înainte de a roti
     
-    for attempt in range(max_retries):
-        payload = {
-            "model": model,
-            "messages": [
-                {
-                    "role": "system", 
-                    "content": (
-                        SYSTEM_PROMPT
-                    )
-                },
-                {"role": "user", "content": prompt}
-            ],
-            "temperature": 0.8,
-            "max_tokens": 1024,
-            "stream": False,
-            "response_format": {"type": "json_object"}
-        }
-
-        try:
-            response = requests.post(
-                api_url,
-                headers={
-                    "Authorization": f"Bearer {token}",
-                    "Content-Type": "application/json"
-                },
-                json=payload,
-                timeout=45
-            )
-            
-            if response.status_code == 200:
-                data = response.json()
-                content = data["choices"][0]["message"]["content"].strip()
-                
-                content = re.sub(r'```json\s*', '', content)
-                content = re.sub(r'```\s*', '', content)
-                content = content.strip()
-                
-                # Parse JSON
-                try:
-                    json_data = json.loads(content)
-                    
-                    if "narrative" in json_data:
-                        json_data["narrative"] = fix_romanian_grammar(json_data["narrative"])
-                    
-                    if "items_gained" in json_data and isinstance(json_data["items_gained"], list):
-                        items_gained = []
-                        for item_dict in json_data["items_gained"]:
-                            item_dict.setdefault("type", "diverse")
-                            item_dict.setdefault("value", 0)
-                            item_dict.setdefault("quantity", 1)
-                            items_gained.append(InventoryItem(**item_dict))
-                        json_data["items_gained"] = items_gained
-                    
-                    print(f"\n{'='*40} LLM RAW RESPONSE {'='*40}")
-                    print(f"JSON RAW Content: {content}") 
-                    print(f"Câmp 'suggestions' există: {'suggestions' in json_data}")
-                    if 'suggestions' in json_data:
-                        print(f"Valoare sugestii: {json_data['suggestions']}")
-                    print(f"{'='*90}\n")
-                    
-                    # 🔥 Validează și returnează Pydantic model - SUCCESS EXIT POINT
-                    return NarrativeResponse(**json_data)
-                    
-                except json.JSONDecodeError as e:
-                    print(f"❌ JSON Decode Error: {e} - Reîncercare {attempt + 1}/{max_retries - 1}...")
-                    time.sleep(1) # Pauză scurtă înainte de reîncercare
-                    continue # Mergi la următoarea încercare
-                    
-                except ValidationError as e:
-                    print(f"❌ Pydantic Validation Error: {e} - Reîncercare {attempt + 1}/{max_retries - 1}...")
-                    print(f"📄 JSON data (Validation Failed): {json_data}") 
-                    time.sleep(1) # Pauză scurtă înainte de reîncercare
-                    continue # Mergi la următoarea încercare
-
-                except Exception as e:
-                    print(f"❌ Unexpected Error during Pydantic/Data processing: {e}")
-                    import traceback
-                    traceback.print_exc()
-                    break # Ieși din buclă la eroare neașteptată
-            
-            # 🔥 Handle specific API errors (401, 429, 503) - These should break or return immediately
-            elif response.status_code == 401:
-                st.error("❌ Token invalid! Status 401 - Verifică GROQ_API_KEY")
-                return NarrativeResponse(narrative="Autentificare eșuată. Token-ul API este invalid sau expirat.", game_over=True)
-            elif response.status_code == 429:
-                st.warning("⚠️ Rate limit atins.")
-                if attempt < max_retries - 1:
-                    time.sleep(random.randint(2, 5))
-                    continue
-                else:
-                    return NarrativeResponse(narrative="API-ul este ocupat.", game_over=False)
-            elif response.status_code == 503:
-                print(f"⚠️ Service Unavailable (503): {model}")
-                if attempt < max_retries - 1:
-                    time.sleep(2)
-                    continue
-                else:
-                    return NarrativeResponse(narrative="Serviciul este temporar indisponibil.", game_over=False)
-            else:
-                print(f"⚠️ Unexpected status code: {response.status_code}")
-                break # Ieși din buclă la alte erori HTTP
+    # Thread-safe rotation: determinăm cheia de start pentru acest request
+    global _groq_key_index
+    with _groq_key_lock:
+        start_index = _groq_key_index
+        # Incrementăm pentru următorul request
+        _groq_key_index = (_groq_key_index + 1) % len(tokens)
+    
+    # Încercăm fiecare cheie începând de la index-ul rotit
+    for i in range(len(tokens)):
+        token_index = (start_index + i) % len(tokens)
+        token = tokens[token_index]
         
-        except requests.exceptions.Timeout:
-            print(f"⏱️ Timeout la {model} (45s)")
-            if attempt < max_retries - 1:
-                time.sleep(2)
-                continue
-            else:
-                return NarrativeResponse(narrative="Cererea a expirat. Verifică conexiunea la internet.", game_over=False)
-        except Exception as e:
-            print(f"❌ Excepție neașteptată în REQUEST: {e}")
-            import traceback
-            traceback.print_exc()
-            break # Ieși din buclă la erori de rețea sau altele
+        # Afișăm doar dacă avem mai multe chei
+        if len(tokens) > 1:
+            st.toast(f"🔑 Folosind cheia Groq {token_index + 1}/{len(tokens)}", icon="🔄")
+        
+        for attempt in range(max_retries_per_key):
+            payload = {
+                "model": model,
+                "messages": [
+                    {
+                        "role": "system", 
+                        "content": SYSTEM_PROMPT
+                    },
+                    {"role": "user", "content": prompt}
+                ],
+                "temperature": 0.8,
+                "max_tokens": 1024,
+                "stream": False,
+                "response_format": {"type": "json_object"}
+            }
+
+            try:
+                response = requests.post(
+                    api_url,
+                    headers={
+                        "Authorization": f"Bearer {token}",
+                        "Content-Type": "application/json"
+                    },
+                    json=payload,
+                    timeout=45
+                )
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    content = data["choices"][0]["message"]["content"].strip()
+                    content = re.sub(r'```json\s*', '', content)
+                    content = re.sub(r'```\s*', '', content)
+                    content = content.strip()
+                    
+                    try:
+                        json_data = json.loads(content)
+                        
+                        if "narrative" in json_data:
+                            json_data["narrative"] = fix_romanian_grammar(json_data["narrative"])
+                        
+                        if "items_gained" in json_data and isinstance(json_data["items_gained"], list):
+                            items_gained = []
+                            for item_dict in json_data["items_gained"]:
+                                item_dict.setdefault("type", "diverse")
+                                item_dict.setdefault("value", 0)
+                                item_dict.setdefault("quantity", 1)
+                                items_gained.append(InventoryItem(**item_dict))
+                            json_data["items_gained"] = items_gained
+                        
+                        print(f"\n{'='*40} LLM RAW RESPONSE {'='*40}")
+                        print(f"JSON RAW Content: {content}") 
+                        print(f"Câmp 'suggestions' există: {'suggestions' in json_data}")
+                        if 'suggestions' in json_data:
+                            print(f"Valoare sugestii: {json_data['suggestions']}")
+                        print(f"{'='*90}\n")
+                        
+                        # Returnăm răspunsul validat
+                        return NarrativeResponse(**json_data)
+                        
+                    except json.JSONDecodeError as e:
+                        print(f"❌ JSON Decode Error: {e}")
+                        if attempt < max_retries_per_key - 1:
+                            time.sleep(1)
+                            continue
+                        else:
+                            st.warning(f"⚠️ JSON invalid cu cheia {token_index + 1}, trecem la următoarea...")
+                            break
+                            
+                    except ValidationError as e:
+                        print(f"❌ Pydantic Validation Error: {e}")
+                        print(f"📄 JSON data (Validation Failed): {json_data}")
+                        if attempt < max_retries_per_key - 1:
+                            time.sleep(1)
+                            continue
+                        else:
+                            st.warning(f"⚠️ Validare eșuată cu cheia {token_index + 1}, trecem la următoarea...")
+                            break
+
+                    except Exception as e:
+                        print(f"❌ Unexpected Error during Pydantic/Data processing: {e}")
+                        import traceback
+                        traceback.print_exc()
+                        break
+                
+                # Handle specific API errors
+                elif response.status_code == 401:
+                    st.error(f"❌ Cheia {token_index + 1} este invalidă (401)!")
+                    break  # Trecem la următoarea cheie
+                elif response.status_code == 429:
+                    st.warning(f"⚠️ Rate limit atins pentru cheia {token_index + 1} (429).")
+                    break  # Trecem la următoarea cheie
+                elif response.status_code == 503:
+                    print(f"⚠️ Service Unavailable (503): {model}")
+                    break  # Trecem la următoarea cheie
+                else:
+                    print(f"⚠️ Unexpected status code: {response.status_code}")
+                    break
             
-    # Dacă bucla s-a terminat fără succes (din cauza JSON/Pydantic errors sau break)
+            except requests.exceptions.Timeout:
+                print(f"⏱️ Timeout la {model} (45s) cu cheia {token_index + 1}")
+                break  # Trecem la următoarea cheie
+            except Exception as e:
+                print(f"❌ Excepție neașteptată cu cheia {token_index + 1}: {e}")
+                import traceback
+                traceback.print_exc()
+                break
+    
+    # Dacă am epuizat toate cheile
     return NarrativeResponse(
-        narrative="Naratorul este epuizat. Nu a putut genera un răspuns valid după multiple încercări.",
-        game_over=False
+        narrative=f"Toate conexiunile magice au eșuat. (Verifică {len(tokens)} GROQ_API_KEY în .env)",
+        game_over=True
     )
+
     
 def generate_narrative_with_progress(prompt: str, use_api: bool = True) -> NarrativeResponse:
     """
