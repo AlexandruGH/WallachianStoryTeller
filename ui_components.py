@@ -1,7 +1,5 @@
-# ui_components.py - UI with HIGH VISIBILITY & WIDER CONTENT
 import streamlit as st
-from typing import List, Dict
-from typing import Optional  # ✅ ACEASTĂ LINIE LIPSEȘTE
+from typing import List, Dict, Optional
 from io import BytesIO
 from PIL import Image
 import io
@@ -15,8 +13,6 @@ import re
 import pdfkit
 import requests
 from models import GameState, CharacterStats, InventoryItem
-#from elevenlabs.client import ElevenLabs
-
 
 def get_api_token() -> Optional[str]:
     """Obține token-ul din mediu sau Secrets (cloud)."""
@@ -31,47 +27,6 @@ def get_api_token() -> Optional[str]:
     except:
         pass
     return None
-
-# Cache client pentru viteză
-# @st.cache_resource(show_spinner=False)
-# def get_eleven_client():
-#     key = os.getenv("ELEVEN_API_KEY")
-#     if not key:
-#         st.error("🔑 **ELEVEN_API_KEY lipsește din .env**")
-#         st.stop()
-#     return ElevenLabs(api_key=key)
-
-# def clean_text_for_tts(text: str) -> str:
-#     """Șterge markdown și caractere pe care le citește literal."""
-#     text = re.sub(r"\*\*|\*|`|\"|'|_", "", text)  # Șterge *, **, `, ", ', _
-#     text = re.sub(r"\n+", " ", text)              # Newlines → spațiu
-#     return text.strip()
-
-# def medieval_tts(text: str) -> bytes:
-#     """ElevenLabs: voce Adam (masculin profund) în română."""
-#     text = clean_text_for_tts(text)
-#     client = get_eleven_client()
-
-#     # Adam = JBFqnCBsd6RMkjVDRZzb (deep male)
-#     audio = client.text_to_speech.convert(
-#         text=text,
-#         voice_id="JBFqnCBsd6RMkjVDRZzb",
-#         model_id="eleven_multilingual_v2",
-#         output_format="mp3_44100_128",
-#     )
-
-#     # Convert generator to bytes
-#     return b"".join(audio)
-
-# def speak(text: str):
-#     """Butonul apasă și vorbește."""
-#     mp3 = medieval_tts(text)
-#     if mp3:
-#         b64 = base64.b64encode(mp3).decode()
-#         html = f"""<audio autoplay style="width:100%;">
-#           <source src="data:audio/mp3;base64,{b64}" type="audio/mp3">
-#         </audio>"""
-#         st.components.v1.html(html, height=0)
 
 def inject_css():
     """Injectează CSS medieval - VERSIUNE SIMPLIFICATĂ"""
@@ -258,11 +213,6 @@ def display_story(story: List[Dict]):
             f'</div>',
             unsafe_allow_html=True
         )
-        # ------- TTS button for AI messages only -------
-        #if msg["role"] == "ai":
-        #    # Butonul de ascultat
-        #    if st.button("🔊 Ascultă", key=f"tts_{msg.get('turn', 0)}_{hash(msg['text'][:20])}"):
-        #        speak(msg["text"])
         # Afisează imaginea (fără caption) imediat sub text
         if msg["role"] == "ai" and msg.get("image") is not None:
             col_spacer1, col_img, col_spacer2 = st.columns([1, 3, 1])
@@ -277,11 +227,15 @@ def render_header():
     st.markdown('<h1 class="main-header">WALLACHIA</h1>', unsafe_allow_html=True)
     st.markdown('<p class="subtitle">Aventura în Secolul XV pe timpul domniei lui Vlad Țepeș</p>', unsafe_allow_html=True)
 
-def render_sidebar(game_state: "GameState") -> int:  # ⭕ Type hint pentru GameState
+def render_sidebar(game_state: "GameState") -> int:
     """
     Render sidebar cu controale, character sheet, și inventory.
     Primește GameState Pydantic și returnează legend_scale.
     """
+    
+    # Inițializăm flag-ul pentru tracking-ul fișierelor încărcate
+    if "_loaded_file_hash" not in st.session_state:
+        st.session_state._loaded_file_hash = None
     
     # CONTROLS
     st.sidebar.markdown('<div class="sidebar-section">', unsafe_allow_html=True)
@@ -338,20 +292,23 @@ def render_sidebar(game_state: "GameState") -> int:  # ⭕ Type hint pentru Game
     st.sidebar.markdown('<div class="sidebar-section">', unsafe_allow_html=True)
     st.sidebar.subheader("💾 Salvează Aventura")
     
-    # === FIX: Exportă game_state ca JSON compatibil (FĂRĂ IMAGINI)
+    # === FIX: Exportă game_state ca JSON compatibil (CU IMAGINI)
     def game_state_to_dict():
-        # Eliminăm imaginile (bytes) din story pentru serializare JSON
-        json_friendly_story = [
-            {k: v for k, v in msg.items() if k != "image"}  # ⭕ Exclude câmpul 'image'
-            for msg in st.session_state.story
-        ]
+        # Encode imagini ca base64 pentru serializare JSON
+        story_with_images = []
+        for msg in st.session_state.story:
+            msg_copy = msg.copy()
+            if msg_copy.get("image") and isinstance(msg_copy["image"], bytes):
+                msg_copy["image"] = base64.b64encode(msg_copy["image"]).decode('utf-8')
+            story_with_images.append(msg_copy)
         
         return {
             "character": game_state.character.model_dump(),
             "inventory": [item.model_dump() for item in game_state.inventory],
-            "story": json_friendly_story,  # ⭕ Folosim versiunea fără imagini
+            "story": story_with_images,  # ⭕ Acum include imagini
             "turn": game_state.turn,
-            "timestamp": time.strftime("%Y-%m-%d %H:%M:%S")
+            "last_image_turn": game_state.last_image_turn,
+            "session_id": st.session_state.session_id  # ⭕ Salvează și session_id
         }
     
     json_str = json.dumps(game_state_to_dict(), ensure_ascii=False, indent=2)
@@ -366,38 +323,60 @@ def render_sidebar(game_state: "GameState") -> int:  # ⭕ Type hint pentru Game
     
     st.sidebar.markdown("---")
     
-    # JSON Load
+    # JSON Load - FIXED: Prevenim bucla infinită folosind hash de fișier
+    st.sidebar.markdown('<div class="sidebar-section">', unsafe_allow_html=True)
+    st.sidebar.subheader("📂 Încarcă Aventură (JSON)")
+    
     uploaded = st.sidebar.file_uploader(
         "📂 Încarcă Aventură (JSON)",
         type=["json"],
         key="load_story"
     )
-    if uploaded:
-        try:
-            data = json.load(uploaded)
-            if "character" in data and "inventory" in data:
-                # ⭕ Reconstruiește GameState din JSON
-                st.session_state.game_state = GameState(
-                    character=CharacterStats(**data["character"]),
-                    inventory=[InventoryItem(**item) for item in data["inventory"]],
-                    story=data.get("story", []),
-                    turn=data.get("turn", 0),
-                    last_image_turn=data.get("last_image_turn", -10)
-                )
-                st.session_state.story = data.get("story", [])
-                st.sidebar.success("✅ Aventură încărcată!")
-                time.sleep(0.5)
-                st.rerun()
-        except Exception as e:
-            st.sidebar.error(f"❌ Eroare încărcare: {e}")
+    
+    # Procesăm doar dacă avem un fișier nou (folosim hashing pentru a detecta duplicatele)
+    if uploaded is not None:
+        # Calculăm hash-ul fișierului pentru a detecta dacă e același
+        current_file_hash = hash(uploaded.getvalue())
+        
+        # Procesăm doar dacă hash-ul diferă de cel din session_state
+        if current_file_hash != st.session_state._loaded_file_hash:
+            try:
+                data = json.load(uploaded)
+                if "character" in data and "inventory" in data:
+                    # Decode imagini din base64 înapoi în bytes
+                    story_with_images = []
+                    for msg in data.get("story", []):
+                        if msg.get("image") and isinstance(msg["image"], str):
+                            msg["image"] = base64.b64decode(msg["image"].encode('utf-8'))
+                        story_with_images.append(msg)
+                    
+                    st.session_state.game_state = GameState(
+                        character=CharacterStats(**data["character"]),
+                        inventory=[InventoryItem(**item) for item in data["inventory"]],
+                        story=story_with_images,
+                        turn=data.get("turn", 0),
+                        last_image_turn=data.get("last_image_turn", -10)
+                    )
+                    st.session_state.story = story_with_images
+                    st.session_state.session_id = data.get("session_id", str(uuid.uuid4())[:8])
+                    # Salvăm hash-ul fișierului procesat
+                    st.session_state._loaded_file_hash = current_file_hash
+                    st.sidebar.success("✅ Aventură încărcată!")
+                    # Reîncărcăm pentru a afișa noua stare
+                    st.rerun()
+            except Exception as e:
+                st.sidebar.error(f"❌ Eroare încărcare: {e}")
+                # Resetăm hash-ul în caz de eroare
+                st.session_state._loaded_file_hash = None
     
     st.sidebar.markdown('</div>', unsafe_allow_html=True)
     
     # EXPORT PDF/HTML
     st.sidebar.markdown('<div class="sidebar-section">', unsafe_allow_html=True)
     st.sidebar.subheader("🧾 Export Aventură")
-    
-    if st.sidebar.button("📄 Generează Document", use_container_width=True):
+
+    # ✅ BUTON HTML (funcționează întotdeauna)
+    if st.sidebar.button("📄 Generează & Descarcă HTML", use_container_width=True):
         with st.spinner("Se creează documentul..."):
             html_content = generate_pdf_html(st.session_state.story)
             
@@ -425,7 +404,6 @@ def render_sidebar(game_state: "GameState") -> int:  # ⭕ Type hint pentru Game
                                 </body>
                                 </html>"""
             
-            # Buton HTML (funcționează întotdeauna)
             st.sidebar.download_button(
                 "📥 Descarcă HTML",
                 data=standalone_html.encode('utf-8'),
@@ -433,23 +411,20 @@ def render_sidebar(game_state: "GameState") -> int:  # ⭕ Type hint pentru Game
                 mime="text/html",
                 use_container_width=True
             )
-            
-            # Buton PDF (dacă weasyprint este instalat)
-            try:
-                import weasyprint
-                pdf_bytes = weasyprint.HTML(string=standalone_html).write_pdf()
-                st.sidebar.download_button(
-                    "📄 Descarcă PDF",
-                    data=pdf_bytes,
-                    file_name=f"aventura_wallachia_{int(time.time())}.pdf",
-                    mime="application/pdf",
-                    use_container_width=True
-                )
-            except ImportError:
-                st.sidebar.warning("💡 Pentru PDF direct: pip install weasyprint")
-            except Exception as e:
-                st.sidebar.error(f"❌ Eroare PDF: {e}")
-    
+
+    # 💡 Instrucțiuni pentru PDF
+    with st.sidebar.expander("💡 Cum faci PDF din HTML?"):
+        st.markdown("""
+        **3 pași simpli:**
+        1. Descarcă fișierul HTML
+        2. Deschide-l în Chrome/Firefox
+        3. Apasă `Ctrl+P` (Windows) / `Cmd+P` (Mac) și selectează "Save as PDF"
+        
+        *Setări recomandate:*
+        - Margini: Minimum
+        - Scale: 95%
+        """)
+
     st.sidebar.markdown('</div>', unsafe_allow_html=True)
     
     return legend_scale  # ⭕ Returnează valoarea pentru slider

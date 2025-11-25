@@ -88,9 +88,6 @@ def generate_scene_image(text: str, is_initial: bool = False) -> Optional[bytes]
         token_index = (start_index + i) % len(tokens)
         token = tokens[token_index]
         
-        # Afișăm doar dacă avem mai multe token-uri
-        if len(tokens) > 1:
-            st.toast(f"🎨 Folosind token-ul HF {token_index + 1}/{len(tokens)}", icon="🔄")
         print(f"[SESSION {session_id}] 🎨 USING HF TOKEN {token_index + 1}")  # ⭕ LOG TOKEN
         # Încercăm fiecare model cu acest token
         for model in IMAGE_MODELS:

@@ -173,8 +173,7 @@ def generate_with_api(prompt: str, use_api: bool = True) -> NarrativeResponse:
         return NarrativeResponse(
             narrative="Conexiunea cu tărâmul magic s-a întrerupt. (Verifică GROQ_API_KEY în .env)",
             game_over=True
-        )
-    print(f"[SESSION {session_id}] 🔑 USING TOKEN: {tokens[start_index][:10]}...")  # ⭕ LOG TOKEN
+        )    
     api_url = "https://api.groq.com/openai/v1/chat/completions"
     model = "openai/gpt-oss-120b"
     max_retries_per_key = 1  # Doar 1 încercare per cheie înainte de a roti
@@ -190,10 +189,7 @@ def generate_with_api(prompt: str, use_api: bool = True) -> NarrativeResponse:
     for i in range(len(tokens)):
         token_index = (start_index + i) % len(tokens)
         token = tokens[token_index]
-        
-        # Afișăm doar dacă avem mai multe chei
-        if len(tokens) > 1:
-            st.toast(f"🔑 Folosind cheia Groq {token_index + 1}/{len(tokens)}", icon="🔄")
+        print(f"[SESSION {session_id}] 🔑 USING TOKEN: {token[:10]}...")  # ⭕ LOG TOKEN
         
         for attempt in range(max_retries_per_key):
             payload = {
@@ -282,7 +278,7 @@ def generate_with_api(prompt: str, use_api: bool = True) -> NarrativeResponse:
                 # Handle specific API errors
                 elif response.status_code == 401:
                     print(f"[SESSION {session_id}] ❌ TOKEN {token_index + 1} INVALID (401)")  # ⭕ LOG
-                    st.error(f"❌ Cheia {token_index + 1} este invalidă (401)!")
+                    st.warning(f"❌ Cheia {token_index + 1} este invalidă (401)!")
                     break  # Trecem la următoarea cheie
                 elif response.status_code == 429:
                     print(f"[SESSION {session_id}] ⚠️ TOKEN {token_index + 1} RATE LIMITED (429)")  # ⭕ LOG
@@ -383,7 +379,7 @@ def generate_narrative_with_progress(prompt: str, use_api: bool = True) -> Narra
 def generate_local(prompt: str) -> str:
     tokenizer, model = load_local_model()
     if not tokenizer or not model:
-        st.error("❌ Modelul local nu este disponibil. Instalează `distilgpt2` manual.")
+        st.warning("❌ Modelul local nu este disponibil. Instalează `distilgpt2` manual.")
         return "Conexiunea cu tărâmul magic s-a întrerupt. (Verifică Token-ul)"
     try:
         context_prompt = f"Fantasy story: {prompt}"
@@ -441,6 +437,6 @@ def generate_story_text_with_progress(prompt: str, use_api: bool = True) -> str:
         return "Conexiunea cu tărâmul magic s-a întrerupt. (Verifică Token-ul)"
     final = result_container["text"]
     if not final or final in ["api_fail", ""]:
-        st.error("🧙 NARATOR: **CRITICAL ERROR**: No model available. Check GROQ_API_KEY and internet.")
+        st.error("🧙 NARATOR: **CRITICAL ERROR**: No model available. Check API_KEY and internet.")
         return "Conexiunea cu tărâmul magic s-a întrerupt. (Verifică Token-ul)"
     return final
