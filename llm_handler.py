@@ -27,7 +27,8 @@ _groq_key_lock = threading.Lock()
 # llm_handler.py
 SYSTEM_PROMPT = (
     "Ești Naratorul Tărâmului Valah în veacul al XV-lea, în zilele domniei lui Vlad Țepeș (Drăculea). "
-    "Tonul tău este medieval românesc: grav, aspru, veridic și autentic, folosind expresii arhaice și un vocabular variat specific epocii. "
+    "Tonul tău este medieval românesc: grav, aspru, veridic și autentic, folosind un vocabular variat specific epocii. "
+    "Evită total greșelile gramaticale sau de exprimare din limba română. Fii foarte atent la exprimare și acordurile cuvintelor din limba română."
     "DIALOG DIRECT & FORMAL: Când adresez o întrebare unui personaj, mai ales NPC-uri majore ca Vlad Țepeș, favorizează dialogul în locul narațiunii și oferă prioritar replica în **GHILIMELE** duble (\"\") alături de contextul naratorului."
     "Nu folosi obiecte, noțiuni sau emoții moderne (ex: puști, singurătate, frică excesivă) și evită orice meta-comentariu. "
 
@@ -278,11 +279,11 @@ def generate_with_api(prompt: str, use_api: bool = True) -> NarrativeResponse:
                 # Handle specific API errors
                 elif response.status_code == 401:
                     print(f"[SESSION {session_id}] ❌ TOKEN {token_index + 1} INVALID (401)")  # ⭕ LOG
-                    st.warning(f"❌ Cheia {token_index + 1} este invalidă (401)!")
+                    #st.warning(f"❌ Cheia {token_index + 1} este invalidă (401)!")
                     break  # Trecem la următoarea cheie
                 elif response.status_code == 429:
                     print(f"[SESSION {session_id}] ⚠️ TOKEN {token_index + 1} RATE LIMITED (429)")  # ⭕ LOG
-                    st.warning(f"⚠️ Rate limit atins pentru cheia {token_index + 1} (429).")
+                    #st.warning(f"⚠️ Rate limit atins pentru cheia {token_index + 1} (429).")
                     break  # Trecem la următoarea cheie
                 elif response.status_code == 503:
                     print(f"[SESSION {session_id}] ⚠️ TOKEN {token_index + 1} Service Unavailable (503): {model}")  # ⭕ LOG
