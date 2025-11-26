@@ -28,7 +28,7 @@ class Config:
     def make_intro_text(scale: int) -> str:
         # Propoziții istorice
         historical_sentences = [
-            "Vlad Țepeș, domnitor al Țării Românești, a condus cu o mână de fier între anii 1448 și 1476.",
+            "Prin forță și teroare, a restabilit ordinea internă și a consolidat autoritatea domnească.",
             "Cetățile de la poalele Carpaților au fost întărite sub domnia lui, pentru a apăra țara de invazii.",
             "Metodele sale dure i-au adus atât respect, cât și teamă în rândul dușmanilor și al supușilor.",
             "A impus În țară o ordine strictă, pedepsind aspru hoția și nelegiuirea.",
@@ -63,7 +63,7 @@ class Config:
 
         # Intro narativ
         return (
-        "Țara Românească, 1456, domn Vlad Țepeș (Drăculea). "
+        "Țara Românească 1456, domn Vlad Țepeș (Drăculea). "
         + mixed_text
         + "\n\n"        
         )
