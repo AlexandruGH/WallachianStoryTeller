@@ -31,7 +31,7 @@ class Config:
             "Vlad Țepeș, domnitor al Țării Românești, a condus cu o mână de fier între anii 1448 și 1476.",
             "Cetățile de la poalele Carpaților au fost întărite sub domnia lui, pentru a apăra țara de invazii.",
             "Metodele sale dure i-au adus atât respect, cât și teamă în rândul dușmanilor și al supușilor.",
-            "Târgoviște era inima puterii, locul unde deciziile puteau schimba soarta unui întreg popor.",
+            "A impus În țară o ordine strictă, pedepsind aspru hoția și nelegiuirea.",
             "Cronici vechi îl descriu ca pe un strateg necruțător, dar drept."
         ]
 
@@ -63,7 +63,7 @@ class Config:
 
         # Intro narativ
         return (
-        "Țara Românească, 1456. "
+        "Țara Românească, 1456, domn Vlad Țepeș (Drăculea). "
         + mixed_text
         + "\n\n"        
         )
