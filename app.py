@@ -261,7 +261,7 @@ def handle_player_input():
                 # Acesta este nucleul modificării - concatenăm sugestiile direct în text
                 narrative_with_suggestions = corrected_narrative
                 if corrected_suggestions:
-                    narrative_with_suggestions += "\n\n**Posibile acțiuni:**"
+                    narrative_with_suggestions += "\n\n**Sugestii:**"
                     narrative_with_suggestions += "\n".join([f"• {s}" for s in corrected_suggestions])
                 
                 # Update game state din response
