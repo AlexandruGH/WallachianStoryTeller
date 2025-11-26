@@ -63,7 +63,7 @@ class Config:
 
         # Intro narativ
         return (
-        "Țara Românească 1456, domn Vlad Țepeș (Drăculea). "
+        "Vlad Țepeș Drăculea, domn al Țării Românești. "
         + mixed_text
         + "\n\n"        
         )
