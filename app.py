@@ -35,7 +35,7 @@ def init_session():
     if "game_state" not in st.session_state:
         # ⭕ DEFINIM italic_flavour AICI - variabila locală necesară
         italic_flavour = (
-            "*Te afli la marginea cetății Târgoviște, pe o noapte rece de toamnă. "
+            "*Personaj (TU): Ești un aventurier aflat în anul 1456. Te afli la marginea cetății Târgoviște, pe o noapte rece de toamnă. "
             "Flăcările torțelor dansează în vânt, proiectând umbre lungi pe zidurile masive. "
             "Porțile de stejar se ridică încet, cu un scârțâit apăsat, iar aerul miroase "
             "a fum, fier și pământ ud. În depărtare se aud cai și voci ale străjerilor. "
