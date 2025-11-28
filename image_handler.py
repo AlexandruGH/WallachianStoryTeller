@@ -72,7 +72,7 @@ def generate_scene_image(text: str, is_initial: bool = False) -> Optional[bytes]
         print(f"[SESSION {session_id}] 🔒 NO HF TOKENS - OFFLINE MODE")  # ⭕ LOG
         st.info("🔒 Mod offline – generăm imagine de rezervă...")
         return generate_fallback_image(text, is_initial)
-    print(f"[SESSION {session_id}] 🎨 GENERATING IMAGE: {text[:100]}...")  # ⭕ LOG PROMPT
+    print(f"[SESSION {session_id}] 🎨 GENERATING IMAGE: {text}")  # ⭕ LOG PROMPT
     # Rotation logic: determinăm token-ul de start pentru acest request
     global _hf_token_index
     with _hf_token_lock:
