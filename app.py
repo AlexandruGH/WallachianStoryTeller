@@ -238,7 +238,7 @@ def handle_player_input():
                     character=character_data, 
                     legend_scale=legend_scale
                 )
-                print(f"[SESSION {st.session_state.session_id}] 🤖 LLM PROMPT: {full_prompt_text[:200]}...")  # ⭕ LOG PROMPT
+                print(f"[SESSION {st.session_state.session_id}] 🤖 LLM PROMPT: {full_prompt_text}")  # ⭕ LOG PROMPT
                 # 3. GENERAREA NARAȚIUNII (Se apelează API-ul cu textul construit mai sus)
                 # Aici se apelează funcția din llm_handler.py
                 response = generate_narrative_with_progress(full_prompt_text)
