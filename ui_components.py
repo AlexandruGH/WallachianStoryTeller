@@ -14,6 +14,17 @@ import pdfkit
 import requests
 from models import GameState, CharacterStats, InventoryItem
 
+# Import Supabase client
+try:
+    from supabase import create_client, Client
+    SUPABASE_URL = os.getenv("SUPABASE_URL")
+    SUPABASE_ANON_KEY = os.getenv("SUPABASE_ANON_KEY")
+    supabase: Optional[Client] = None
+    if SUPABASE_URL and SUPABASE_ANON_KEY:
+        supabase = create_client(SUPABASE_URL, SUPABASE_ANON_KEY)
+except ImportError:
+    supabase = None
+
 def get_api_token() -> Optional[str]:
     """Obține token-ul din mediu sau Secrets (cloud)."""
     token = os.getenv("HF_TOKEN")
@@ -28,172 +39,94 @@ def get_api_token() -> Optional[str]:
         pass
     return None
 
+# =========================
+# — CSS Îmbunătățit - Adaugă în ui_components.py
+# =========================
 def inject_css():
-    """Injectează CSS medieval - VERSIUNE SIMPLIFICATĂ"""
+    """CSS medieval - VERSIUNE FINALĂ PENTRU AUTH"""
     st.markdown("""
         <style>
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
         
-        .block-container {
-            padding-top: 2rem;
-            padding-bottom: 2rem;
-            max-width: 1400px !important;
-            margin: 0 auto;
-        }
-        
+        /* Fundal și fonturi generale */
         .stApp {
             background: linear-gradient(135deg, #0a0805 0%, #1a0f0b 50%, #0d0704 100%);
             color: #e8d8c3;
             font-family: 'Crimson Text', serif;
         }
         
-        .main-header {
-            font-family: 'Cinzel', serif;
-            font-size: 3.5rem;
-            font-weight: 700;
-            text-align: center;
-            background: linear-gradient(90deg, #ff6b6b, #d4af37, #ff6b6b);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
-            margin-bottom: 0;
-            letter-spacing: 2px;
+        /* Tabs profesionale */
+        .stTabs {
+            margin-top: 20px !important;
         }
         
-        .subtitle {
-            font-family: 'Cinzel', serif;
-            font-size: 1.2rem;
-            text-align: center;
-            color: #d4af37;
-            margin-bottom: 30px;
-            letter-spacing: 1px;
-        }
-        
-        .story-container {
-            background: rgba(30, 20, 10, 0.85);
-            border: 2px solid #5a3921;
+        .stTabs [data-baseweb="tab-list"] {
+            background: rgba(30, 20, 10, 0.8);
             border-radius: 12px;
-            padding: 25px;
-            margin: 20px auto;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.7);
+            padding: 4px;
+            gap: 4px !important;
         }
         
-        .message-box {
-            margin-bottom: 20px;
-            padding: 20px;
-            border-left: 4px solid #d4af37;
-            background: rgba(20, 15, 8, 0.8);
-            border-radius: 0 8px 8px 0;
-            font-size: 1.2rem;
-            line-height: 1.8;
-            letter-spacing: 0.5px;
-            color: #f4e4c1;
-        }
-        
-        .ai-message {
-            border-left-color: #ff6b6b;
-        }
-        
-        .user-message {
-            border-left-color: #4e9af1;
-        }
-        
-        .story-image-container {
-            text-align: center;
-            margin: 15px 0;
-            padding: 10px;
-            background: rgba(20, 15, 8, 0.6);
+        .stTabs [data-baseweb="tab"] {
+            flex: 1;
+            justify-content: center;
             border-radius: 8px;
-            border: 1px solid #5a3921;
-        }
-        
-        .stTextInput label {
-            font-family: 'Cinzel', serif !important;
-            color: #d4af37 !important;
-            font-weight: 700 !important;
-            font-size: 1.3rem !important;
-            margin-bottom: 10px !important;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
-        }
-        
-        .stButton>button {
-            background: linear-gradient(135deg, #5a3921 0%, #7a4f2a 100%) !important;
-            color: #ffffff !important;
-            border: 2px solid #d4af37 !important;
-            border-radius: 10px;
-            padding: 16px 32px !important;
-            font-family: 'Crimson Text', serif !important;
-            font-weight: 600 !important;
-            font-size: 1.3rem !important;
-            line-height: 1.4 !important;
-            letter-spacing: 0.5px !important;
-            min-height: 60px !important;
-            box-sizing: border-box !important;
+            padding: 12px 16px !important;
+            font-weight: 600;
+            font-size: 1rem;
+            color: #8b6b6b;
             transition: all 0.3s ease;
-            width: 100%;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        }
-
-        .stButton>button:hover {
-            background: linear-gradient(135deg, #7a4f2a 0%, #9a6f3a 100%) !important;
-            box-shadow: 0 0 25px rgba(212, 175, 55, 0.6) !important;
-            transform: translateY(-3px);
         }
         
-        .stTextInput>div>input {
+        .stTabs [aria-selected="true"] {
+            background: linear-gradient(135deg, #5a3921, #7a4f2a) !important;
+            color: #d4af37 !important;
+            box-shadow: 0 2px 8px rgba(212, 175, 55, 0.3);
+        }
+        
+        /* Input fields */
+        .stTextInput > div > div > input {
             background: rgba(20, 15, 8, 0.95);
             color: #e8d8c3;
             border: 2px solid #5a3921;
             border-radius: 8px;
-            padding: 14px;
-            font-size: 1.2rem;
-            line-height: 1.6;
-        }
-        
-        .sidebar-section {
-            background: rgba(30, 20, 10, 0.9) !important;
-            padding: 18px !important;
-            border-radius: 8px !important;
-            margin-bottom: 15px !important;
-            border: 1px solid #d4af37 !important;
-        }
-        
-        .stSidebar .stMarkdown p,
-        .stSidebar .stMarkdown span,
-        .stSidebar .stMarkdown div {
-            color: #f4e4c1 !important;
-            font-size: 1.1rem !important;
-            line-height: 1.7 !important;
-            font-weight: 500 !important;
-        }
-        
-        .inventory-item {
-            background: rgba(90, 57, 33, 0.6);
-            padding: 10px 14px;
-            margin: 6px 0;
-            border-radius: 5px;
-            border-left: 3px solid #d4af37;
-            font-size: 1rem;
-            color: #f4e4c1 !important;
-        }
-        
-        .progress-text {
-            font-family: 'Cinzel', serif;
-            color: #d4af37;
-            font-size: 1.3rem;
-            text-align: center;
-            margin: 10px 0;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
-            font-weight: 600;
-        }
-        
-        #MainMenu {visibility: hidden;}
-        footer {visibility: hidden;}
-        
-        .stToast {
-            background: rgba(30, 20, 10, 0.95) !important;
-            border: 2px solid #d4af37 !important;
+            padding: 14px 16px;
             font-size: 1.1rem;
+            line-height: 1.6;
+            transition: all 0.3s ease;
+        }
+        
+        .stTextInput > div > div > input:focus {
+            border-color: #d4af37 !important;
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2) !important;
+        }
+        
+        /* Butoane */
+        .stButton > button {
+            background: linear-gradient(135deg, #5a3921 0%, #7a4f2a 100%) !important;
+            color: #ffffff !important;
+            border: 2px solid #d4af37 !important;
+            border-radius: 10px !important;
+            padding: 16px 24px !important;
+            font-family: 'Crimson Text', serif !important;
+            font-weight: 600 !important;
+            font-size: 1.2rem !important;
+            transition: all 0.3s ease;
+            width: 100%;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        
+        .stButton > button:hover {
+            background: linear-gradient(135deg, #7a4f2a 0%, #9a6f3a 100%) !important;
+            box-shadow: 0 0 25px rgba(212, 175, 55, 0.6) !important;
+            transform: translateY(-2px);
+        }
+        
+        /* Mesaje de eroare */
+        .stAlert {
+            margin-top: 10px !important;
+            padding: 12px 16px !important;
+            border-radius: 8px !important;
         }
         </style>
     """, unsafe_allow_html=True)
@@ -232,15 +165,38 @@ def render_sidebar(game_state: "GameState") -> int:
     Render sidebar cu controale, character sheet, și inventory.
     Primește GameState Pydantic și returnează legend_scale.
     """
-    
+
     # Inițializăm flag-ul pentru tracking-ul fișierelor încărcate
     if "_loaded_file_hash" not in st.session_state:
         st.session_state._loaded_file_hash = None
-    
+
+    # USER INFO - Display authenticated user's character name
+    if "character_name" in st.session_state and st.session_state.character_name:
+        st.sidebar.markdown('<div class="sidebar-section">', unsafe_allow_html=True)
+        st.sidebar.markdown(f"**👤 {st.session_state.character_name}**")
+
+        # Character name change option
+        with st.sidebar.expander("⚙️ Schimbă nume erou"):
+            with st.form("change_name_form"):
+                new_name = st.text_input(
+                    "Nume nou erou",
+                    value=st.session_state.character_name,
+                    placeholder="Introdu noul nume..."
+                )
+                if st.form_submit_button("💾 Salvează", type="secondary"):
+                    # Store the new name request for processing in main app
+                    st.session_state.pending_name_change = new_name
+                    st.success("🔄 Procesăm schimbarea numelui...")
+                    time.sleep(0.5)
+                    st.rerun()
+
+        st.sidebar.markdown("---")
+        st.sidebar.markdown('</div>', unsafe_allow_html=True)
+
     # CONTROLS
     st.sidebar.markdown('<div class="sidebar-section">', unsafe_allow_html=True)
     st.sidebar.title("⚔️ Controale")
-    
+
     legend_scale = st.sidebar.slider(
         "Legenda vs Adevăr Istoric",
         min_value=0,
@@ -250,7 +206,7 @@ def render_sidebar(game_state: "GameState") -> int:
         key="legend_slider"
     )
     st.sidebar.markdown('</div>', unsafe_allow_html=True)
-    
+
     # CHARACTER SHEET
     st.sidebar.markdown('<div class="sidebar-section">', unsafe_allow_html=True)
     st.sidebar.subheader("📜 Foaie de Personaj")
@@ -427,8 +383,27 @@ def render_sidebar(game_state: "GameState") -> int:
 
     st.sidebar.markdown('</div>', unsafe_allow_html=True)
     
-    return legend_scale  # ⭕ Returnează valoarea pentru slider
+    # LOGOUT SECTION - MODIFICAT
+    st.sidebar.markdown("---")
+    st.sidebar.markdown('<div class="sidebar-section">', unsafe_allow_html=True)
 
+    # ⭕ VERIFICĂM DACĂ USER ESTE AUTENTIFICAT
+    if "user" in st.session_state and st.session_state.user:
+        if st.sidebar.button("🚪 Logout", use_container_width=True):
+            try:
+                # Sign out from Supabase
+                supabase.auth.sign_out()
+
+                # Clear session state
+                st.session_state.clear()
+
+                st.success("👋 Ai fost deconectat cu succes!")
+                time.sleep(1.5)
+                st.rerun()  # ✅ FIX: API stabil
+            except Exception as e:
+                st.error(f"❌ Eroare la logout: {e}")
+
+    return legend_scale
 
 def generate_pdf_html(story: List[Dict]) -> str:
     """Generate styled HTML for PDF export (includes images as base64)"""

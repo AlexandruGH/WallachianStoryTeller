@@ -1,8 +1,6 @@
 import os
 import sys
 import streamlit as st
-from transformers import AutoTokenizer, AutoModelForCausalLM
-import torch
 import requests
 import threading
 from typing import List, Optional
@@ -11,50 +9,74 @@ import random
 import re
 import json
 from streamlit.runtime.scriptrunner import add_script_run_ctx
-from pydantic import ValidationError # ⭕ FIX: Added explicit Pydantic ValidationError import
+from pydantic import ValidationError
 
 from models import InventoryItem, NarrativeResponse
 
-if os.name == 'nt':
-    os.environ["HF_HOME"] = "D:/huggingface_cache"
-    os.makedirs("D:/huggingface_cache", exist_ok=True)
-
-
-# Thread-safe rotation pentru Groq API keys
+# ========== CONFIGURAȚIE API ==========
 _groq_key_index = 0
 _groq_key_lock = threading.Lock()
 
-# llm_handler.py
 SYSTEM_PROMPT = (
-    "Ești Naratorul Tărâmului Valah în veacul al XV-lea, în zilele domniei lui Vlad Țepeș (Drăculea). Folosești un stil specific unui maestru de joc Dungeons & Dragons. "
-    "Tonul tău este medieval românesc: grav, aspru, veridic și autentic, folosind un vocabular variat și corect în exprimare. "
-    "Nu face greșeli gramaticale! Evită total greșelile gramaticale sau de exprimare din limba română. Fii foarte atent la exprimare, forma corectă a cuvintelor și acordurile din limba română."
-    "DIALOG DIRECT & FORMAL: Când adresez o întrebare unui personaj, mai ales NPC-uri majore ca Vlad Țepeș, favorizează dialogul în locul narațiunii și oferă prioritar replica în **GHILIMELE** duble (\"\") alături de contextul naratorului."
-    "Nu folosi obiecte, noțiuni sau emoții moderne (ex: puști, singurătate, frică excesivă) și evită orice meta-comentariu. "
-    "Nu te învârti în cerc atunci când răspunzi și nu forța narațiunea spre o acțiune fixă. Oferă libertate și explorează mai multe posibilități."
+    "Ești Naratorul Tărâmului Valah în veacul al XV-lea, în vremea lui Vlad Țepeș. "
+    "Vorbirea ta este matură, poetică în mod controlat, fără repetiții inutile "
+    "și fără greșeli gramaticale sau de exprimare. "
+    "Eviți modernismele, exagerările emoționale și metaforele reciclate."
 
-    "\n\n**MECANICA NARATIVĂ ȘI DIALOGUL:**"
-    "1. **Anti-Repetiție Strictă:** Variează structura propozițiilor, descrierile (vânt/umbre), verbele și cuvintele. Nu repeta descrieri și acțiuni similare în răspunsuri consecutive. "
-    "2. **Realism Medieval:** Respectă coerența locurilor (cetăți, sate, codri, mănăstiri, drumuri de negoț) și a personajelor (boieri, călăreți ai curții, țărani, monahi, negustori). "
-    "3. **Firul Narativ:** Povestea se leagă de isprăvi domnești, slujbe trimise de Vlad Vodă, sau întâlniri ce dezvăluie secrete și primejdii ale vremii (ex: atacuri otomane, comploturi boierești, legende locale). "
-    "4. **Descriere Scenă:** Păstrează firul narativ: locație, obiecte găsite/pierdute, NPC-uri, starea eroului. "
-    "5. **Lungime și Stil:** Scrie strict 2-4 propoziții vii, direct legate de acțiunea jucătorului, evitând pasajele lungi sau divagațiile. "
-    "6. **Opțiuni (FĂRĂ REPETIȚIE):** Oferă **mereu 2-3 opțiuni clare** de acțiune jucătorului la final. **Nu repeta aceleași opțiuni** dacă nu au fost alese, ci continuă logic firul narativ." # <--- ADĂUGATĂ REGULĂ ANTI-REPETIȚIE AICI
+    "\n\n========== IDENTITATE & STIL ==========\n"
+    "• Ești Maestru de Joc de tip Dungeons & Dragons — inteligent, echilibrat, coerent. "
+    "• Tonul tău este sobru, imersiv și nuanțat, evitând descrieri sau expresii repetitive "
+    "• Folosește sinonime, variații și schimbă structura propozițiilor la fiecare răspuns. "
+    "• Oprește orice repetiție de idei sau expresii folosite recent (ANTI-REPETIȚIE STRICT). "
+    "• Nu divaga, nu risca pierderea firului narativ, nu oferi paragrafe mai lungi de 2–4 propoziții."
+
+    "\n\n========== MEMORIE NARATIVĂ EXTINSĂ ==========\n"
+    "Păstrezi consecvența lumii: locații, NPC-uri, acțiuni trecute, alianțe, conflicte, "
+    "obiecte obținute sau pierdute. Nu uiți elementele introduse anterior. "
+    "Nu reintroduci personaje sau locuri deja stabilite. "
+    "Dacă jucătorul își schimbă locația, descrierea se adaptează realist și coerent."
+
+    "\n\n========== COERENȚĂ A LUMII ==========\n"
+    "Valahia este un ținut aspru, medieval: sate, codri, mănăstiri, turnuri de veghe, "
+    "drumuri comerciale, curtea domnească din Târgoviște, boieri, comercianți, străjeri, soldați, țărani, haiduci, spioni, iscoade. "
+    "Evenimentele au continuitate. Nu alterezi brusc locația fără logică. "
+    "NPC-urile au personalități distincte și nu devin interschimbabile."
+
+    "\n\n========== LIMBA ROMÂNĂ DE CALITATE ==========\n"
+    "Ești impecabil gramatical: acorduri, diacritice, topica frazei. "
+    "Nu creezi cuvinte greșite, nu folosești arhaisme deformate, nu amesteci stiluri. "
+    "Frazele sunt clare, solide și naturale în limba română."
+
+    "\n\n========== DIALOG ==========\n"
+    "Când jucătorul interacționează cu un NPC important (ex: boieri, soldați, Vlad Vodă), prioritizează dialogul în fața narațiunii. "
+    "Oferă replicile în **ghilimele duble („ ”)**, iar narațiunea contextualizează scurt scena."
+
+    "\n\n========== STRUCTURA RĂSPUNSULUI ==========\n"
+    "Răspunzi în format JSON dezactivat în cod, conform cerințelor. În câmpul 'narrative':\n"
+    "1. 2–4 propoziții concise, coerente, nerepetitive.\n"
+    "2. Eveniment clar, reacție firescă la acțiunea jucătorului.\n"
+    "3. Consecințe logice + evoluție contextualizată a lumii.\n"
+    "4. NICIODATĂ narațiune lungă, poezie exagerată sau descrieri repetitive.\n"
+
+    "\n\n========== OPȚIUNI DE ACȚIUNE ==========\n"
+    "La finalul narațiunii, în câmpul 'suggestions', oferă *exact 2–3 acțiuni DISTINCTE*, "
+    "realiste, specifice situației curente. Fără repetiție cu sugestiile precedente. Fără opțiuni generice."
+
+    "\n\n========== SARCINA TA PRINCIPALĂ ==========\n"
+    "Transformă fiecare input al jucătorului într-o evoluție coerentă, variată, realistă "
+    "și impecabil scrisă, într-o Valahie medievală dură și autentică, condusă de Vlad Țepeș."
 )
 
 def get_session_id():
-    """Obține ID-ul de sesiune din Streamlit session_state"""
     return st.session_state.get('session_id', 'UNKNOWN_SESSION')
 
 def get_all_groq_tokens() -> List[str]:
-    """Obține TOATE cheile Groq din mediu: GROQ_API_KEY, GROQ_API_KEY1, GROQ_API_KEY2, etc."""
+    """Obține TOATE cheile Groq: GROQ_API_KEY, GROQ_API_KEY1, GROQ_API_KEY2, etc."""
     tokens = []
-    # Cheia principală
     token = os.getenv("GROQ_API_KEY")
     if token and token.strip():
         tokens.append(token.strip())
     
-    # Chei secundare (GROQ_API_KEY1, GROQ_API_KEY2, ...)
     i = 1
     while True:
         token = os.getenv(f"GROQ_API_KEY{i}")
@@ -64,7 +86,6 @@ def get_all_groq_tokens() -> List[str]:
         else:
             break
     
-    # Elimină duplicate păstrând ordinea
     seen = set()
     unique_tokens = []
     for token in tokens:
@@ -74,44 +95,9 @@ def get_all_groq_tokens() -> List[str]:
     
     return unique_tokens
 
-
-@st.cache_resource(show_spinner=True)
-def load_local_model():
-    try:
-        model_name = "distilgpt2"
-        cache_dir = os.getenv("HF_HOME", None)
-        tokenizer = AutoTokenizer.from_pretrained(model_name, cache_dir=cache_dir)
-        model = AutoModelForCausalLM.from_pretrained(model_name, cache_dir=cache_dir, torch_dtype=torch.float32, device_map="cpu")
-        return tokenizer, model
-    except Exception as e:
-        return None, None
-
-def get_groq_token():
-    token = os.getenv("GROQ_API_KEY")
-    if token: return token
-    try:
-        if "GROQ_API_KEY" in st.secrets:
-            token = st.secrets["GROQ_API_KEY"]
-            os.environ["GROQ_API_KEY"] = token
-            return token
-    except: pass
-    return None
-
-def validate_groq_token():
-    token = get_groq_token()
-    if not token:
-        st.error("🔑 **GROQ_API_KEY lipsește!**")
-        st.info("Adaugă-l în fișierul `.env` (local) sau în `Secrets` (Cloud):")
-        st.code("GROQ_API_KEY=gsk_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", language="bash")
-        return False
-    if not token.startswith("gsk_"):
-        st.warning("⚠️ Tokenul nu pare valid (trebuie să înceapă cu 'gsk_')")
-    return True
-
 def clean_ai_response(text: str) -> str:
     if not text: return ""
     
-    # Eliminăm artifact-urile comune
     markers = [
         "<|im_start|>", "<|im_end|>", "user", "assistant", "system", 
         "System:", "User:", "Assistant:", "*", "[End of response]", 
@@ -120,7 +106,6 @@ def clean_ai_response(text: str) -> str:
     for m in markers: 
         text = text.replace(m, "")
     
-    # Eliminăm spații multiple și newline-uri excesive
     text = re.sub(r'\s+', ' ', text)
     text = re.sub(r'\n{3,}', '\n\n', text)
     
@@ -131,29 +116,25 @@ def fix_romanian_grammar(text: str) -> str:
         return text
     
     corrections = {
-        # Greșelile tale specificate
         r'\bturchi\b': 'turci',
-        r'\bunui păsări\b': 'unei păsări',  # ⭕ FIX PENTRU PROBLEMA TA
-        r'\bunei păsări\b': 'unei păsări',   # Confirmă forma corectă
-        r'\bunui (păsări|bestii|creaturi)\b': r'unor \1',  # Plural corect
+        r'\bunui păsări\b': 'unei păsări',
+        r'\bunei păsări\b': 'unei păsări',
+        r'\bunui (păsări|bestii|creaturi)\b': r'unor \1',
         r'\bsăgeată încoace\b': 'săgeată din spate',
         r'\bte atacă pe tine\b': 'te atacă',
         r'\bpentru ca\b': 'pentru că',
         r'\bsa (?!fi)\b': 'să ',
         r'\bcu o forță mare\b': 'cu forță mare',
-        # Diacritice
         r'\b(ş|ţ)\b': lambda m: 'ș' if m.group(1) == 'ş' else 'ț',
         r'\bîl\b': 'îl',
         r'\bîi\b': 'îi',
         r'\bîți\b': 'îți',
-        # Articole + substantive
         r'\b(o|un) (armă|săgeată|pumnal|secure|suliță)\b': r'\1n \2',
     }
     
     for pattern, replacement in corrections.items():
         text = re.sub(pattern, replacement, text, flags=re.IGNORECASE)
     
-    # Capitalizare și punct final
     text = re.sub(r'\s+', ' ', text.strip())
     if text and len(text) > 1:
         text = text[0].upper() + text[1:]
@@ -162,173 +143,142 @@ def fix_romanian_grammar(text: str) -> str:
     
     return text
 
-def generate_with_api(prompt: str, use_api: bool = True) -> NarrativeResponse:
+def generate_with_api(prompt: str) -> NarrativeResponse:
     """
-    Generează răspuns folosind Groq API cu rotație inteligentă de chei.
-    La fiecare request se rotește la următoarea cheie. Dacă o cheie eșuează,
-    se încearcă automat următoarea din listă.
+    Generează RĂSPUNS DOAR prin Groq API. Dacă toate cheile eșuează,
+    returnează un mesaj de eroare clar pentru utilizator.
     """
-    session_id = get_session_id()  # ⭕ OBTINE ID SESIUNE
+    session_id = get_session_id()
     tokens = get_all_groq_tokens()
+    
     if not tokens:
-        print(f"[SESSION {session_id}] 🔑 NO GROQ TOKENS FOUND")  # ⭕ LOG
+        print(f"[SESSION {session_id}] 🔑 NO GROQ TOKENS FOUND")
+        st.error("🔒 **Serviciul de Narare este Dezactivat**")
+        st.info("➡️ Adaugă `GROQ_API_KEY` în `.env` sau variabile de mediu.")
         return NarrativeResponse(
-            narrative="Conexiunea cu tărâmul magic s-a întrerupt. (Verifică GROQ_API_KEY în .env)",
+            narrative="**🔒 Serviciul de Narare este Momentan Indisponibil**  \n"
+                     "Nu a fost configurată nicio cheie API validă.  \n"
+                     "Contactează administratorul sistemului.",
             game_over=True
-        )    
+        )
+    
     api_url = "https://api.groq.com/openai/v1/chat/completions"
     model = "openai/gpt-oss-120b"
-    max_retries_per_key = 1  # Doar 1 încercare per cheie înainte de a roti
     
-    # Thread-safe rotation: determinăm cheia de start pentru acest request
     global _groq_key_index
     with _groq_key_lock:
         start_index = _groq_key_index
-        # Incrementăm pentru următorul request
         _groq_key_index = (_groq_key_index + 1) % len(tokens)
     
-    # Încercăm fiecare cheie începând de la index-ul rotit
     for i in range(len(tokens)):
         token_index = (start_index + i) % len(tokens)
         token = tokens[token_index]
-        print(f"[SESSION {session_id}] 🔑 USING TOKEN: {token[:10]}...")  # ⭕ LOG TOKEN
+        print(f"[SESSION {session_id}] 🔑 ÎNCERC TOKEN {token_index + 1}")
         
-        for attempt in range(max_retries_per_key):
-            payload = {
-                "model": model,
-                "messages": [
-                    {
-                        "role": "system", 
-                        "content": SYSTEM_PROMPT
-                    },
-                    {"role": "user", "content": prompt}
-                ],
-                "temperature": 0.8,
-                "max_tokens": 1024,
-                "stream": False,
-                "response_format": {"type": "json_object"}
-            }
+        payload = {
+            "model": model,
+            "messages": [
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user", "content": prompt}
+            ],
+            "temperature": 0.8,
+            "max_tokens": 1024,
+            "stream": False,
+            "response_format": {"type": "json_object"}
+        }
 
-            try:
-                response = requests.post(
-                    api_url,
-                    headers={
-                        "Authorization": f"Bearer {token}",
-                        "Content-Type": "application/json"
-                    },
-                    json=payload,
-                    timeout=45
-                )
-                
-                if response.status_code == 200:
-                    data = response.json()
-                    content = data["choices"][0]["message"]["content"].strip()
-                    content = re.sub(r'```json\s*', '', content)
-                    content = re.sub(r'```\s*', '', content)
-                    content = content.strip()
-                    
-                    try:
-                        json_data = json.loads(content)
-                        
-                        if "narrative" in json_data:
-                            json_data["narrative"] = fix_romanian_grammar(json_data["narrative"])
-                        
-                        if "items_gained" in json_data and isinstance(json_data["items_gained"], list):
-                            items_gained = []
-                            for item_dict in json_data["items_gained"]:
-                                item_dict.setdefault("type", "diverse")
-                                item_dict.setdefault("value", 0)
-                                item_dict.setdefault("quantity", 1)
-                                items_gained.append(InventoryItem(**item_dict))
-                            json_data["items_gained"] = items_gained
-                        
-                        #print(f"\n{'='*40} LLM RAW RESPONSE {'='*40}")
-                        #print(f"JSON RAW Content: {content}") 
-                        #rint(f"Câmp 'suggestions' există: {'suggestions' in json_data}")
-                        #if 'suggestions' in json_data:
-                        #    print(f"Valoare sugestii: {json_data['suggestions']}")
-                        #print(f"{'='*90}\n")
-                        print(f"[SESSION {session_id}] ✅ SUCCESS WITH TOKEN {token_index + 1}")  # ⭕ LOG SUCCES
-                        # Returnăm răspunsul validat
-                        return NarrativeResponse(**json_data)
-                        
-                    except json.JSONDecodeError as e:
-                        print(f"[SESSION {session_id}] ❌ TOKEN {token_index + 1} JSON Decode Error: {e}")  # ⭕ LOG
-                        
-                        if attempt < max_retries_per_key - 1:
-                            time.sleep(1)
-                            continue
-                        else:
-                            st.warning(f"⚠️ JSON invalid cu cheia {token_index + 1}, trecem la următoarea...")
-                            break
-                            
-                    except ValidationError as e:
-                        print(f"[SESSION {session_id}] ❌ TOKEN {token_index + 1} Pydantic Validation Error: {e} {json_data}")  # ⭕ LOG
-                        if attempt < max_retries_per_key - 1:
-                            time.sleep(1)
-                            continue
-                        else:
-                            st.warning(f"⚠️ Validare eșuată cu cheia {token_index + 1}, trecem la următoarea...")
-                            break
-
-                    except Exception as e:
-                        print(f"[SESSION {session_id}] ❌ TOKEN {token_index + 1} Unexpected Error during Pydantic/Data processing: {e}")  # ⭕ LOG
-                        import traceback
-                        traceback.print_exc()
-                        break
-                
-                # Handle specific API errors
-                elif response.status_code == 401:
-                    print(f"[SESSION {session_id}] ❌ TOKEN {token_index + 1} INVALID (401)")  # ⭕ LOG
-                    #st.warning(f"❌ Cheia {token_index + 1} este invalidă (401)!")
-                    break  # Trecem la următoarea cheie
-                elif response.status_code == 429:
-                    print(f"[SESSION {session_id}] ⚠️ TOKEN {token_index + 1} RATE LIMITED (429)")  # ⭕ LOG
-                    #st.warning(f"⚠️ Rate limit atins pentru cheia {token_index + 1} (429).")
-                    break  # Trecem la următoarea cheie
-                elif response.status_code == 503:
-                    print(f"[SESSION {session_id}] ⚠️ TOKEN {token_index + 1} Service Unavailable (503): {model}")  # ⭕ LOG
-                    break  # Trecem la următoarea cheie
-                else:
-                    print(f"[SESSION {session_id}] ⚠️ TOKEN {token_index + 1} Unexpected status code: {model}")  # ⭕ LOG
-                    break
+        try:
+            response = requests.post(
+                api_url,
+                headers={
+                    "Authorization": f"Bearer {token}",
+                    "Content-Type": "application/json"
+                },
+                json=payload,
+                timeout=45
+            )
             
-            except requests.exceptions.Timeout:
-                print(f"[SESSION {session_id}] ⏱️ TIMEOUT TOKEN {token_index + 1}")  # ⭕ LOG
-                break  # Trecem la următoarea cheie
-            except Exception as e:
-                print(f"[SESSION {session_id}] ❌ Unknown EXCEPTION TOKEN {token_index + 1}: {e}")  # ⭕ LOG
-                import traceback
-                traceback.print_exc()
-                break
-    print(f"[SESSION {session_id}] ❌ ALL TOKENS FAILED")  # ⭕ LOG
-    # Dacă am epuizat toate cheile
+            if response.status_code == 200:
+                data = response.json()
+                content = data["choices"][0]["message"]["content"].strip()
+                content = re.sub(r'```json\s*', '', content)
+                content = re.sub(r'```\s*', '', content)
+                content = content.strip()
+                
+                try:
+                    json_data = json.loads(content)
+                    
+                    if "narrative" in json_data:
+                        json_data["narrative"] = fix_romanian_grammar(json_data["narrative"])
+                    
+                    if "items_gained" in json_data and isinstance(json_data["items_gained"], list):
+                        items_gained = []
+                        for item_dict in json_data["items_gained"]:
+                            item_dict.setdefault("type", "diverse")
+                            item_dict.setdefault("value", 0)
+                            item_dict.setdefault("quantity", 1)
+                            items_gained.append(InventoryItem(**item_dict))
+                        json_data["items_gained"] = items_gained
+                    
+                    print(f"[SESSION {session_id}] ✅ SUCCES CU TOKEN {token_index + 1}")
+                    return NarrativeResponse(**json_data)
+                    
+                except json.JSONDecodeError as e:
+                    print(f"[SESSION {session_id}] ❌ TOKEN {token_index + 1} JSON Decode Error: {e}")
+                    continue
+                    
+                except ValidationError as e:
+                    print(f"[SESSION {session_id}] ❌ TOKEN {token_index + 1} Pydantic Validation Error: {e}")
+                    continue
+
+            elif response.status_code == 401:
+                print(f"[SESSION {session_id}] ❌ TOKEN {token_index + 1} INVALID (401)")
+                #st.warning(f"⚠️ Cheia {token_index + 1} este invalidă (401).")
+                continue
+            elif response.status_code == 429:
+                print(f"[SESSION {session_id}] ⚠️ TOKEN {token_index + 1} RATE LIMITED (429)")
+                continue
+            elif response.status_code == 503:
+                print(f"[SESSION {session_id}] ⚠️ TOKEN {token_index + 1} Service Unavailable (503)")
+                continue
+        
+        except requests.exceptions.Timeout:
+            print(f"[SESSION {session_id}] ⏱️ TIMEOUT TOKEN {token_index + 1}")
+            continue
+        except Exception as e:
+            print(f"[SESSION {session_id}] ❌ EXCEPȚIE NECUNOSCUTĂ TOKEN {token_index + 1}: {e}")
+            continue
+    
+    # Dacă am epuizat TOATE cheile
+    print(f"[SESSION {session_id}] ❌ TOATE TOKEN-URILE AU EȘUAT")
+    st.error("🔒 **Serviciul de Narare este Indisponibil**")
+    st.info("➡️ Toate conexiunile API au eșuat. Încearcă din nou peste câteva minute.")
+    
     return NarrativeResponse(
-        narrative=f"Toate conexiunile magice au eșuat. (Verifică {len(tokens)} GROQ_API_KEY în .env)",
-        game_over=True
+        narrative="**🔒 Serviciul de Narare este Momentan Indisponibil**  \n"
+                 "Toate cheile API au eșuat sau au atins limita.  \n"
+                 "Încearcă din nou peste câteva minute.",
+        game_over=False
     )
 
-    
-def generate_narrative_with_progress(prompt: str, use_api: bool = True) -> NarrativeResponse:
+def generate_narrative_with_progress(prompt: str) -> NarrativeResponse:
     """
-    Generează narativ cu bară de progres animată și returnează NarrativeResponse.
-    Păstrează experiența "Scribii lui Vlad scriu..." în timp ce API-ul lucrează.
+    Generează narativ cu bară de progres. Dacă API eșuează complet,
+    afișează mesaj de eroare pentru utilizator.
     """
     result_container = {"response": None, "error": None}
     
     def run_gen():
         try:
-            result_container["response"] = generate_with_api(prompt, use_api)
+            result_container["response"] = generate_with_api(prompt)
         except Exception as e:
             result_container["error"] = str(e)
             print(f"❌ Eroare în thread-ul de generare: {e}")
     
-    # Pornește thread-ul de generare în background
     t = threading.Thread(target=run_gen, daemon=True)
     add_script_run_ctx(t)
     t.start()
     
-    # 🔥 UI de progres - animația vizibilă
     progress_container = st.empty()
     status_text = st.empty()
     
@@ -336,7 +286,6 @@ def generate_narrative_with_progress(prompt: str, use_api: bool = True) -> Narra
         progress_bar = st.progress(0)
         progress = 0
         
-        # Actualizează progresul cât timp thread-ul rulează
         while t.is_alive():
             time.sleep(0.1)
             if progress < 85:
@@ -347,98 +296,29 @@ def generate_narrative_with_progress(prompt: str, use_api: bool = True) -> Narra
                     unsafe_allow_html=True
                 )
         
-        # Așteaptă finalizarea thread-ului
         t.join()
         
-        # Completează animația la 100%
         for i in range(progress, 101):
             progress_bar.progress(i)
             time.sleep(0.005)
         
-        # Curăță textul de status
         status_text.empty()
     
-    # Curăță containerul de progres
     progress_container.empty()
     
-    # 🔥 Procesează rezultatul
     if result_container["error"]:
-        st.error(f"🧙 NARATOR: **Eroare Critică**: {result_container['error']}")
+        st.error(f"🧙 NARATOR: **EROARE CRITICĂ**: {result_container['error']}")
         return NarrativeResponse(
-            narrative="Conexiunea cu tărâmul magic s-a întrerupt. (Verifică Token-ul)",
-            game_over=True
+            narrative="**🔒 Eroare Sistem**  \nA apărut o eroare neașteptată. Reîncearcă.",
+            game_over=False
         )
     
     response = result_container["response"]
     if not response:
         return NarrativeResponse(
-            narrative="Nu am putut genera un răspuns valid.",
+            narrative="**🔒 Nu am putut genera un răspuns valid.**  \n"
+                     "Verifică conexiunea la internet și cheile API.",
             game_over=False
         )
     
     return response
-
-def generate_local(prompt: str) -> str:
-    tokenizer, model = load_local_model()
-    if not tokenizer or not model:
-        st.warning("❌ Modelul local nu este disponibil. Instalează `distilgpt2` manual.")
-        return "Conexiunea cu tărâmul magic s-a întrerupt. (Verifică Token-ul)"
-    try:
-        context_prompt = f"Fantasy story: {prompt}"
-        inputs = tokenizer(context_prompt, return_tensors="pt", truncation=True, max_length=512)
-        with torch.no_grad():
-            out = model.generate(**inputs, max_new_tokens=80, do_sample=True, temperature=0.9, pad_token_id=tokenizer.eos_token_id)
-        text = tokenizer.decode(out[0], skip_special_tokens=True)
-        result = clean_ai_response(text.replace(context_prompt, ""))
-        return result
-    except Exception as e:
-        st.error(f"❌ Eroare la generarea locală: {e}")
-        return "Ceva a tulburat liniștea..."
-
-def generate_story_text(prompt: str, use_api: bool = True) -> str:
-    if use_api:
-        if validate_groq_token():
-            res = generate_with_api(prompt)
-            if res != "api_fail": return res
-            st.warning("⚠️ API a eșuat complet. Folosesc modelul local...")
-        else:
-            st.warning("⚠️ Token invalid. Folosesc modelul local...")
-    return generate_local(prompt)
-
-def generate_story_text_with_progress(prompt: str, use_api: bool = True) -> str:
-    result_container = {"text": "", "done": False, "error": None}
-    def run_gen():
-        try:
-            result_container["text"] = generate_story_text(prompt, use_api)
-        except Exception as e:
-            result_container["error"] = str(e)
-        finally:
-            result_container["done"] = True
-    t = threading.Thread(target=run_gen)
-    add_script_run_ctx(t)
-    t.start()
-    progress_container = st.empty()
-    status_text = st.empty()
-    with progress_container:
-        progress_bar = st.progress(0)
-        progress = 0
-        while t.is_alive():
-            time.sleep(0.1)
-            if progress < 85:
-                progress = min(progress + random.randint(1, 5), 85)
-                progress_bar.progress(progress)
-                status_text.markdown(f'<div class="progress-text">⚔️ Scribii lui Vlad scriu... {progress}%</div>', unsafe_allow_html=True)
-        t.join()
-        for i in range(progress, 101):
-            progress_bar.progress(i)
-            time.sleep(0.005)
-        status_text.empty()
-    progress_container.empty()
-    if result_container["error"]:
-        st.error(f"🧙 NARATOR: **CRITICAL ERROR**: {result_container['error']}")
-        return "Conexiunea cu tărâmul magic s-a întrerupt. (Verifică Token-ul)"
-    final = result_container["text"]
-    if not final or final in ["api_fail", ""]:
-        st.error("🧙 NARATOR: **CRITICAL ERROR**: No model available. Check API_KEY and internet.")
-        return "Conexiunea cu tărâmul magic s-a întrerupt. (Verifică Token-ul)"
-    return final
