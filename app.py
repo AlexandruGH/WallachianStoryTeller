@@ -538,25 +538,17 @@ def render_auth_page(cookie_manager):
     inject_css()
 
     # Handle OAuth callback FIRST
-    # We moved this logic to main() to avoid component race conditions,
-    # but we keep it here as a fallback if main() didn't catch it (should not happen).
-    # Actually, we removed the call from main() in this refactor to let render_auth_page handle it,
-    # BUT we moved cookie_manager init to top of main.
-    # So render_auth_page is called with cookie_manager.
-    # We need to ensure handle_oauth_callback doesn't conflict.
-    # handle_oauth_callback instantiates its own cookie_manager if needed, BUT we passed one?
-    # handle_oauth_callback calls get_cookie_manager().
-    # Since get_cookie_manager is a factory creating new instance every time, this might cause duplicate key error again
-    # IF render_auth_page (and thus main) already created one.
-    # BUT handle_oauth_callback uses "auth_cookie_manager" key.
-    # main uses "auth_cookie_manager" key.
-    # So we MUST NOT call get_cookie_manager() inside handle_oauth_callback again if main already did!
-    # BUT handle_oauth_callback is global function.
-    # We should update handle_oauth_callback to use the passed cookie_manager?
-    # Or accept it as argument?
-    # Ideally yes. But handle_oauth_callback is called by main?
-    # In the new design below, handle_oauth_callback is called in main.
-    pass 
+    if "code" in st.query_params:
+        with st.spinner("Procesăm autentificarea..."):
+            if handle_oauth_callback():
+                return
+            else:
+                # Only show error if it's not a refresh/stale code issue
+                last_error = st.session_state.get('last_oauth_error', '')
+                is_flow_error = "flow_state_not_found" in last_error or "invalid flow state" in last_error
+                
+                if not is_flow_error:
+                    st.error("❌ Autentificarea a eșuat!")
 
     # Check for existing session - MULTIPLE RECOVERY METHODS
     try:
@@ -787,6 +779,10 @@ def render_auth_page(cookie_manager):
 
     # If we get here, no valid session was found
     print("[AUTH] 🔄 No valid session - showing login page")
+
+    # Clear logging_out flag if we reached the login page (user is now cleanly logged out)
+    if st.session_state.get('logging_out'):
+        del st.session_state['logging_out']
 
     # Clear any stale session state if no valid session
     if "user" in st.session_state:
