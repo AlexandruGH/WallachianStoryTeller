@@ -160,7 +160,7 @@ def render_header():
     st.markdown('<h1 class="main-header">WALLACHIA</h1>', unsafe_allow_html=True)
     st.markdown('<p class="subtitle">Aventura în Secolul XV pe timpul domniei lui Vlad Țepeș</p>', unsafe_allow_html=True)
 
-def render_sidebar(game_state: "GameState") -> int:
+def render_sidebar(game_state: "GameState", cookie_manager=None, on_name_change=None) -> int:
     """
     Render sidebar cu controale, character sheet, și inventory.
     Primește GameState Pydantic și returnează legend_scale.
@@ -184,11 +184,14 @@ def render_sidebar(game_state: "GameState") -> int:
                     placeholder="Introdu noul nume..."
                 )
                 if st.form_submit_button("💾 Salvează", type="secondary"):
-                    # Store the new name request for processing in main app
-                    st.session_state.pending_name_change = new_name
-                    st.success("🔄 Procesăm schimbarea numelui...")
-                    time.sleep(0.5)
-                    st.rerun()
+                    if on_name_change:
+                        on_name_change(new_name)
+                    else:
+                        # Fallback
+                        st.session_state.pending_name_change = new_name
+                        st.success("🔄 Procesăm schimbarea numelui...")
+                        time.sleep(0.5)
+                        st.rerun()
 
         st.sidebar.markdown("---")
         st.sidebar.markdown('</div>', unsafe_allow_html=True)
@@ -383,25 +386,46 @@ def render_sidebar(game_state: "GameState") -> int:
 
     st.sidebar.markdown('</div>', unsafe_allow_html=True)
     
-    # LOGOUT SECTION - MODIFICAT
+    # LOGOUT SECTION
     st.sidebar.markdown("---")
     st.sidebar.markdown('<div class="sidebar-section">', unsafe_allow_html=True)
 
     # ⭕ VERIFICĂM DACĂ USER ESTE AUTENTIFICAT
     if "user" in st.session_state and st.session_state.user:
-        if st.sidebar.button("🚪 Logout", use_container_width=True):
+        if st.sidebar.button("🚪 Deconectare", type="secondary", use_container_width=True):
             try:
-                # Sign out from Supabase
-                supabase.auth.sign_out()
+                # 1. Sign out from Supabase and invalidate DB sessions
+                if supabase:
+                    # Invalidate persistent sessions to prevent auto-login from DB
+                    try:
+                        user_id = st.session_state.user.user.id
+                        # Delete the session record entirely as 'is_active' column might not exist
+                        supabase.table('user_sessions').delete().eq('user_id', user_id).execute()
+                    except Exception as db_err:
+                        print(f"DB session invalidation error: {db_err}")
+                    
+                    supabase.auth.sign_out()
 
-                # Clear session state
+                # 2. Clear session state but keep logout flag
+                # IMPORTANT: Do this BEFORE cookie operations to ensure state is cleared 
+                # even if cookie component triggers an early rerun.
                 st.session_state.clear()
+                st.session_state['logging_out'] = True
+                
+                # 3. Clear cookies if manager is provided
+                if cookie_manager:
+                    try:
+                        # Use unique keys to avoid Streamlit duplicate key errors
+                        cookie_manager.delete('sb_access_token', key='delete_access_token')
+                        cookie_manager.delete('sb_refresh_token', key='delete_refresh_token')
+                    except Exception as cookie_err:
+                        print(f"Cookie cleanup error: {cookie_err}")
 
-                st.success("👋 Ai fost deconectat cu succes!")
-                time.sleep(1.5)
-                st.rerun()  # ✅ FIX: API stabil
+                st.sidebar.success("👋 Ai fost deconectat!")
+                time.sleep(0.5)
+                st.rerun()
             except Exception as e:
-                st.error(f"❌ Eroare la logout: {e}")
+                st.sidebar.error(f"❌ Eroare la logout: {e}")
 
     return legend_scale
 

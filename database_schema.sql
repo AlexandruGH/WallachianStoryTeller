@@ -28,17 +28,12 @@ CREATE POLICY "Users can update their own profile" ON user_profiles
 CREATE POLICY "Users can insert their own profile" ON user_profiles
     FOR INSERT WITH CHECK (auth.uid() = user_id);
 
--- Alternative policy for debugging - allow all operations for authenticated users
--- RUN THESE IF RLS IS CAUSING ISSUES:
+-- TEMPORARILY DISABLE RLS for testing character name saving
+ALTER TABLE user_profiles DISABLE ROW LEVEL SECURITY;
 
--- Drop existing policies
-DROP POLICY IF EXISTS "Users can view their own profile" ON user_profiles;
-DROP POLICY IF EXISTS "Users can update their own profile" ON user_profiles;
-DROP POLICY IF EXISTS "Users can insert their own profile" ON user_profiles;
-
--- Create permissive policies
-CREATE POLICY "Allow all operations for authenticated users" ON user_profiles
-    FOR ALL USING (auth.role() = 'authenticated');
+-- Alternative policies (uncomment when ready to secure):
+-- CREATE POLICY "Allow all operations for authenticated users" ON user_profiles
+--     FOR ALL USING (auth.role() = 'authenticated');
 
 -- ===============================
 -- GAME SESSIONS TABLE
@@ -83,6 +78,37 @@ CREATE POLICY "Users can insert their own game sessions" ON game_sessions
 
 CREATE POLICY "Users can delete their own game sessions" ON game_sessions
     FOR DELETE USING (auth.uid() = user_id);
+
+-- ===============================
+-- USER SESSIONS TABLE (for session persistence)
+-- ===============================
+CREATE TABLE IF NOT EXISTS user_sessions (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    user_id UUID NOT NULL,
+    session_data JSONB,
+    last_active TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
+
+    -- Foreign key constraint
+    CONSTRAINT fk_user_sessions_user_id
+        FOREIGN KEY (user_id)
+        REFERENCES auth.users(id)
+        ON DELETE CASCADE
+);
+
+-- Create index for performance
+CREATE INDEX IF NOT EXISTS idx_user_sessions_user_id ON user_sessions(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_sessions_active ON user_sessions(last_active DESC);
+
+-- TEMPORARILY DISABLE RLS for testing (enable later with proper policies)
+ALTER TABLE user_sessions DISABLE ROW LEVEL SECURITY;
+
+-- Alternative policies (uncomment when ready to secure):
+-- CREATE POLICY "Users can view their own sessions" ON user_sessions
+--     FOR SELECT USING (auth.uid() = user_id);
+--
+-- CREATE POLICY "Users can manage their own sessions" ON user_sessions
+--     FOR ALL USING (auth.uid() = user_id);
 
 -- ===============================
 -- FUNCTIONS

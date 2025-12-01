@@ -25,7 +25,12 @@ import secrets
 import re
 import requests
 import threading
+from datetime import datetime, timedelta
 from streamlit.runtime.scriptrunner import add_script_run_ctx
+try:
+    import extra_streamlit_components as stx
+except ImportError:
+    stx = None
 
 # Import local modules
 from config import Config, ModelRouter
@@ -36,11 +41,38 @@ from models import GameState, CharacterStats, InventoryItem, ItemType, Narrative
 from database import Database
 
 # =========================
+# — Helper Classes
+# =========================
+class ManualUser:
+    def __init__(self, id, email, user_metadata=None, app_metadata=None):
+        self.id = id
+        self.email = email
+        self.user_metadata = user_metadata or {}
+        self.app_metadata = app_metadata or {}
+        self.raw_user_meta_data = self.user_metadata # Alias
+
+class ManualSession:
+    def __init__(self, access_token, refresh_token, user_data):
+        self.access_token = access_token
+        self.refresh_token = refresh_token
+        self.user = ManualUser(
+            id=user_data.get('id'),
+            email=user_data.get('email'),
+            user_metadata=user_data.get('user_metadata'),
+            app_metadata=user_data.get('app_metadata')
+        )
+
+# =========================
 # — Database Configuration
 # =========================
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_ANON_KEY = os.getenv("SUPABASE_ANON_KEY")
 db = Database(SUPABASE_URL, SUPABASE_ANON_KEY)
+
+def get_cookie_manager():
+    # Do NOT cache the manager instance. It needs to be re-instantiated on every run
+    # to pick up the latest cookie values from the frontend widget state.
+    return stx.CookieManager(key="auth_cookie_manager") if stx else None
 
 # =========================
 # — Session State Initialization
@@ -54,6 +86,16 @@ def init_session():
     if "user" in st.session_state and st.session_state.user and st.session_state.user.user:
         user_id = st.session_state.user.user.id
         print(f"[INIT] Loading game data for authenticated user: {user_id}")
+
+        # Ensure character name is loaded if missing
+        if "character_name" not in st.session_state:
+            try:
+                name = db.get_user_character_name(user_id)
+                st.session_state.character_name = name
+                print(f"[INIT] Loaded character name: {name}")
+            except Exception as e:
+                print(f"[INIT] Failed to load character name: {e}")
+                st.session_state.character_name = "Aventurier"
 
         game_state, session_id = db.load_user_game(user_id)
 
@@ -170,6 +212,32 @@ def handle_email_register(email: str, password: str, character_name: str):
     except Exception as e:
         st.error(f"❌ Eroare la crearea contului: {str(e)}")
 
+def refresh_session_via_http(refresh_token: str) -> Optional[Dict[str, Any]]:
+    """Refresh session using direct HTTP request to bypass client state issues"""
+    try:
+        if not refresh_token:
+            return None
+            
+        token_url = f"{SUPABASE_URL}/auth/v1/token?grant_type=refresh_token"
+        headers = {
+            "apikey": SUPABASE_ANON_KEY,
+            "Content-Type": "application/json"
+        }
+        data = {
+            "refresh_token": refresh_token
+        }
+        
+        resp = requests.post(token_url, headers=headers, json=data)
+        
+        if resp.status_code == 200:
+            return resp.json()
+        else:
+            print(f"[AUTH] ❌ HTTP Refresh failed: {resp.text}")
+            return None
+    except Exception as e:
+        print(f"[AUTH] ❌ HTTP Refresh error: {e}")
+        return None
+
 def get_oauth_redirect_url():
     """Get OAuth redirect URL"""
     env_url = os.getenv("OAUTH_REDIRECT_URL")
@@ -204,7 +272,7 @@ def generate_pkce_challenge(verifier):
     digest = hashlib.sha256(verifier.encode('utf-8')).digest()
     return base64.urlsafe_b64encode(digest).decode('utf-8').rstrip('=')
 
-def handle_oauth_callback():
+def handle_oauth_callback(cookie_manager=None):
     """Handle OAuth callback with PKCE verification"""
     try:
         query_params = dict(st.query_params)
@@ -227,15 +295,151 @@ def handle_oauth_callback():
 
             code_verifier = query_params["pkce_verifier"]
 
-            # Exchange code for session
-            session_response = db.client.auth.exchange_code_for_session({
-                "auth_code": code,
-                "code_verifier": code_verifier
-            })
+            # Exchange code for session using direct HTTP to avoid library state issues
+            print(f"[OAUTH] Exchanging code: {code[:10]}... with verifier: {code_verifier[:10]}...")
+            
+            # 1. Try direct HTTP exchange (Most robust)
+            session_response = None
+            try:
+                # Use grant_type=pkce as expected by Supabase
+                token_url = f"{SUPABASE_URL}/auth/v1/token?grant_type=pkce"
+                headers = {
+                    "apikey": SUPABASE_ANON_KEY,
+                    "Content-Type": "application/json"
+                }
+                
+                # Reconstruct the exact redirect_uri used in the authorization request
+                redirect_base = get_oauth_redirect_url()
+                redirect_uri = f"{redirect_base}?pkce_verifier={code_verifier}"
+                
+                data = {
+                    "auth_code": code,
+                    "code_verifier": code_verifier,
+                    "redirect_uri": redirect_uri
+                }
+                
+                resp = requests.post(token_url, headers=headers, json=data)
+                
+                if resp.status_code == 200:
+                    data = resp.json()
+                    print(f"[OAUTH] Response data keys: {list(data.keys())}")
+                    
+                    # Manually set the session on the Supabase client
+                    try:
+                        db.client.auth.set_session(data.get('access_token'), data.get('refresh_token', ''))
+                    except Exception as set_err:
+                        print(f"[OAUTH] Warning: set_session failed: {set_err}")
+                    
+                    # Retrieve the session object to match expected format
+                    session_response = db.client.auth.get_session()
+                    
+                    # If get_session fails but we have the data, construct a session-like object
+                    if not session_response:
+                        if 'user' in data:
+                            print("[OAUTH] ⚠️ get_session() returned None, constructing manual session object")
+                            session_response = ManualSession(
+                                access_token=data.get('access_token'),
+                                refresh_token=data.get('refresh_token'),
+                                user_data=data['user']
+                            )
+                        else:
+                            print("[OAUTH] ❌ Response missing 'user' object despite 200 OK")
+                        
+                    print(f"[OAUTH] ✅ Direct HTTP exchange successful. Session object: {session_response is not None}")
+                    if session_response:
+                         print(f"[OAUTH] Session user: {session_response.user}")
+                else:
+                    error_details = resp.text
+                    print(f"[OAUTH] ❌ Direct exchange failed: {error_details}")
+                    
+                    # Save error for final check
+                    st.session_state.last_oauth_error = error_details
+
+                    # Fallback to library method
+                    # Pass arguments as a dictionary/object as required by newer versions
+                    session_response = db.client.auth.exchange_code_for_session({
+                        "auth_code": code,
+                        "code_verifier": code_verifier,
+                        "redirect_uri": redirect_uri
+                    })
+            except Exception as e:
+                print(f"[OAUTH] ❌ Exchange error: {e}")
+                st.session_state.last_oauth_error = str(e)
+                
+                # Last ditch effort: try library method if not tried yet or if HTTP failed with exception
+                if not session_response:
+                    try:
+                        session_response = db.client.auth.exchange_code_for_session({
+                            "auth_code": code,
+                            "code_verifier": code_verifier,
+                            "redirect_uri": redirect_uri
+                        })
+                    except Exception as lib_e:
+                        print(f"[OAUTH] ❌ Library fallback error: {lib_e}")
 
             if session_response and session_response.user:
                 user = session_response.user
+                print(f"[OAUTH] Processing success for user: {user.id}")
+
+                # Clear logout flag as we are successfully logging in
+                if 'logging_out' in st.session_state:
+                    del st.session_state['logging_out']
+
+                # Store session with database persistence
                 st.session_state.user = session_response
+
+                # 1. Store session in database (CRITICAL: Do this BEFORE cookies to ensure persistence if script is killed)
+                try:
+                    print("[OAUTH] Preparing DB upsert...")
+                    session_data = {
+                        'user_id': user.id,
+                        'session_token': session_response.access_token if hasattr(session_response, 'access_token') else None,
+                        'refresh_token': session_response.refresh_token if hasattr(session_response, 'refresh_token') else None,
+                        'user_agent': 'streamlit_app',
+                        'created_at': str(datetime.now())
+                    }
+                    
+                    # Check if db client is ready
+                    if db.client:
+                        print("[OAUTH] Executing DB upsert...")
+                        # Store session in our custom sessions table for persistence
+                        db.client.table('user_sessions').upsert({
+                            'user_id': user.id,
+                            'session_data': json.dumps(session_data),
+                            'last_active': 'now()'
+                        }).execute()
+                        print(f"[OAUTH] Created persistent session record for user: {user.id}")
+                    else:
+                        print("[OAUTH] DB client is missing!")
+
+                except Exception as session_error:
+                    print(f"[OAUTH] Failed to create session record: {session_error}")
+                    # Fallback: just store in session state
+                    if hasattr(session_response, 'access_token'):
+                        st.session_state.supabase_session_token = session_response.access_token
+                
+                # 2. Clear params BEFORE cookies to avoid double-submit loop
+                st.query_params.clear()
+
+                # 3. SET COOKIES FOR PERSISTENCE (Primary Method)
+                # This might trigger a rerun, so it must be last
+                # Initialize cookie_manager here if not provided, to avoid race condition at start of script
+                if not cookie_manager:
+                    cookie_manager = get_cookie_manager()
+
+                if cookie_manager and hasattr(session_response, 'access_token'):
+                    try:
+                        expires = datetime.now() + timedelta(days=30)
+                        # Use unique keys to avoid Streamlit duplicate key errors
+                        cookie_manager.set('sb_access_token', session_response.access_token, expires_at=expires, key="set_access_token")
+                        if hasattr(session_response, 'refresh_token') and session_response.refresh_token:
+                            cookie_manager.set('sb_refresh_token', session_response.refresh_token, expires_at=expires, key="set_refresh_token")
+                        
+                        # Give time for cookies to be written before rerun
+                        time.sleep(1)
+                        print("[OAUTH] ✅ Auth cookies set successfully")
+                    except Exception as cookie_error:
+                        print(f"[OAUTH] ❌ Failed to set cookies: {cookie_error}")
 
                 # Get or create character name
                 suggested_name = 'Aventurier'
@@ -276,7 +480,17 @@ def handle_oauth_callback():
                             placeholder="Introdu numele eroului tău..."
                         )
                         if st.form_submit_button("🚀 Confirmă Numele", type="primary"):
-                            # Use the same approach as sidebar name change
+                            # Save to database immediately
+                            try:
+                                db.client.table('user_profiles').upsert({
+                                    'user_id': user.id,
+                                    'character_name': custom_name
+                                }).execute()
+                                print(f"[OAUTH] Character name '{custom_name}' saved to database")
+                            except Exception as db_error:
+                                print(f"[OAUTH] Failed to save character name: {db_error}")
+
+                            # Update session state
                             st.session_state.pending_name_change = custom_name
                             st.session_state.character_name = custom_name
                             if 'pending_character_name' in st.session_state:
@@ -292,7 +506,19 @@ def handle_oauth_callback():
                 return True
 
             else:
-                st.error("❌ Nu s-a putut obține sesiunea!")
+                # If we have a user in session state already (from previous run), ignore this error
+                if "user" in st.session_state and st.session_state.user:
+                     return True
+
+                if not st.session_state.get('reported_error'):
+                    # Check if this might be a refresh (code reused) based on captured error
+                    last_error = st.session_state.get('last_oauth_error', '')
+                    is_refresh_error = "flow_state_not_found" in last_error or "invalid flow state" in last_error
+                    
+                    if is_refresh_error:
+                         pass # Silent fail on refresh
+                    else:
+                        st.error("❌ Nu s-a putut obține sesiunea!")
                 st.query_params.clear()
                 return False
 
@@ -306,62 +532,243 @@ def handle_oauth_callback():
 # =========================
 # — UI Functions
 # =========================
-def render_auth_page():
+def render_auth_page(cookie_manager):
     """Authentication page with persistent session handling"""
-    st.set_page_config(
-        page_title="Wallachia - Intră în Aventură",
-        page_icon="⚔️",
-        layout="centered",
-        initial_sidebar_state="collapsed"
-    )
+    # Note: st.set_page_config moved to main to ensure it runs first
     inject_css()
 
     # Handle OAuth callback FIRST
-    if "code" in st.query_params:
-        with st.spinner("Procesăm autentificarea..."):
-            if handle_oauth_callback():
-                return
-            else:
-                st.error("❌ Autentificarea a eșuat!")
+    # We moved this logic to main() to avoid component race conditions,
+    # but we keep it here as a fallback if main() didn't catch it (should not happen).
+    # Actually, we removed the call from main() in this refactor to let render_auth_page handle it,
+    # BUT we moved cookie_manager init to top of main.
+    # So render_auth_page is called with cookie_manager.
+    # We need to ensure handle_oauth_callback doesn't conflict.
+    # handle_oauth_callback instantiates its own cookie_manager if needed, BUT we passed one?
+    # handle_oauth_callback calls get_cookie_manager().
+    # Since get_cookie_manager is a factory creating new instance every time, this might cause duplicate key error again
+    # IF render_auth_page (and thus main) already created one.
+    # BUT handle_oauth_callback uses "auth_cookie_manager" key.
+    # main uses "auth_cookie_manager" key.
+    # So we MUST NOT call get_cookie_manager() inside handle_oauth_callback again if main already did!
+    # BUT handle_oauth_callback is global function.
+    # We should update handle_oauth_callback to use the passed cookie_manager?
+    # Or accept it as argument?
+    # Ideally yes. But handle_oauth_callback is called by main?
+    # In the new design below, handle_oauth_callback is called in main.
+    pass 
 
-    # Check for existing Supabase session - PERSISTENT ACROSS REFRESHES
+    # Check for existing session - MULTIPLE RECOVERY METHODS
     try:
-        # For localhost development, we need special handling
         import os
         is_localhost = "localhost" in os.getenv("OAUTH_REDIRECT_URL", "") or not os.getenv("STREAMLIT_SERVER_HEADLESS")
 
-        if is_localhost:
-            # Localhost workaround: Check Streamlit session state first
-            if "user" in st.session_state and st.session_state.user:
-                print(f"[AUTH] ✅ Found user in Streamlit session: {st.session_state.user.user.id}")
-                # For localhost, trust Streamlit session state since Supabase localStorage doesn't work well
-                # Just ensure character name is loaded
-                if "character_name" not in st.session_state:
-                    try:
-                        character_name = db.get_user_character_name(st.session_state.user.user.id)
-                        st.session_state.character_name = character_name
-                    except Exception as name_error:
-                        print(f"[AUTH] Could not load character name: {name_error}")
-                        st.session_state.character_name = "Aventurier"  # fallback
-                print(f"[AUTH] ✅ Localhost session restored for: {st.session_state.character_name}")
-                st.rerun()
-                return
+        # Method 1: Check Cookies (Best for Cloud Persistence)
+        # cookie_manager passed from main
+        
+        # Check logout flag to prevent auto-login loop
+        is_logging_out = st.session_state.get('logging_out', False)
+        
+        if cookie_manager and not is_logging_out:
+            # We need to give time for cookies to load
+            time.sleep(0.1)
+            access_token = cookie_manager.get('sb_access_token')
+            refresh_token = cookie_manager.get('sb_refresh_token')
 
-        # Standard Supabase session check
+            if access_token:
+                print("[AUTH] 🍪 Found session cookies")
+                try:
+                    # Try to restore Supabase session from cookies
+                    db.client.auth.set_session(access_token, refresh_token or '')
+
+                    # Verify restoration
+                    session = db.client.auth.get_session()
+                    if session and session.user:
+                        st.session_state.user = session
+                        character_name = db.get_user_character_name(session.user.id)
+                        st.session_state.character_name = character_name
+                        print(f"[AUTH] ✅ Session restored from cookies for: {character_name}")
+                        # No need to rerun, main will handle it
+                        return
+                    else:
+                        print("[AUTH] ❌ Session verification failed after cookie restore")
+                        # Try to refresh the session
+                        try:
+                            if refresh_token:
+                                print("[AUTH] 🔄 Attempting to refresh session with refresh token")
+                                
+                                # Try HTTP refresh first (more robust)
+                                data = refresh_session_via_http(refresh_token)
+                                if data:
+                                    # Update client with new tokens
+                                    try:
+                                        db.client.auth.set_session(data['access_token'], data['refresh_token'])
+                                    except:
+                                        pass
+                                        
+                                    # Get session object (or mock it if needed, but get_session should work now)
+                                    session = db.client.auth.get_session()
+                                    
+                                    if session and session.user:
+                                        st.session_state.user = session
+                                        character_name = db.get_user_character_name(session.user.id)
+                                        st.session_state.character_name = character_name
+
+                                        # Update cookies
+                                        expires = datetime.now() + timedelta(days=30)
+                                        cookie_manager.set('sb_access_token', data['access_token'], expires_at=expires, key="refresh_set_access")
+                                        if data.get('refresh_token'):
+                                            cookie_manager.set('sb_refresh_token', data['refresh_token'], expires_at=expires, key="refresh_set_refresh")
+                                            
+                                        print(f"[AUTH] ✅ Session refreshed via HTTP for: {character_name}")
+                                        return
+
+                                # Fallback to standard refresh
+                                refresh_response = db.client.auth.refresh_session()
+                                if refresh_response and refresh_response.user:
+                                    st.session_state.user = refresh_response
+                                    character_name = db.get_user_character_name(refresh_response.user.id)
+                                    st.session_state.character_name = character_name
+
+                                    # Update cookies with new tokens
+                                    if hasattr(refresh_response, 'access_token'):
+                                        expires = datetime.now() + timedelta(days=30)
+                                        cookie_manager.set('sb_access_token', refresh_response.access_token, expires_at=expires, key="refresh_lib_set_access")
+                                        if hasattr(refresh_response, 'refresh_token') and refresh_response.refresh_token:
+                                            cookie_manager.set('sb_refresh_token', refresh_response.refresh_token, expires_at=expires, key="refresh_lib_set_refresh")
+
+                                    print(f"[AUTH] ✅ Session refreshed from cookies for: {character_name}")
+                                    return
+                        except Exception as refresh_error:
+                            print(f"[AUTH] ❌ Failed to refresh session: {refresh_error}")
+
+                except Exception as cookie_restore_error:
+                    print(f"[AUTH] ❌ Failed to restore from cookies: {cookie_restore_error}")
+                    # Check if it's an "invalid flow state" error - if so, try refresh
+                    if "invalid flow state" in str(cookie_restore_error).lower() or "flow state" in str(cookie_restore_error).lower():
+                        print("[AUTH] 🔄 Detected invalid flow state, attempting HTTP refresh")
+                        try:
+                            if refresh_token:
+                                # Try HTTP refresh first
+                                data = refresh_session_via_http(refresh_token)
+                                if data:
+                                    # Update client with new tokens
+                                    try:
+                                        db.client.auth.set_session(data['access_token'], data['refresh_token'])
+                                    except:
+                                        pass
+                                    
+                                    session = db.client.auth.get_session()
+                                    if session and session.user:
+                                        st.session_state.user = session
+                                        character_name = db.get_user_character_name(session.user.id)
+                                        st.session_state.character_name = character_name
+
+                                        # Update cookies with new tokens
+                                        expires = datetime.now() + timedelta(days=30)
+                                        cookie_manager.set('sb_access_token', data['access_token'], expires_at=expires, key="recover_set_access")
+                                        if data.get('refresh_token'):
+                                            cookie_manager.set('sb_refresh_token', data['refresh_token'], expires_at=expires, key="recover_set_refresh")
+
+                                        print(f"[AUTH] ✅ Session recovered via HTTP refresh for: {character_name}")
+                                        return
+                                
+                                # Fallback to standard
+                                refresh_response = db.client.auth.refresh_session()
+                                if refresh_response and refresh_response.user:
+                                    st.session_state.user = refresh_response
+                                    character_name = db.get_user_character_name(refresh_response.user.id)
+                                    st.session_state.character_name = character_name
+
+                                    # Update cookies with new tokens
+                                    if hasattr(refresh_response, 'access_token'):
+                                        expires = datetime.now() + timedelta(days=30)
+                                        cookie_manager.set('sb_access_token', refresh_response.access_token, expires_at=expires, key="recover_lib_set_access")
+                                        if hasattr(refresh_response, 'refresh_token') and refresh_response.refresh_token:
+                                            cookie_manager.set('sb_refresh_token', refresh_response.refresh_token, expires_at=expires, key="recover_lib_set_refresh")
+
+                                    print(f"[AUTH] ✅ Session recovered via refresh for: {character_name}")
+                                    return
+                        except Exception as refresh_error:
+                            print(f"[AUTH] ❌ Refresh also failed: {refresh_error}")
+
+                    # CRITICAL: Delete bad cookies to prevent loop
+                    try:
+                        cookie_manager.delete('sb_access_token')
+                        cookie_manager.delete('sb_refresh_token')
+                    except:
+                        pass
+
+        # Method 2: Check Streamlit session state (works on localhost)
+        if "user" in st.session_state and st.session_state.user:
+            print(f"[AUTH] ✅ Found user in Streamlit session: {st.session_state.user.user.id}")
+            # Ensure character name is loaded
+            if "character_name" not in st.session_state:
+                try:
+                    character_name = db.get_user_character_name(st.session_state.user.user.id)
+                    st.session_state.character_name = character_name
+                except Exception as name_error:
+                    print(f"[AUTH] Could not load character name: {name_error}")
+                    st.session_state.character_name = "Aventurier"  # fallback
+            print(f"[AUTH] ✅ Session restored from Streamlit for: {st.session_state.character_name}")
+            return
+
+        # Method 3: Check database for persistent sessions (Last resort)
+        # Re-enabled but guarded by logging_out flag to prevent loops
+        if not is_logging_out:
+            try:
+                # Look for recent sessions in our custom table
+                recent_sessions = db.client.table('user_sessions').select('*').order('last_active', desc=True).limit(10).execute()
+
+                if recent_sessions.data:
+                    # Try to restore from the most recent valid session
+                    for session_record in recent_sessions.data:
+                        try:
+                            session_data = json.loads(session_record['session_data'])
+                            user_id = session_record['user_id']
+                            access_token = session_data.get('session_token')
+                            refresh_token = session_data.get('refresh_token')
+
+                            if access_token:
+                                # Try to set the session
+                                db.client.auth.set_session(access_token, refresh_token or '')
+
+                                # Verify it worked
+                                restored_session = db.client.auth.get_session()
+                                if restored_session and restored_session.user:
+                                    st.session_state.user = restored_session
+                                    character_name = db.get_user_character_name(restored_session.user.id)
+                                    st.session_state.character_name = character_name
+
+                                    # Update last active
+                                    db.client.table('user_sessions').update({
+                                        'last_active': 'now()'
+                                    }).eq('user_id', user_id).execute()
+
+                                    print(f"[AUTH] ✅ Session restored from database for: {character_name}")
+                                    return
+
+                        except Exception as session_restore_error:
+                            print(f"[AUTH] ❌ Failed to restore session from database record: {session_restore_error}")
+                            continue
+
+            except Exception as db_check_error:
+                print(f"[AUTH] Database session check failed: {db_check_error}")
+
+        # Method 4: Standard Supabase session check
         session = db.client.auth.get_session()
         user_response = db.client.auth.get_user()
 
         print(f"[AUTH] Session check - session: {session is not None}, user: {user_response is not None}")
 
         if session and session.user:
-            print(f"[AUTH] ✅ Found active session for user: {session.user.id}")
+            print(f"[AUTH] ✅ Found active Supabase session for user: {session.user.id}")
             # Always restore session state on refresh
             st.session_state.user = session
             # Load character name from database
             character_name = db.get_user_character_name(session.user.id)
             st.session_state.character_name = character_name
             print(f"[AUTH] ✅ Session restored for: {character_name}")
-            st.rerun()
             return
         elif user_response and user_response.user:
             print(f"[AUTH] ✅ Found user (no active session) for user: {user_response.user.id}")
@@ -370,10 +777,9 @@ def render_auth_page():
             character_name = db.get_user_character_name(user_response.user.id)
             st.session_state.character_name = character_name
             print(f"[AUTH] ✅ User restored for: {character_name}")
-            st.rerun()
             return
         else:
-            print("[AUTH] ❌ No session or user found - login required")
+            print("[AUTH] ❌ No session found - login required")
     except Exception as e:
         print(f"[AUTH] ❌ Session check error: {e}")
         import traceback
@@ -488,9 +894,33 @@ def render_auth_page():
 def main():
     """Main app logic"""
 
+    # Set consistent page config FIRST - before any other logic to prevent reruns
+    st.set_page_config(
+        page_title="Wallachia - D&D Adventure",
+        page_icon="⚔️",
+        layout="wide",
+        initial_sidebar_state="expanded"
+    )
+
+    # Check for OAuth callback FIRST (Race condition fix)
+    # Do this BEFORE initializing cookie_manager to prevent component-triggered reloads from killing the OAuth flow
+    if "code" in st.query_params:
+         with st.spinner("Procesăm autentificarea..."):
+             # Handle OAuth - pass None for cookie_manager to delay its init
+             if handle_oauth_callback(None):
+                 return # Rerun happened inside
+
+    # Initialize cookie manager ONCE per run at the top level (Normal flow)
+    cookie_manager = get_cookie_manager()
+
+    # UI Stability: Prevent login form flash on first load
+    if "auth_check_complete" not in st.session_state:
+        st.session_state.auth_check_complete = True
+        # Force a rerun to allow cookie manager to sync
+        st.rerun()
+
     # Check authentication
     if not db.client:
-        st.set_page_config(page_title="Wallachia - Config Error", layout="centered")
         st.error("🔧 Sistemul de autentificare nu este configurat!")
         st.info("Adaugă SUPABASE_URL și SUPABASE_ANON_KEY în fișierul .env")
         return
@@ -498,94 +928,41 @@ def main():
     # Handle authentication FIRST - before any other logic
     user_authenticated = "user" in st.session_state and st.session_state.user is not None
 
+    # CRITICAL FIX: Ensure db.client has the session if we are authenticated in state
+    # This is necessary because db is re-initialized on every rerun
+    if user_authenticated:
+        try:
+            current_session = db.client.auth.get_session()
+            if not current_session:
+                user_obj = st.session_state.user
+                if hasattr(user_obj, 'access_token') and user_obj.access_token:
+                    print(f"[MAIN] Restoring session to DB client for user: {user_obj.user.id}")
+                    # Use refresh token if available, otherwise empty string
+                    refresh_token = getattr(user_obj, 'refresh_token', '') or ''
+                    db.client.auth.set_session(user_obj.access_token, refresh_token)
+        except Exception as e:
+            print(f"[MAIN] Warning: Failed to restore DB session: {e}")
+
     if not user_authenticated:
-        render_auth_page()
-        return
+        # Pass the single cookie_manager instance
+        render_auth_page(cookie_manager)
+        
+        # Check again if authentication succeeded during render_auth_page (e.g. via cookies)
+        # preventing an unnecessary rerun
+        if "user" in st.session_state and st.session_state.user:
+            user_authenticated = True
+        else:
+            return
 
     # User is authenticated - start game
-    st.set_page_config(
-        page_title="Wallachia - D&D Adventure",
-        page_icon="⚔️",
-        layout="wide",
-        initial_sidebar_state="expanded"
-    )
     inject_css()
 
     # Initialize session AFTER authentication is confirmed
     init_session()
 
-    # Handle pending name change
+    # Handle pending name change - Legacy check for safety
     if "pending_name_change" in st.session_state:
-        try:
-            new_name = st.session_state.pending_name_change
-            user_id = st.session_state.user.user.id
-            print(f"[DEBUG] Attempting to update character name for user {user_id} to '{new_name}'")
-
-            # Use direct table operations with upsert
-            try:
-                # Try upsert (insert or update on conflict)
-                upsert_result = db.client.table('user_profiles').upsert({
-                    'user_id': user_id,
-                    'character_name': new_name
-                }).execute()
-                print(f"[DEBUG] Upsert result: {upsert_result}")
-
-            except Exception as upsert_error:
-                print(f"[DEBUG] Upsert failed: {upsert_error}")
-                # Fallback: manual check and update/insert
-                try:
-                    # Check if profile exists
-                    existing = db.client.table('user_profiles').select('*').eq('user_id', user_id).execute()
-
-                    if existing.data and len(existing.data) > 0:
-                        # Update existing
-                        update_result = db.client.table('user_profiles').update({
-                            'character_name': new_name
-                        }).eq('user_id', user_id).execute()
-                        print(f"[DEBUG] Updated existing profile: {len(update_result.data) if update_result.data else 0} rows")
-                    else:
-                        # Insert new
-                        insert_result = db.client.table('user_profiles').insert({
-                            'user_id': user_id,
-                            'character_name': new_name
-                        }).execute()
-                        print(f"[DEBUG] Inserted new profile: {len(insert_result.data) if insert_result.data else 0} rows")
-
-                except Exception as table_error:
-                    print(f"[DEBUG] Table operation failed: {table_error}")
-                    # Final fallback: service role approach
-                    try:
-                        from supabase import create_client, Client
-                        service_key = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
-                        if service_key:
-                            service_client = create_client(SUPABASE_URL, service_key)
-                            service_client.table('user_profiles').upsert({
-                                'user_id': user_id,
-                                'character_name': new_name
-                            }).execute()
-                            print("[DEBUG] Used service role for upsert - SUCCESS")
-                        else:
-                            raise Exception("No service role key available")
-                    except Exception as service_error:
-                        print(f"[DEBUG] Service role approach failed: {service_error}")
-                        raise Exception(f"All database approaches failed: upsert={upsert_error}, table={table_error}, service={service_error}")
-
-            # Success - update session state
-            st.session_state.character_name = new_name
-            if "pending_name_change" in st.session_state:
-                del st.session_state.pending_name_change
-            st.success(f"✅ Nume erou schimbat în: {new_name}")
-            print(f"[DEBUG] Character name updated successfully to '{new_name}'")
-            time.sleep(1)
-            st.rerun()
-
-        except Exception as e:
-            st.error(f"❌ Eroare la schimbarea numelui: {str(e)}")
-            print(f"[DEBUG] Exception during name change: {e}")
-            import traceback
-            traceback.print_exc()
-            if "pending_name_change" in st.session_state:
-                del st.session_state.pending_name_change
+        handle_name_change(st.session_state.pending_name_change)
 
     # Check API fallback
     if st.session_state.settings.get("api_fail_count", 0) > 3:
@@ -595,7 +972,17 @@ def main():
     render_header()
 
     # Render sidebar and save game state
-    legend_scale = render_sidebar(st.session_state.game_state)
+    # cookie_manager is already initialized at top of main
+    
+    # Callback to handle name change without double reload
+    def on_name_change_callback(new_name):
+        handle_name_change(new_name)
+    
+    legend_scale = render_sidebar(
+        st.session_state.game_state, 
+        cookie_manager=cookie_manager,
+        on_name_change=on_name_change_callback
+    )
     st.session_state.legend_scale = legend_scale
 
     # Auto-save game state to database after each interaction
@@ -783,6 +1170,10 @@ def handle_player_input():
                     st.error("💀 **Aventura s-a încheiat.**")
                     st.session_state.is_game_over = True
 
+                # Save game state immediately to ensure persistence across rerun
+                user_id = st.session_state.user.user.id
+                db.save_game_state(user_id, gs, st.session_state.db_session_id)
+                
                 st.rerun()
 
             except Exception as e:
@@ -804,6 +1195,48 @@ def handle_player_input():
             gs.character.health = min(100, gs.character.health + heal)
             st.toast(f"❤️ Te-ai vindecat cu {heal} puncte!", icon="✨")
             time.sleep(0.5)
+
+def handle_name_change(new_name):
+    """Handle character name change logic efficiently"""
+    try:
+        if not new_name:
+            return
+
+        user_id = st.session_state.user.user.id
+        print(f"[DEBUG] Attempting to update character name to '{new_name}'")
+
+        # Use direct table operations with upsert
+        try:
+            db.client.table('user_profiles').upsert({
+                'user_id': user_id,
+                'character_name': new_name
+            }).execute()
+        except Exception as upsert_error:
+            print(f"[DEBUG] Upsert failed: {upsert_error}")
+            # Fallback not strictly needed if DB setup is correct, but safe to have
+            try:
+                # Check if profile exists
+                existing = db.client.table('user_profiles').select('*').eq('user_id', user_id).execute()
+                if existing.data:
+                    db.client.table('user_profiles').update({'character_name': new_name}).eq('user_id', user_id).execute()
+                else:
+                    db.client.table('user_profiles').insert({'user_id': user_id, 'character_name': new_name}).execute()
+            except Exception as e:
+                print(f"[DEBUG] Fallback failed: {e}")
+
+        # Success - update session state
+        st.session_state.character_name = new_name
+        if "pending_name_change" in st.session_state:
+            del st.session_state.pending_name_change
+            
+        st.success(f"✅ Nume erou schimbat în: {new_name}")
+        time.sleep(0.5)
+        st.rerun()
+
+    except Exception as e:
+        st.error(f"❌ Eroare la schimbarea numelui: {str(e)}")
+        if "pending_name_change" in st.session_state:
+            del st.session_state.pending_name_change
 
 if __name__ == "__main__":
     main()
