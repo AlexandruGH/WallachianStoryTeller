@@ -69,9 +69,12 @@ class Config:
         )
 
     @staticmethod
-    def build_dnd_prompt(story: List[Dict], character: Dict, legend_scale: int = 5) -> str:
+    def build_dnd_prompt(story: List[Dict], character: Dict, legend_scale: int = 5, 
+                         game_mode: str = None, current_episode: int = 0) -> str:
         """Construiește prompt pentru LLM folosind structuri de date simple (dict/list)"""
         from models import NarrativeResponse # Import local
+        from campaign import get_current_episode # Import local
+        from character_creation import FACTIONS # Import local
         
         # Calcul raport legend vs istoric
         ratio = legend_scale / 10.0
@@ -87,24 +90,72 @@ class Config:
         # Construire context narativ din ultimele replici
         context = "\n".join([f"{m['role'].upper()}: {m['text']}" for m in story[-4:]])
         
-        # Construire Info caracter (Accesăm prin CHEI de dicționar ['key'], nu prin punct .attr)
-        # Verificăm existența cheilor cu .get() pentru siguranță
+        # Construire Info caracter
         char_health = character.get('health', 100)
         char_rep = character.get('reputation', 20)
         char_gold = character.get('gold', 0)
         char_loc = character.get('location', 'Târgoviște')
         
+        # New Character Fields
+        char_class = character.get('character_class', 'Aventurier')
+        char_faction = character.get('faction', 'Fără Facțiune')
+        char_ability = character.get('special_ability', 'Niciuna')
+        char_passive = character.get('passive_ability', 'Niciuna')
+        
+        # Fetch detailed Faction info
+        faction_bonuses = ""
+        faction_disadvantage = ""
+        
+        # Look up faction in dict (handling Enum value or string)
+        found_faction = None
+        for f_enum, f_data in FACTIONS.items():
+            if f_enum.value == char_faction or str(f_enum) == char_faction:
+                found_faction = f_data
+                break
+        
+        if found_faction:
+            faction_bonuses = found_faction.get('bonuses', '')
+            faction_disadvantage = found_faction.get('disadvantage', '')
+
         power_desc = 'SLABĂ'
         if char_rep >= 60: power_desc = 'CRESCUTĂ'
         elif char_rep >= 30: power_desc = 'MEDIE'
 
+        ep_progress = character.get('episode_progress', 0.0)
+
         char_info = (
-            f"\n\nSTATISTICI CRITICE: Viață={char_health} | "
-            f"Reputație={char_rep} | "
-            f"Locație={char_loc} | "
-            f"Galbeni={char_gold} | "
-            f"Puterea ta este {power_desc}\n"
+            f"\n\nSTATISTICI CRITICE: Viață={char_health} | Reputație={char_rep} | "
+            f"Locație={char_loc} | Galbeni={char_gold} | Progres Episod={ep_progress:.1f}\n"
+            f"DETALII EROU: Clasă={char_class} | Facțiune={char_faction}\n"
+            f"ABILITĂȚI ACTIVE: {char_ability} | PASIVE: {char_passive}\n"
+            f"BONUSURI FACȚIUNE: {faction_bonuses}\n"
+            f"DEZAVANTAJ FACȚIUNE: {faction_disadvantage}\n"
+            f"Puterea ta politică este {power_desc}\n"
         )
+        
+        # Campaign Logic
+        campaign_context = ""
+        if game_mode == "Campanie: Pecetea Drăculeștilor":
+            # We don't have 'turn' here directly, but we can infer or pass it. 
+            # Actually, app.py should pass the turn if needed, or we rely on the episode passed.
+            # Assuming 'current_episode' is the episode NUMBER.
+            # Wait, get_current_episode takes TURN number.
+            # I should pass turn_count to build_dnd_prompt?
+            # Or just pass the episode data directly?
+            # For simplicity, let's assume we pass the episode number logic elsewhere?
+            # Actually, let's update app.py to pass turn number or episode data.
+            # But let's keep it simple: assume app logic handles turn transition and sets 'current_episode' in state?
+            # No, 'current_episode' in GameState is just an int.
+            # Let's import the campaign data here.
+            from campaign import CAMPAIGN_EPISODES
+            ep_data = CAMPAIGN_EPISODES.get(current_episode)
+            if ep_data:
+                campaign_context = (
+                    f"\nCONTEXT CAMPANIE (EPISODUL {current_episode}): {ep_data['title']}\n"
+                    f"OBIECTIVE ACTUALE: {', '.join(ep_data['objectives'])}\n"
+                    f"DESCRIERE SCENĂ: {ep_data['description']}\n"
+                    "NARRATOR: Trebuie să ghidezi jucătorul spre aceste obiective, respectând libertatea de alegere.\n"
+                )
         
         # Restricții bazate pe reputație
         restrictions = ""
@@ -120,7 +171,7 @@ class Config:
         
         # Construire instrucțiuni finale
         instructions = (
-            f"\n{style_prefix}{restrictions}"            
+            f"\n{style_prefix}{restrictions}\n{campaign_context}"            
             "REGULI OBLIGATORII:\n"
             "- 'narrative': 2-3 propoziții, fără greșeli gramaticale, în română medievală\n"
             "- 'suggestions': Listă de EXACT 2-3 string-uri, fără numere, fără bullet points\n"

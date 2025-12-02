@@ -76,10 +76,33 @@ class Database:
             print(f"❌ Error getting active game session: {e}")
             return None
 
+    def list_user_sessions(self, user_id: str) -> List[Dict[str, Any]]:
+        """List all game sessions for a user"""
+        try:
+            response = self.client.table('game_sessions').select('session_id, created_at, updated_at, current_turn, is_active').eq('user_id', user_id).order('updated_at', desc=True).execute()
+            return response.data if response.data else []
+        except Exception as e:
+            print(f"❌ Error listing user sessions: {e}")
+            return []
+
+    def set_active_session(self, user_id: str, session_id: str) -> bool:
+        """Set a specific session as active and others as inactive"""
+        try:
+            # Deactivate all
+            self.client.table('game_sessions').update({'is_active': False}).eq('user_id', user_id).execute()
+            # Activate specific one
+            self.client.table('game_sessions').update({'is_active': True}).eq('session_id', session_id).execute()
+            return True
+        except Exception as e:
+            print(f"❌ Error setting active session: {e}")
+            return False
+
     def create_game_session(self, user_id: str, game_state: GameState) -> Optional[str]:
         """Create new game session and return session ID"""
         try:
-            session_id = f"{user_id}_{int(datetime.utcnow().timestamp())}"
+            # Use UUID to ensure uniqueness and prevent collisions/deletions
+            import uuid
+            session_id = f"{user_id}_{uuid.uuid4().hex[:12]}"
 
             # Convert game state to database format
             session_data = {
@@ -173,6 +196,32 @@ class Database:
             print(f"❌ Error deactivating old sessions: {e}")
             return False
 
+    def delete_old_autosaves(self, user_id: str, current_session_id: str) -> bool:
+        """
+        Delete all auto-saved sessions (non-manual) except the current active one.
+        This ensures only one autosave exists per user.
+        """
+        try:
+            # Fetch all sessions
+            response = self.client.table('game_sessions').select('session_id').eq('user_id', user_id).execute()
+            all_sessions = response.data if response.data else []
+            
+            ids_to_delete = []
+            for s in all_sessions:
+                sid = s['session_id']
+                # If it's NOT the current one AND NOT a manual save
+                if sid != current_session_id and "_manual" not in sid:
+                    ids_to_delete.append(sid)
+            
+            if ids_to_delete:
+                print(f"[DB] Cleaning up {len(ids_to_delete)} old autosaves...")
+                self.client.table('game_sessions').delete().in_('session_id', ids_to_delete).execute()
+                
+            return True
+        except Exception as e:
+            print(f"❌ Error deleting old autosaves: {e}")
+            return False
+
     # ===============================
     # — UTILITY METHODS
     # ===============================
@@ -223,3 +272,28 @@ class Database:
         except Exception as e:
             print(f"❌ Error getting character name: {e}")
             return 'Aventurier'
+
+    def get_last_campaign_inventory(self, user_id: str) -> Optional[List[InventoryItem]]:
+        """Get inventory from the last active campaign session"""
+        try:
+            # We search for sessions where game_mode inside character_stats is 'Campanie: Pecetea Drăculeștilor'
+            # Note: JSON filtering syntax depends on Supabase/PostgREST version.
+            # We fetch recent sessions and filter in python to be safe and avoid complex query issues if schema varies.
+            
+            response = self.client.table('game_sessions').select('inventory, character_stats').eq('user_id', user_id).order('updated_at', desc=True).limit(10).execute()
+            
+            if response.data:
+                for session in response.data:
+                    stats = session.get('character_stats', {})
+                    if stats and stats.get('game_mode') == "Campanie: Pecetea Drăculeștilor":
+                        # Found a campaign session!
+                        raw_inv = session.get('inventory', [])
+                        inventory = []
+                        for item_data in raw_inv:
+                            if isinstance(item_data, dict):
+                                inventory.append(InventoryItem(**item_data))
+                        return inventory
+            return None
+        except Exception as e:
+            print(f"❌ Error getting last campaign inventory: {e}")
+            return None

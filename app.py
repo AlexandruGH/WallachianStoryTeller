@@ -35,10 +35,11 @@ except ImportError:
 # Import local modules
 from config import Config, ModelRouter
 from character import CharacterSheet, roll_dice, update_stats
-from ui_components import inject_css, render_header, render_sidebar, display_story
+from ui_components import inject_css, render_header, render_sidebar, display_story, render_loading_screen, scroll_to_top
 from llm_handler import fix_romanian_grammar, generate_narrative_with_progress
 from models import GameState, CharacterStats, InventoryItem, ItemType, NarrativeResponse
 from database import Database
+from character_creation import render_character_creation
 
 # =========================
 # — Helper Classes
@@ -97,16 +98,35 @@ def init_session():
                 print(f"[INIT] Failed to load character name: {e}")
                 st.session_state.character_name = "Aventurier"
 
-        game_state, session_id = db.load_user_game(user_id)
-
-        if game_state and session_id:
-            st.session_state.game_state = game_state
-            st.session_state.db_session_id = session_id
-            print(f"[INIT] ✅ Loaded existing game session: {session_id}")
-        else:
-            # Create new game state
+        # Check if we forced a new game from UI
+        if st.session_state.get("force_new_game"):
+            print(f"[INIT] 🆕 Force new game requested")
             create_new_game_state()
-            print(f"[INIT] Created new game state for user: {user_id}")
+            
+            # CRITICAL: Clear DB session ID to ensure a NEW session row is created
+            if "db_session_id" in st.session_state:
+                del st.session_state.db_session_id
+                
+            # Clean up old autosaves from DB to maintain "One Autosave" rule
+            # New session ID is in st.session_state.session_id (set in ui or init)
+            # We pass it to spare it (though it's not in DB yet so it doesn't matter)
+            db.delete_old_autosaves(user_id, st.session_state.session_id)
+            
+            # Clear flag
+            del st.session_state.force_new_game
+            
+        # Normal load - ONLY if game_state is missing (first load)
+        elif "game_state" not in st.session_state:
+            game_state, session_id = db.load_user_game(user_id)
+
+            if game_state and session_id:
+                st.session_state.game_state = game_state
+                st.session_state.db_session_id = session_id
+                print(f"[INIT] ✅ Loaded existing game session: {session_id}")
+            else:
+                # Create new game state
+                create_new_game_state()
+                print(f"[INIT] Created new game state for user: {user_id}")
     else:
         print(f"[INIT] ❌ No authenticated user - creating default state")
         # No user logged in, create default game state
@@ -148,7 +168,7 @@ def init_session():
 def create_new_game_state():
     """Create a fresh game state"""
     italic_flavour = (
-        "*Personaj (TU): Ești un aventurier aflat în anul 1456. Te afli la marginea cetății Târgoviște, pe o noapte rece de toamnă. "
+        "*Personaj (TU)*: Ești un aventurier aflat în anul 1456. Te afli la marginea cetății Târgoviște, pe o noapte rece de toamnă. "
         "Flăcările torțelor dansează în vânt, proiectând umbre lungi pe zidurile masive. "
         "Porțile de stejar se ridică încet, cu un scârțâit apăsat, iar aerul miroase "
         "a fum, fier și pământ ud. În depărtare se aud cai și voci ale străjerilor. "
@@ -158,7 +178,7 @@ def create_new_game_state():
     st.session_state.game_state = GameState(
         character=CharacterStats(),
         inventory=[
-            InventoryItem(name="Pumnal valah", type=ItemType.weapon, value=3, quantity=1),
+            InventoryItem(name="Pumnal", type=ItemType.weapon, value=3, quantity=1),
             InventoryItem(name="Hartă ruptă", type=ItemType.misc, value=0, quantity=1),
             InventoryItem(name="5 galbeni", type=ItemType.currency, value=5, quantity=1),
         ],
@@ -171,6 +191,9 @@ def create_new_game_state():
         turn=0,
         last_image_turn=-10
     )
+    # Ensure db_session_id exists (even if None) to prevent AttributeError later
+    if "db_session_id" not in st.session_state:
+        st.session_state.db_session_id = None
     print(f"[INIT] Created new game state: {st.session_state.session_id}")
 
 # =========================
@@ -549,6 +572,35 @@ def render_auth_page(cookie_manager):
                 
                 if not is_flow_error:
                     st.error("❌ Autentificarea a eșuat!")
+    
+    # JS Hack to handle Hash Fragments (Implicit Flow / Email Links)
+    # Converts #access_token=... to ?access_token=... so Streamlit can see it
+    st.components.v1.html("""
+    <script>
+        if (window.location.hash) {
+            const params = new URLSearchParams(window.location.hash.substring(1));
+            if (params.has('access_token') || params.has('error') || params.has('error_code')) {
+                const newUrl = window.location.origin + window.location.pathname + '?' + window.location.hash.substring(1);
+                window.location.href = newUrl;
+            }
+        }
+    </script>
+    """, height=0)
+
+    # Handle Auth Errors (e.g. Email Link Expired)
+    if "error" in st.query_params:
+        error_code = st.query_params.get("error_code", "unknown_error")
+        error_desc = st.query_params.get("error_description", "A apărut o eroare la autentificare.")
+        
+        st.error(f"⚠️ Eroare Autentificare: {error_code}")
+        st.warning(f"{error_desc}")
+        
+        if error_code == "otp_expired":
+            st.info("📧 Link-ul de verificare a expirat. Te rugăm să încerci din nou autentificarea pentru a primi un nou link.")
+        
+        if st.button("🔄 Încearcă din nou"):
+            st.query_params.clear()
+            st.rerun()
 
     # Check for existing session - MULTIPLE RECOVERY METHODS
     try:
@@ -898,6 +950,19 @@ def main():
         initial_sidebar_state="expanded"
     )
 
+    # Force scroll to top on page load/rerun
+    scroll_to_top()
+
+    # 1. IMMEDIATE LOADING OVERLAY
+    # Inject CSS globally first so it persists even when we clear the loading placeholder
+    inject_css()
+    
+    # Render loading screen immediately to mask any processing/latency
+    # We use a placeholder so we can remove it once the UI is ready
+    loading_placeholder = st.empty()
+    with loading_placeholder:
+        render_loading_screen()
+
     # Check for OAuth callback FIRST (Race condition fix)
     # Do this BEFORE initializing cookie_manager to prevent component-triggered reloads from killing the OAuth flow
     if "code" in st.query_params:
@@ -910,13 +975,17 @@ def main():
     cookie_manager = get_cookie_manager()
 
     # UI Stability: Prevent login form flash on first load
+    # Note: We already showed a loading screen above, so we can reduce the explicit sleep here or remove the dedicated block
+    # But we keep the auth_check logic to ensure cookies sync properly on first load
     if "auth_check_complete" not in st.session_state:
         st.session_state.auth_check_complete = True
-        # Force a rerun to allow cookie manager to sync
+        # Allow a brief moment for cookies to be read by the component
+        time.sleep(0.5) 
         st.rerun()
 
     # Check authentication
     if not db.client:
+        loading_placeholder.empty() # Clear loading
         st.error("🔧 Sistemul de autentificare nu este configurat!")
         st.info("Adaugă SUPABASE_URL și SUPABASE_ANON_KEY în fișierul .env")
         return
@@ -940,6 +1009,7 @@ def main():
             print(f"[MAIN] Warning: Failed to restore DB session: {e}")
 
     if not user_authenticated:
+        loading_placeholder.empty() # Clear loading before showing auth page
         # Pass the single cookie_manager instance
         render_auth_page(cookie_manager)
         
@@ -951,7 +1021,7 @@ def main():
             return
 
     # User is authenticated - start game
-    inject_css()
+    # inject_css() was already called above
 
     # Initialize session AFTER authentication is confirmed
     init_session()
@@ -965,21 +1035,25 @@ def main():
         st.warning("⚠️ API a eșuat de 3+ ori. Se trece în modul local automat.")
         st.session_state.settings["use_api_fallback"] = False
 
+    # Character Creation Flow
+    # If character class or faction is missing, show the creation wizard and STOP
+    user_id = st.session_state.user.user.id
+    db_session_id = getattr(st.session_state, 'db_session_id', None)
+    
+    # Pass db and user_id so wizard can save state immediately to avoid reset on rerun
+    # Pass loading_placeholder so wizard can clear it ONLY when it's ready to render its own UI
+    if not render_character_creation(st.session_state.game_state, db, user_id, db_session_id, loading_placeholder):
+        return
+
+    # If wizard returns True, it means character creation is complete.
+    # Now we clear the loading screen before rendering the main game UI.
+    loading_placeholder.empty()
+
     render_header()
 
-    # Render sidebar and save game state
-    # cookie_manager is already initialized at top of main
-    
-    # Callback to handle name change without double reload
-    def on_name_change_callback(new_name):
-        handle_name_change(new_name)
-    
-    legend_scale = render_sidebar(
-        st.session_state.game_state, 
-        cookie_manager=cookie_manager,
-        on_name_change=on_name_change_callback
-    )
-    st.session_state.legend_scale = legend_scale
+    # Render sidebar in a fragment to prevent main UI flickering during saves/updates
+    with st.sidebar:
+        sidebar_fragment(cookie_manager, db)
 
     # Auto-save game state to database after each interaction
     user_id = st.session_state.user.user.id
@@ -993,13 +1067,44 @@ def main():
     # Start image worker
     start_image_worker()
 
+    # Run the game loop in a fragment to prevent full page reloads (Flicker Fix)
+    game_loop()
+
+@st.fragment
+def sidebar_fragment(cookie_manager, db):
+    """Sidebar isolation to prevent main page reloads on simple interactions"""
+    # Callback to handle name change
+    def on_name_change_callback(new_name):
+        handle_name_change(new_name)
+    
+    # Render
+    legend_scale = render_sidebar(
+        st.session_state.game_state, 
+        cookie_manager=cookie_manager,
+        on_name_change=on_name_change_callback,
+        db=db
+    )
+    # Update state for main loop usage
+    st.session_state.legend_scale = legend_scale
+
+@st.fragment
+def game_loop():
     # Main layout
     col_left, col_center, col_right = st.columns([0.5, 4, 0.5])
+    
     with col_center:
-        display_story(st.session_state.game_state.story)
+        # Create a container for the story to allow in-place updates
+        story_container = st.empty()
+        
+        def refresh_story():
+            with story_container.container():
+                display_story(st.session_state.game_state.story)
+        
+        # Initial render
+        refresh_story()
 
-    # Handle player input
-    handle_player_input()
+        # Handle player input with callback to refresh story without full rerun
+        handle_player_input(on_update=refresh_story)
 
 def start_image_worker():
     """Start image generation worker"""
@@ -1030,7 +1135,7 @@ def background_image_gen():
     finally:
         st.session_state.image_worker_active = False
 
-def handle_player_input():
+def handle_player_input(on_update=None):
     """Handle player input and update game state"""
 
     # Game over check
@@ -1051,13 +1156,45 @@ def handle_player_input():
 
     col_left, col_centre, col_right = st.columns([0.5, 4, 0.5])
     with col_centre:
+        
+        # 1. Display Clickable Suggestions
+        last_msg = st.session_state.game_state.story[-1] if st.session_state.game_state.story else None
+        suggestion_clicked = None
+        
+        # Try to retrieve suggestions from metadata or parse
+        suggestions_list = last_msg.get("suggestions", []) if last_msg else []
+        
+        # Fallback parsing if metadata missing
+        if not suggestions_list and last_msg and "SUGESTII:" in last_msg.get("text", "").replace("**Sugestii:**", "SUGESTII:"):
+            try:
+                parts = last_msg["text"].replace("**Sugestii:**", "SUGESTII:").split("SUGESTII:")
+                if len(parts) > 1:
+                    raw_sugs = parts[1].strip().split("\n")
+                    for s in raw_sugs:
+                        clean_s = s.strip().lstrip("•").lstrip("-").strip()
+                        if clean_s:
+                            suggestions_list.append(clean_s)
+            except:
+                pass
+
+        if suggestions_list:
+            st.markdown("##### 💡 Sugestii Rapide:")
+            if len(suggestions_list) > 3:
+                suggestions_list = suggestions_list[:3]
+                
+            cols = st.columns(len(suggestions_list))
+            for idx, sug in enumerate(suggestions_list):
+                if cols[idx].button(sug, key=f"sug_{idx}", use_container_width=True):
+                    suggestion_clicked = sug
+
         # Input form
         with st.form(key="action_form", clear_on_submit=True):
             user_action = st.text_input(
-                "🗡️ Ce vrei să faci?",
+                "✍️ Sau scrie propria ta acțiune...",
                 placeholder="Scrie acțiunea ta...",
                 key="input_action",
             )
+            
             c1, c2, c3 = st.columns([2, 1, 1])
             with c1:
                 submitted = st.form_submit_button(
@@ -1072,8 +1209,17 @@ def handle_player_input():
                     "🏥 Vindecă", use_container_width=True
                 )
 
+        # Handle Action Logic
+        final_action = None
+        if suggestion_clicked:
+            final_action = suggestion_clicked
+        elif submitted and user_action and user_action.strip():
+            final_action = user_action
+
         # Process main action
-        if submitted and user_action and user_action.strip():
+        if final_action:
+            user_action = final_action # Normalize
+            
             if st.session_state.is_generating:
                 st.warning("⏳ Așteaptă finalizarea generării...")
                 return
@@ -1088,6 +1234,10 @@ def handle_player_input():
                     "turn": current_turn,
                     "image": None
                 })
+                
+                # Update UI immediately with user input if callback provided
+                if on_update:
+                    on_update()
 
                 # Prepare data
                 legend_scale = st.session_state.get("legend_scale", 5)
@@ -1101,10 +1251,16 @@ def handle_player_input():
                     story_data = gs_data['story']
 
                 # Generate prompt
+                # Pass game_mode and current_episode from CharacterStats (where they persist)
+                game_mode = gs_data.character.game_mode
+                current_episode = gs_data.character.current_episode
+                
                 full_prompt_text = Config.build_dnd_prompt(
                     story=story_data,
                     character=character_data,
-                    legend_scale=legend_scale
+                    legend_scale=legend_scale,
+                    game_mode=game_mode,
+                    current_episode=current_episode
                 )
 
                 # Generate narrative
@@ -1118,10 +1274,8 @@ def handle_player_input():
                 ]
 
                 # Add suggestions to narrative
+                # UPDATED: Suggestions are now buttons only, NOT appended to text.
                 narrative_with_suggestions = corrected_narrative
-                if corrected_suggestions:
-                    narrative_with_suggestions += "\n\n**Sugestii:**"
-                    narrative_with_suggestions += "\n".join([f"• {s}" for s in corrected_suggestions])
 
                 # Update game state
                 gs = st.session_state.game_state
@@ -1147,13 +1301,40 @@ def handle_player_input():
                 if response.status_effects:
                     gs.character.status_effects.extend(response.status_effects)
 
+                # Handle Episode Progress
+                next_episode_data = None
+                if response.episode_progress is not None:
+                    gs.character.episode_progress = response.episode_progress
+                    
+                    # Check for episode completion
+                    if gs.character.episode_progress >= 1.0 and gs.character.game_mode == "Campanie: Pecetea Drăculeștilor":
+                        gs.character.current_episode += 1
+                        gs.character.episode_progress = 0.0
+                        st.toast(f"🎉 Episod Complet! Începe Episodul {gs.character.current_episode}", icon="📜")
+                        
+                        from campaign import CAMPAIGN_EPISODES
+                        next_episode_data = CAMPAIGN_EPISODES.get(gs.character.current_episode)
+
                 # Add AI response to story
                 st.session_state.game_state.story.append({
                     "role": "ai",
                     "text": narrative_with_suggestions,
                     "turn": current_turn,
-                    "image": None
+                    "image": None,
+                    "suggestions": corrected_suggestions
                 })
+                
+                # Append Episode Intro if triggered
+                if next_episode_data:
+                    st.session_state.game_state.story.append({
+                        "role": "ai",
+                        "text": "", # Rendered via UI component
+                        "turn": current_turn,
+                        "image": None,
+                        "type": "episode_intro",
+                        "content_data": next_episode_data,
+                        "suggestions": next_episode_data.get("initial_suggestions", [])
+                    })
 
                 # Queue image generation
                 if (current_turn - st.session_state.last_image_turn) >= Config.IMAGE_INTERVAL:
@@ -1166,11 +1347,20 @@ def handle_player_input():
                     st.error("💀 **Aventura s-a încheiat.**")
                     st.session_state.is_game_over = True
 
-                # Save game state immediately to ensure persistence across rerun
+                # Save game state immediately to ensure persistence
                 user_id = st.session_state.user.user.id
-                db.save_game_state(user_id, gs, st.session_state.db_session_id)
+                # Use .get() safely in case db_session_id was deleted or not set
+                current_sid = st.session_state.get("db_session_id")
+                new_sid = db.save_game_state(user_id, gs, current_sid)
+                if new_sid and new_sid != current_sid:
+                    st.session_state.db_session_id = new_sid
                 
-                st.rerun()
+                # Update UI immediately with final response if callback provided
+                if on_update:
+                    on_update()
+                else:
+                    # Fallback to rerun if no partial update method
+                    st.rerun()
 
             except Exception as e:
                 st.error(f"❌ Eroare în procesare: {e}")

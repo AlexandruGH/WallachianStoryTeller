@@ -11,14 +11,14 @@ class CharacterSheet:
         self.max_health = 100
         self.reputation = 20  # START MAI JOS
         self.max_reputation = 100
-        self.inventory = ["Pumnal valah", "Hartă ruptă", "Foiță de pergament"]
+        self.inventory = ["Pumnal", "Hartă ruptă", "Foiță de pergament"]
         self.gold = 5  # Adăugăm monede
         self.location = "Târgoviște"
         self.status_effects = []
         self.power_level = 1  # NIVEL DE PUTERE
         self.gold = 5
         self.inventory = [
-            {"name": "Pumnal valah", "type": "armă", "value": 3},
+            {"name": "Pumnal", "type": "armă", "value": 3},
             {"name": "Hartă ruptă", "type": "obiect", "value": 0},
             {"name": "Foiță de pergament", "type": "obiect", "value": 0},
             {"name": "5 galbeni", "type": "monedă", "value": 5}
