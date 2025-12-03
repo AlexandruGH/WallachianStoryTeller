@@ -514,12 +514,12 @@ def render_loading_screen():
         </div>
     """, unsafe_allow_html=True)
 
-def render_sidebar(game_state: "GameState", cookie_manager=None, on_name_change=None, db=None) -> int:
+def render_sidebar_header_controls(on_name_change=None) -> int:
     """
-    Render sidebar cu controale, character sheet, și inventory.
-    Primește GameState Pydantic și returnează legend_scale.
+    Render top sidebar section with User Info and Controls.
+    Contains WIDGETS (Inputs, Sliders). Must be called from main logic (not fragment).
+    Returns legend_scale.
     """
-
     # Inițializăm flag-ul pentru tracking-ul fișierelor încărcate
     if "_loaded_file_hash" not in st.session_state:
         st.session_state._loaded_file_hash = None
@@ -563,7 +563,13 @@ def render_sidebar(game_state: "GameState", cookie_manager=None, on_name_change=
         key="legend_slider"
     )
     st.markdown('</div>', unsafe_allow_html=True)
+    return legend_scale
 
+def render_sidebar_stats(game_state: "GameState"):
+    """
+    Render sidebar statistics (Stats, Inventory, Campaign).
+    Contains NO WIDGETS (only markdown/progress). Safe for fragments.
+    """
     # CAMPAIGN PROGRESS (if applicable)
     if game_state.character.game_mode == GameMode.CAMPAIGN:
         st.markdown('<div class="sidebar-section">', unsafe_allow_html=True)
@@ -654,13 +660,13 @@ def render_sidebar(game_state: "GameState", cookie_manager=None, on_name_change=
                         f'<div class="inventory-item">{item.name}{qty_str}</div>',
                         unsafe_allow_html=True
                     )
-    
     st.markdown('</div>', unsafe_allow_html=True)
-    
-    # ===============================
-    # — GAME MANAGEMENT SECTIONS
-    # ===============================
 
+def render_sidebar_footer(game_state: "GameState", db=None, cookie_manager=None):
+    """
+    Render bottom sidebar section (Game Management).
+    Contains WIDGETS. Must be called from main logic.
+    """
     # 1. START NEW GAME
     st.markdown('<div class="sidebar-section">', unsafe_allow_html=True)
     st.subheader("🆕 Aventură Nouă")
@@ -928,7 +934,12 @@ def render_sidebar(game_state: "GameState", cookie_manager=None, on_name_change=
             except Exception as e:
                 st.error(f"❌ Eroare la logout: {e}")
 
-    return legend_scale
+def render_sidebar(game_state: "GameState", cookie_manager=None, on_name_change=None, db=None) -> int:
+    """Wrapper legacy for backward compatibility"""
+    l = render_sidebar_header_controls(on_name_change)
+    render_sidebar_stats(game_state)
+    render_sidebar_footer(game_state, db, cookie_manager)
+    return l
 
 def generate_pdf_html(story: List[Dict]) -> str:
     """Generate styled HTML for PDF export (includes images as base64)"""

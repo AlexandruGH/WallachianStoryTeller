@@ -49,6 +49,12 @@ SYSTEM_PROMPT = (
     "Nu creezi cuvinte greșite, nu folosești arhaisme deformate, nu amesteci stiluri. "
     "Frazele sunt clare, solide și naturale în limba română."
 
+    "\n\n========== COERENȚĂ GRAMATICALĂ & ACORDURI ==========\n"
+    "• ATENȚIE MAXIMĂ la acordurile gramaticale (gen, număr, caz). Asigură-te că pronumele corespund substantivelor la care se referă.\n"
+    "• Exemple corecte: 'o cutie' -> 'o arunci', 'un document' -> 'îl citești'.\n"
+    "• NU folosi pronume masculine plural ('îi') pentru obiecte feminine singular ('o').\n"
+    "• Verifică logic acțiunile: nu poți arunca ceva ce nu ai în mână, nu poți interacționa cu obiecte inexistente."
+
     "\n\n========== DIALOG ==========\n"
     "Când jucătorul interacționează cu un NPC important (ex: boieri, soldați, Vlad Vodă), prioritizează dialogul în fața narațiunii. "
     "Oferă replicile în **ghilimele duble („ ”)**, iar narațiunea contextualizează scurt scena."
@@ -180,7 +186,8 @@ def generate_with_api(prompt: str) -> NarrativeResponse:
         )
     
     api_url = "https://api.groq.com/openai/v1/chat/completions"
-    model = "openai/gpt-oss-120b"
+    # Folosim Llama 3.3 70B Versatile pentru cea mai bună performanță în limba română
+    model = "llama-3.3-70b-versatile" #"openai/gpt-oss-120b"
     
     global _groq_key_index
     with _groq_key_lock:
@@ -280,8 +287,7 @@ def generate_with_api(prompt: str) -> NarrativeResponse:
 
 def generate_narrative_with_progress(prompt: str) -> NarrativeResponse:
     """
-    Generează narativ cu bară de progres. Dacă API eșuează complet,
-    afișează mesaj de eroare pentru utilizator.
+    Generează narativ cu bară de progres (animație 'Scribii lui Vlad').
     """
     result_container = {"response": None, "error": None}
     
