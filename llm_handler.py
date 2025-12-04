@@ -12,6 +12,7 @@ from streamlit.runtime.scriptrunner import add_script_run_ctx
 from pydantic import ValidationError
 
 from models import InventoryItem, NarrativeResponse
+from caching import CacheManager
 
 # ========== CONFIGURAȚIE API ==========
 _groq_key_index = 0
@@ -171,18 +172,44 @@ def generate_with_api(prompt: str) -> NarrativeResponse:
     Generează RĂSPUNS DOAR prin Groq API. Dacă toate cheile eșuează,
     returnează un mesaj de eroare clar pentru utilizator.
     """
+    # 1. Check Cache First (Hash Match)
+    cached_response = CacheManager.get(prompt)
+    if cached_response:
+        print(f"[CACHE] Hit for prompt hash: {hash(prompt)}")
+        return cached_response
+
+    # 1.1 Check Cache Second (Text Fallback)
+    # Extract last user message from prompt to check Source Cache
+    # Heuristic: Context ends before "STATISTICI CRITICE:"
+    try:
+        context_part = prompt.split("STATISTICI CRITICE:")[0]
+        lines = context_part.strip().split('\n')
+        last_user_line = None
+        for line in reversed(lines):
+            if line.strip().upper().startswith("USER:"):
+                last_user_line = line.strip()[5:].strip() # Remove "USER:"
+                break
+        
+        if last_user_line:
+            # print(f"[CACHE] Checking text fallback for: '{last_user_line[:30]}...'")
+            text_hit = CacheManager.get_by_text(last_user_line)
+            if text_hit:
+                return text_hit
+    except Exception as e:
+        print(f"[CACHE] Text fallback check failed: {e}")
+
     session_id = get_session_id()
     tokens = get_all_groq_tokens()
     
     if not tokens:
-        print(f"[SESSION {session_id}] 🔑 NO GROQ TOKENS FOUND")
-        st.error("🔒 **Serviciul de Narare este Dezactivat**")
-        st.info("➡️ Adaugă `GROQ_API_KEY` în `.env` sau variabile de mediu.")
+        print(f"[SESSION {session_id}] 🔑 NO GROQ TOKENS FOUND (and no cache hit)")
+        # If we have no tokens AND no cache hit, we fail.
+        st.error("🔒 **Serviciul de Narare este Dezactivat / Cache Miss**")
+        st.info("➡️ Nu am găsit răspuns în cache și nu există chei API configurate.")
         return NarrativeResponse(
-            narrative="**🔒 Serviciul de Narare este Momentan Indisponibil**  \n"
-                     "Nu a fost configurată nicio cheie API validă.  \n"
-                     "Contactează administratorul sistemului.",
-            game_over=True
+            narrative="**🔒 Serviciul de Narare este Indisponibil**  \n"
+                     "Nu există chei API valide și acțiunea nu este în cache-ul offline.",
+            game_over=False
         )
     
     api_url = "https://api.groq.com/openai/v1/chat/completions"
@@ -245,7 +272,10 @@ def generate_with_api(prompt: str) -> NarrativeResponse:
                         json_data["items_gained"] = items_gained
                     
                     print(f"[SESSION {session_id}] ✅ SUCCES CU TOKEN {token_index + 1}")
-                    return NarrativeResponse(**json_data)
+                    response_obj = NarrativeResponse(**json_data)
+                    # 2. Save to Cache
+                    CacheManager.set(prompt, response_obj)
+                    return response_obj
                     
                 except json.JSONDecodeError as e:
                     print(f"[SESSION {session_id}] ❌ TOKEN {token_index + 1} JSON Decode Error: {e}")

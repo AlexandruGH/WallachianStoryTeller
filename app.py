@@ -36,7 +36,7 @@ except ImportError:
 from config import Config, ModelRouter
 from character import CharacterSheet, roll_dice, update_stats
 from ui_components import inject_css, render_header, render_sidebar_header_controls, render_sidebar_stats, render_sidebar_footer, display_story, render_loading_screen, scroll_to_top
-from llm_handler import fix_romanian_grammar, generate_narrative_with_progress
+from llm_handler import fix_romanian_grammar, generate_narrative_with_progress, generate_with_api
 from models import GameState, CharacterStats, InventoryItem, ItemType, NarrativeResponse
 from database import Database
 from character_creation import render_character_creation
@@ -960,8 +960,12 @@ def main():
     # Render loading screen immediately to mask any processing/latency
     # We use a placeholder so we can remove it once the UI is ready
     loading_placeholder = st.empty()
-    with loading_placeholder:
-        render_loading_screen()
+    
+    # Conditional Loading Screen to avoid flicker on small interactions
+    # Only show on initial load, skip on reruns (like dice rolls or interactions)
+    if not st.session_state.get("loading_cleared"):
+        with loading_placeholder:
+            render_loading_screen()
 
     # Check for OAuth callback FIRST (Race condition fix)
     # Do this BEFORE initializing cookie_manager to prevent component-triggered reloads from killing the OAuth flow
@@ -1048,6 +1052,57 @@ def main():
     # If wizard returns True, it means character creation is complete.
     # We defer clearing the loading screen to the game interface to prevent black screen flashes.
     
+    # Check for Story Packs (Cache Pre-loading)
+    try:
+        from caching import CacheManager
+        gs = st.session_state.game_state
+        
+        def normalize_name(name):
+            if not name: return ""
+            # Handle Enums by getting value if possible, otherwise string conversion
+            val = name.value if hasattr(name, "value") else str(name)
+            return val.lower().replace("ă", "a").replace("â", "a").replace("î", "i").replace("ș", "s").replace("ț", "t").replace(" ", "_").replace("/", "_")
+
+        char_class = normalize_name(gs.character.character_class)
+        faction = normalize_name(gs.character.faction)
+        episode = gs.character.current_episode
+        
+        # Ensure we always attempt to load the correct pack for the current configuration
+        pack_filename = f"ep{episode}_{char_class}_{faction}.json"
+        pack_path = os.path.join("story_packs", pack_filename)
+        
+        # Also attempt to load SOURCE pack for offline fallback (UserText -> Response)
+        # Try specific faction source first, then generic class source
+        source_filename_specific = f"ep{episode}_{char_class}_{faction}_source.json"
+        source_filename_generic = f"ep{episode}_{char_class}_source.json"
+        
+        # Check if we need to switch packs (Episode changed or Class/Faction changed or First load)
+        current_loaded = st.session_state.get("loaded_pack_name")
+        
+        if current_loaded != pack_filename:
+            if os.path.exists(pack_path):
+                print(f"[PACK] Loading story pack: {pack_filename}")
+                # Clear previous memory cache to save RAM
+                CacheManager.load_pack(pack_path, clear_previous=True)
+                st.session_state.loaded_pack_name = pack_filename
+                
+                # Load Source Pack
+                if os.path.exists(os.path.join("story_packs", source_filename_specific)):
+                    CacheManager.load_source_pack(os.path.join("story_packs", source_filename_specific))
+                elif os.path.exists(os.path.join("story_packs", source_filename_generic)):
+                    CacheManager.load_source_pack(os.path.join("story_packs", source_filename_generic))
+                    
+            else:
+                # If no pack exists for this new state, we should probably clear the old pack to avoid confusion?
+                # Or keep it? User said "save memory". If we are in Ep 2 and no pack exists, keeping Ep 1 pack is waste.
+                if current_loaded:
+                    print(f"[PACK] Unloading previous pack (New context has no pack): {current_loaded}")
+                    CacheManager.clear_memory()
+                    st.session_state.loaded_pack_name = None
+
+    except Exception as e:
+        print(f"[PACK] Error checking packs: {e}")
+
     render_header()
 
     # Render Sidebar Layout (Static/Widgets in Main, Stats in Fragment)
@@ -1096,12 +1151,14 @@ def render_game_interface(cookie_manager, db, sidebar_stats_container, loading_p
     # 2. Render Main Game Loop (Passing sidebar container for updates)
     game_loop_logic(sidebar_stats_container)
 
-    # Clear loading screen smoothly on first render
+    # Clear loading screen smoothly ONLY if it was shown (initial load)
     if not st.session_state.get("loading_cleared"):
-        # Small delay to ensure UI is fully rendered behind the loader before revealing
-        time.sleep(0.5) 
+        time.sleep(1.0) 
         loading_placeholder.empty()
         st.session_state.loading_cleared = True
+    else:
+        # Ensure it's empty on reruns without delay
+        loading_placeholder.empty()
 
 def game_loop_logic(sidebar_stats_container):
     """Main game loop rendering logic"""
@@ -1153,6 +1210,45 @@ def background_image_gen():
         print(f"❌ BG image error: {e}")
     finally:
         st.session_state.image_worker_active = False
+
+def prefetch_suggestions_worker(suggestions, game_state_dump, legend_scale):
+    """Background worker to pre-generate responses for suggestions."""
+    print(f"[PREFETCH] Starting prefetch for {len(suggestions)} suggestions...")
+    
+    # Reconstruct necessary data from dump
+    try:
+        character_data = game_state_dump['character']
+        story_data = game_state_dump['story']
+        game_mode = character_data.get('game_mode')
+        current_episode = character_data.get('current_episode', 1)
+        
+        for suggestion in suggestions:
+            # Simulate the user action appended to story
+            simulated_story = story_data + [{
+                "role": "user",
+                "text": suggestion,
+                "turn": game_state_dump['turn'] + 1, # hypothetical turn
+                "image": None
+            }]
+            
+            # Build prompt
+            prompt = Config.build_dnd_prompt(
+                story=simulated_story,
+                character=character_data,
+                legend_scale=legend_scale,
+                game_mode=game_mode,
+                current_episode=current_episode
+            )
+            
+            # Call API (will cache result) - Sequential to avoid rate limits
+            # We don't need the result here, just the side effect of caching
+            print(f"[PREFETCH] Generating for: {suggestion[:30]}...")
+            generate_with_api(prompt)
+            time.sleep(1) # small delay to be nice to API
+            
+        print("[PREFETCH] Completed.")
+    except Exception as e:
+        print(f"[PREFETCH] Error: {e}")
 
 def handle_player_input(story_placeholder=None, sidebar_container=None, input_placeholder=None):
     """Handle player input and update game state"""
@@ -1232,7 +1328,7 @@ def handle_player_input(story_placeholder=None, sidebar_container=None, input_pl
     # Process main action
     if final_action:
         user_action = final_action # Normalize
-        
+
         if st.session_state.is_generating:
             st.warning("⏳ Așteaptă finalizarea generării...")
             return
@@ -1247,7 +1343,7 @@ def handle_player_input(story_placeholder=None, sidebar_container=None, input_pl
                 "turn": current_turn,
                 "image": None
             })
-            
+
             # Update UI immediately to show user input before generation
             if story_placeholder:
                 with story_placeholder.container():
@@ -1267,10 +1363,11 @@ def handle_player_input(story_placeholder=None, sidebar_container=None, input_pl
             # Generate prompt
             game_mode = gs_data.character.game_mode
             current_episode = gs_data.character.current_episode
-            
+
+            # IMPORTANT: use mode='json' to match generator script hash calculation
             full_prompt_text = Config.build_dnd_prompt(
                 story=story_data,
-                character=character_data,
+                character=gs_data.character.model_dump(mode='json'),
                 legend_scale=legend_scale,
                 game_mode=game_mode,
                 current_episode=current_episode
@@ -1317,13 +1414,13 @@ def handle_player_input(story_placeholder=None, sidebar_container=None, input_pl
             next_episode_data = None
             if response.episode_progress is not None:
                 gs.character.episode_progress = response.episode_progress
-                
+
                 # Check for episode completion
                 if gs.character.episode_progress >= 1.0 and gs.character.game_mode == "Campanie: Pecetea Drăculeștilor":
                     gs.character.current_episode += 1
                     gs.character.episode_progress = 0.0
                     st.toast(f"🎉 Episod Complet! Începe Episodul {gs.character.current_episode}", icon="📜")
-                    
+
                     from campaign import CAMPAIGN_EPISODES
                     next_episode_data = CAMPAIGN_EPISODES.get(gs.character.current_episode)
 
@@ -1335,7 +1432,7 @@ def handle_player_input(story_placeholder=None, sidebar_container=None, input_pl
                 "image": None,
                 "suggestions": corrected_suggestions
             })
-            
+
             # Append Episode Intro if triggered
             if next_episode_data:
                 st.session_state.game_state.story.append({
@@ -1353,6 +1450,23 @@ def handle_player_input(story_placeholder=None, sidebar_container=None, input_pl
                 st.session_state.image_queue.append((corrected_narrative, current_turn))
                 st.session_state.last_image_turn = current_turn
 
+            # TRIGGER PREFETCHING
+            if corrected_suggestions:
+                try:
+                    # Create a snapshot of the CURRENT state (already updated above)
+                    # We need to dump it because we can't pass the pydantic object across threads safely if it changes
+                    current_gs_dump = st.session_state.game_state.model_dump()
+
+                    t_prefetch = threading.Thread(
+                        target=prefetch_suggestions_worker,
+                        args=(corrected_suggestions, current_gs_dump, legend_scale),
+                        daemon=True
+                    )
+                    add_script_run_ctx(t_prefetch)
+                    t_prefetch.start()
+                except Exception as e:
+                    print(f"[PREFETCH] Failed to start worker: {e}")
+
             # Update turn
             gs.turn += 1
             if response.game_over or gs.character.health <= 0:
@@ -1365,21 +1479,23 @@ def handle_player_input(story_placeholder=None, sidebar_container=None, input_pl
             new_sid = db.save_game_state(user_id, gs, current_sid)
             if new_sid and new_sid != current_sid:
                 st.session_state.db_session_id = new_sid
-            
+
             # MANUAL UPDATE: Refresh UI without st.rerun() to avoid flicker
-            
+
             # 1. Update Story with AI response
             if story_placeholder:
                 with story_placeholder.container():
                     display_story(st.session_state.game_state.story)
-            
+
             # 2. Update Sidebar Stats
             if sidebar_container:
                 with sidebar_container.container():
                     render_sidebar_stats(st.session_state.game_state)
-            
+
             # 3. Update Input Form (New Suggestions)
-            # Re-render the input form to show updated suggestions
+            # Clear previous content explicitly to avoid duplication
+            if input_placeholder:
+                 input_placeholder.empty()
             render_input_form()
 
         except Exception as e:
@@ -1389,7 +1505,144 @@ def handle_player_input(story_placeholder=None, sidebar_container=None, input_pl
         finally:
             st.session_state.is_generating = False
 
-    # Handle secondary actions
+    # Handle suggestion clicks separately to avoid duplication issues
+    if suggestion_clicked and not final_action:
+        # Process suggestion click
+        user_action = suggestion_clicked
+
+        if st.session_state.is_generating:
+            st.warning("⏳ Așteaptă finalizarea generării...")
+            return
+
+        st.session_state.is_generating = True
+        try:
+            # Add user action to story
+            current_turn = st.session_state.game_state.turn
+            st.session_state.game_state.story.append({
+                "role": "user",
+                "text": user_action,
+                "turn": current_turn,
+                "image": None
+            })
+
+            # Prepare data
+            legend_scale = st.session_state.get("legend_scale", 5)
+            gs_data = st.session_state.game_state
+
+            # Generate prompt
+            game_mode = gs_data.character.game_mode
+            current_episode = gs_data.character.current_episode
+
+            full_prompt_text = Config.build_dnd_prompt(
+                story=gs_data.story,
+                character=gs_data.character.model_dump(mode='json'),
+                legend_scale=legend_scale,
+                game_mode=game_mode,
+                current_episode=current_episode
+            )
+
+            # Generate narrative
+            response = generate_narrative_with_progress(full_prompt_text)
+
+            # Process response (same as above)
+            corrected_narrative = fix_romanian_grammar(response.narrative)
+            corrected_suggestions = [
+                fix_romanian_grammar(s) for s in response.suggestions
+                if s and len(s) > 5
+            ]
+
+            narrative_with_suggestions = corrected_narrative
+
+            # Update game state
+            gs = st.session_state.game_state
+            gs.character.health = max(0, min(100, gs.character.health + (response.health_change or 0)))
+            gs.character.reputation = max(0, min(100, gs.character.reputation + (response.reputation_change or 0)))
+            gs.character.gold = max(0, gs.character.gold + (response.gold_change or 0))
+
+            for item in response.items_gained or []:
+                existing = next((i for i in gs.inventory if i.name == item.name), None)
+                if existing:
+                    existing.quantity += item.quantity
+                else:
+                    gs.inventory.append(item)
+            gs.inventory = [i for i in gs.inventory if i.name not in (response.items_lost or [])]
+
+            if response.location_change:
+                gs.character.location = response.location_change
+                st.toast(f"📍 Locație nouă: {response.location_change}", icon="🗺️")
+
+            if response.status_effects:
+                gs.character.status_effects.extend(response.status_effects)
+
+            next_episode_data = None
+            if response.episode_progress is not None:
+                gs.character.episode_progress = response.episode_progress
+                if gs.character.episode_progress >= 1.0 and gs.character.game_mode == "Campanie: Pecetea Drăculeștilor":
+                    gs.character.current_episode += 1
+                    gs.character.episode_progress = 0.0
+                    st.toast(f"🎉 Episod Complet! Începe Episodul {gs.character.current_episode}", icon="📜")
+
+                    from campaign import CAMPAIGN_EPISODES
+                    next_episode_data = CAMPAIGN_EPISODES.get(gs.character.current_episode)
+
+            st.session_state.game_state.story.append({
+                "role": "ai",
+                "text": narrative_with_suggestions,
+                "turn": current_turn,
+                "image": None,
+                "suggestions": corrected_suggestions
+            })
+
+            if next_episode_data:
+                st.session_state.game_state.story.append({
+                    "role": "ai",
+                    "text": "",
+                    "turn": current_turn,
+                    "image": None,
+                    "type": "episode_intro",
+                    "content_data": next_episode_data,
+                    "suggestions": next_episode_data.get("initial_suggestions", [])
+                })
+
+            if (current_turn - st.session_state.last_image_turn) >= Config.IMAGE_INTERVAL:
+                st.session_state.image_queue.append((corrected_narrative, current_turn))
+                st.session_state.last_image_turn = current_turn
+
+            if corrected_suggestions:
+                try:
+                    current_gs_dump = st.session_state.game_state.model_dump()
+                    t_prefetch = threading.Thread(
+                        target=prefetch_suggestions_worker,
+                        args=(corrected_suggestions, current_gs_dump, legend_scale),
+                        daemon=True
+                    )
+                    add_script_run_ctx(t_prefetch)
+                    t_prefetch.start()
+                except Exception as e:
+                    print(f"[PREFETCH] Failed to start worker: {e}")
+
+            gs.turn += 1
+            if response.game_over or gs.character.health <= 0:
+                st.error("💀 **Aventura s-a încheiat.**")
+                st.session_state.is_game_over = True
+
+            user_id = st.session_state.user.user.id
+            current_sid = st.session_state.get("db_session_id")
+            new_sid = db.save_game_state(user_id, gs, current_sid)
+            if new_sid and new_sid != current_sid:
+                st.session_state.db_session_id = new_sid
+
+        except Exception as e:
+            st.error(f"❌ Eroare în procesare: {e}")
+            import traceback
+            traceback.print_exc()
+        finally:
+            st.session_state.is_generating = False
+
+        # For suggestions, use st.rerun() to update UI cleanly and avoid duplication
+        st.rerun()
+
+    # Handle secondary actions (unchanged)
     elif dice_clicked:
         # D&D Logic: d20 + Power Level
         d20 = random.randint(1, 20)

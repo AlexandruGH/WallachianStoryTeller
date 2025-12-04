@@ -1,0 +1,18 @@
+{
+  "narrative": "Pășești în piața aglomerată a Târgoviștei, unde mirosul de pâine proaspătă se amestecă cu cel de fum. Oamenii vorbesc în șoaptă, aruncând priviri temătoare spre străjerii ce veghează fiecare colț. Un negustor bătrân îți face un semn discret din umbra unei tarabe, părând să te recunoască.",
+  "health_change": 0,
+  "reputation_change": 0,
+  "gold_change": 0,
+  "items_gained": [],
+  "items_lost": [],
+  "location_change": "Piața Centrală",
+  "status_effects": [],
+  "game_over": false,
+  "win_condition": false,
+  "suggestions": [
+    "Te apropii de negustorul care ți-a făcut semn.",
+    "Asculți discuțiile trecătorilor pentru a afla noutăți.",
+    "Încerci să intri în vorbă cu un grup de străjeri."
+  ],
+  "episode_progress": 0.1
+}

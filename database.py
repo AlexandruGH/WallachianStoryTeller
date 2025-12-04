@@ -109,8 +109,8 @@ class Database:
                 'session_id': session_id,
                 'user_id': user_id,
                 'story_data': game_state.story,
-                'character_stats': game_state.character.model_dump(),
-                'inventory': [item.model_dump() for item in game_state.inventory],
+                'character_stats': game_state.character.model_dump(mode='json'),
+                'inventory': [item.model_dump(mode='json') for item in game_state.inventory],
                 'current_turn': game_state.turn,
                 'last_image_turn': game_state.last_image_turn,
                 'is_active': True,
@@ -129,8 +129,8 @@ class Database:
         try:
             session_data = {
                 'story_data': game_state.story,
-                'character_stats': game_state.character.model_dump(),
-                'inventory': [item.model_dump() for item in game_state.inventory],
+                'character_stats': game_state.character.model_dump(mode='json'),
+                'inventory': [item.model_dump(mode='json') for item in game_state.inventory],
                 'current_turn': game_state.turn,
                 'last_image_turn': game_state.last_image_turn,
                 'updated_at': datetime.utcnow().isoformat()

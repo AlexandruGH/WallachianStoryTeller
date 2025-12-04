@@ -61,7 +61,8 @@ AVAILABLE_CLASSES = [
     CharacterClassType.AVENTURIER,
     CharacterClassType.NEGUSTOR,
     CharacterClassType.SPION,
-    CharacterClassType.LIBER
+    CharacterClassType.LIBER,
+    CharacterClassType.STRAJER
 ]
 
 FACTIONS: Dict[FactionType, Dict[str, Any]] = {
@@ -315,7 +316,7 @@ def render_character_creation(game_state, db=None, user_id=None, db_session_id=N
         <div class="char-card" style="text-align: center; border: 2px solid #8a0303; background: linear-gradient(145deg, #1a0505, #0a0202); margin-bottom: 30px; min-height: auto;">
             <h1 style="font-size: 4rem;">🐉</h1>
             <h2 style="color: #ff4d4d !important;">CAMPANIE: PECETEA DRĂCULEȘTILOR</h2>
-            <p style="font-size: 1.1rem;">O poveste epică în 8 episoade: Recuperează relicva sacră a lui Vlad Țepeș.</p>
+            <p style="font-size: 1.1rem;">O poveste epică în 8 episoade: Recuperează relicva sacră a Drăculeștilor.</p>
             <p><i>Conține puzzle-uri, bătălii istorice, personaje reale și finaluri multiple.</i></p>
         </div>
         """, unsafe_allow_html=True)
@@ -402,27 +403,55 @@ def render_character_creation(game_state, db=None, user_id=None, db_session_id=N
         
         from campaign import CAMPAIGN_EPISODES
         
-        # Display episodes in a nice timeline or grid
+        current_ep_num = game_state.character.current_episode
+        if current_ep_num == 0: current_ep_num = 1
+
+        # Display episodes in a list with buttons
         for i in range(1, 9):
             ep = CAMPAIGN_EPISODES.get(i)
             if ep:
-                with st.container():
+                # Determine state
+                is_completed = i < current_ep_num
+                is_current = i == current_ep_num
+                is_locked = i > current_ep_num
+
+                # Styling based on state
+                border_color = "#D4AF37" if is_current else "#5a3921" if is_completed else "#333"
+                bg_color = "rgba(212, 175, 55, 0.1)" if is_current else "rgba(0,0,0,0.3)"
+                opacity = "1.0" if is_current else "0.7" if is_completed else "0.4"
+                
+                col_text, col_btn = st.columns([3, 1])
+                
+                with col_text:
                     st.markdown(f"""
                     <div style="
-                        background-color: #1a0f0b; 
-                        border-left: 4px solid #D4AF37; 
+                        background-color: {bg_color}; 
+                        border-left: 4px solid {border_color}; 
                         padding: 15px; 
-                        margin-bottom: 15px;
+                        margin-bottom: 10px;
                         border-radius: 0 8px 8px 0;
+                        opacity: {opacity};
                     ">
-                        <h4 style="color: #D4AF37; margin: 0;">Episodul {i}: {ep['title']}</h4>
+                        <h4 style="color: {border_color}; margin: 0;">Episodul {i}: {ep['title']}</h4>
                         <p style="color: #ccc; margin: 5px 0 0 0; font-style: italic;">{ep.get('mystery_desc', 'Detalii învăluite în mister...')}</p>
                     </div>
                     """, unsafe_allow_html=True)
+                
+                with col_btn:
+                    # Vertical alignment spacer
+                    st.markdown('<div style="height: 15px;"></div>', unsafe_allow_html=True)
+                    
+                    if is_current:
+                        if st.button("⚔️ Intră", key=f"ep_enter_{i}", type="primary", use_container_width=True):
+                            st.session_state.show_campaign_structure = False
+                            st.rerun()
+                    elif is_completed:
+                        st.button("✅ Complet", key=f"ep_done_{i}", disabled=True, use_container_width=True)
+                    else:
+                        st.button("🔒 Blocat", key=f"ep_lock_{i}", disabled=True, use_container_width=True)
 
-        if st.button("⚔️ Continuă spre Crearea Eroului", type="primary", use_container_width=True):
-            st.session_state.show_campaign_structure = False
-            st.rerun()
+        st.markdown("---")
+        # Removed generic "Continue" button as we now have specific enter buttons
             
         return False
 
