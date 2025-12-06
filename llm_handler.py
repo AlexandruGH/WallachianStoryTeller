@@ -177,7 +177,7 @@ def generate_with_api(prompt: str, use_api: bool = True) -> NarrativeResponse:
             game_over=True
         )    
     api_url = "https://api.groq.com/openai/v1/chat/completions"
-    model = "openai/gpt-oss-120b"
+    model = "llama-3.3-70b-versatile" #"openai/gpt-oss-120b"
     max_retries_per_key = 1  # Doar 1 încercare per cheie înainte de a roti
     
     # Thread-safe rotation: determinăm cheia de start pentru acest request
