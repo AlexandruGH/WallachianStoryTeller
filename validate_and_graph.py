@@ -38,7 +38,9 @@ def validate_and_graph(source_path, output_mermaid_path):
         count = 0
         for src, missing in missing_links.items():
             for m in missing:
-                print(f"[MISSING] From '{src}' -> Suggestion '{m}' is undefined.")
+                src_safe = src.encode('ascii', 'ignore').decode('ascii')
+                m_safe = m.encode('ascii', 'ignore').decode('ascii')
+                print(f"[MISSING] From '{src_safe}' -> Suggestion '{m_safe}' is undefined.")
                 count += 1
         print(f"Total missing nodes: {count}")
     else:

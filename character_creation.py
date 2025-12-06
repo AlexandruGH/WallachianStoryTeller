@@ -1,5 +1,5 @@
 import streamlit as st
-from models import CharacterClassType, FactionType, CharacterStats, GameMode
+from models import CharacterClassType, FactionType, CharacterStats, GameMode, InventoryItem, ItemType
 from typing import Dict, Any, Optional
 
 # =========================
@@ -17,7 +17,11 @@ CHARACTER_CLASSES: Dict[CharacterClassType, Dict[str, Any]] = {
         "description": "Gardian de margine, militar disciplinat.",
         "stats": {"constitution": 1, "perception": 1, "archery": 1},
         "special_ability": "Scutul Frontierei – primești un bonus defensiv dacă aperi un loc, obiect sau persoană.",
-        "icon": "🛡️"
+        "icon": "🛡️",
+        "starting_items": [
+            InventoryItem(name="Arbaletă de Străjer", type=ItemType.weapon, value=15, quantity=1, description="Perception +1 | Archery +1"),
+            InventoryItem(name="Săgeți", type=ItemType.consumable, value=1, quantity=10)
+        ]
     },
     CharacterClassType.NEGUSTOR: {
         "description": "Diplomat, comerciant și manipulator economic.",
@@ -210,9 +214,10 @@ AVAILABLE_FACTIONS = [
 # — Logic & UI
 # =========================
 
-def apply_character_class_stats(character: CharacterStats, class_type: CharacterClassType):
-    """Applies base stats and abilities from the selected class"""
+def apply_character_class_stats(game_state, class_type: CharacterClassType):
+    """Applies base stats, abilities, and items from the selected class"""
     data = CHARACTER_CLASSES[class_type]
+    character = game_state.character
     
     # Apply stats
     for stat, value in data["stats"].items():
@@ -222,6 +227,13 @@ def apply_character_class_stats(character: CharacterStats, class_type: Character
     # Set abilities
     character.special_ability = data["special_ability"]
     character.character_class = class_type
+
+    # Apply starting items
+    if "starting_items" in data:
+        for item in data["starting_items"]:
+            # Check if exists (to avoid duplicates if re-run, though re-run resets char usually)
+            if not any(i.name == item.name for i in game_state.inventory):
+                game_state.inventory.append(item)
 
 def apply_faction_modifiers(character: CharacterStats, faction_type: FactionType):
     """Applies faction bonuses (mostly narrative/passive stored in description for now)"""
@@ -487,7 +499,7 @@ def render_character_creation(game_state, db=None, user_id=None, db_session_id=N
                         with st.empty():
                             render_loading_screen()
                             
-                        apply_character_class_stats(game_state.character, cls_type)
+                        apply_character_class_stats(game_state, cls_type)
                         
                         # If Free World, maybe update intro text partially? No wait until Faction.
                         

@@ -115,10 +115,10 @@ class GameState(BaseModel):
     turn: int
     last_image_turn: int
 
-    @field_validator('inventory')
-    @classmethod
-    def validate_inventory(cls, v):
-        # Asigură că există cel puțin monedele
-        if not any(item.name.endswith("galbeni") for item in v):
-            v.append(InventoryItem(name="5 galbeni", type=ItemType.currency, value=5, quantity=1))
-        return v
+    # @field_validator('inventory')
+    # @classmethod
+    # def validate_inventory(cls, v):
+    #     # Asigură că există cel puțin monedele
+    #     if not any(item.name.endswith("galbeni") for item in v):
+    #         v.append(InventoryItem(name="5 galbeni", type=ItemType.currency, value=5, quantity=1))
+    #     return v

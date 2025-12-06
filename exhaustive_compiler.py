@@ -51,7 +51,9 @@ def compile_exhaustive(episode, char_class, faction, source_path, output_path):
     inventory = [
         InventoryItem(name="Pumnal", type=ItemType.weapon, value=3, quantity=1),
         InventoryItem(name="Hartă ruptă", type=ItemType.misc, value=0, quantity=1),
-        InventoryItem(name="5 galbeni", type=ItemType.currency, value=5, quantity=1),
+        InventoryItem(name="Arbaletă de Străjer", type=ItemType.weapon, value=15, quantity=1, description="Perception +1 | Archery +1"),
+        InventoryItem(name="Săgeți", type=ItemType.consumable, value=1, quantity=10),
+        # InventoryItem(name="5 galbeni", type=ItemType.currency, value=5, quantity=1), # Removed to use stats.gold only
     ]
     
     initial_suggs = CAMPAIGN_EPISODES.get(episode, {}).get("initial_suggestions", [])
@@ -199,8 +201,13 @@ def compile_exhaustive(episode, char_class, faction, source_path, output_path):
     }
     
     ensure_dir(os.path.dirname(output_path))
-    with open(output_path, "w", encoding='utf-8') as f:
-        json.dump(bundle, f, ensure_ascii=False, indent=2)
+    log(f"Saving to {output_path}...")
+    try:
+        with open(output_path, "w", encoding='utf-8') as f:
+            json.dump(bundle, f, ensure_ascii=False, indent=2)
+        log("Save successful.")
+    except Exception as e:
+        log(f"Save failed: {e}")
 
 if __name__ == "__main__":
     # Run for Strajer Draculesti Ep 1
