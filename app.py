@@ -1068,29 +1068,35 @@ def main():
         episode = gs.character.current_episode
         
         # Ensure we always attempt to load the correct pack for the current configuration
-        pack_filename = f"ep{episode}_{char_class}_{faction}.json"
-        pack_path = os.path.join("story_packs", pack_filename)
+        # NEW STRUCTURE: story_packs/episode_X/class_faction.json
+        pack_folder = f"episode_{episode}"
+        pack_filename = f"{char_class}_{faction}.json"
+        pack_path = os.path.join("story_packs", pack_folder, pack_filename)
         
         # Also attempt to load SOURCE pack for offline fallback (UserText -> Response)
         # Try specific faction source first, then generic class source
-        source_filename_specific = f"ep{episode}_{char_class}_{faction}_source.json"
-        source_filename_generic = f"ep{episode}_{char_class}_source.json"
+        source_filename_specific = f"{char_class}_{faction}_source.json"
+        source_filename_generic = f"{char_class}_source.json"
+        
+        source_path_specific = os.path.join("story_packs", pack_folder, source_filename_specific)
+        source_path_generic = os.path.join("story_packs", pack_folder, source_filename_generic)
         
         # Check if we need to switch packs (Episode changed or Class/Faction changed or First load)
+        # We use the full path as identifier now
         current_loaded = st.session_state.get("loaded_pack_name")
         
-        if current_loaded != pack_filename:
+        if current_loaded != pack_path:
             if os.path.exists(pack_path):
-                print(f"[PACK] Loading story pack: {pack_filename}")
+                print(f"[PACK] Loading story pack: {pack_path}")
                 # Clear previous memory cache to save RAM
                 CacheManager.load_pack(pack_path, clear_previous=True)
-                st.session_state.loaded_pack_name = pack_filename
+                st.session_state.loaded_pack_name = pack_path
                 
                 # Load Source Pack
-                if os.path.exists(os.path.join("story_packs", source_filename_specific)):
-                    CacheManager.load_source_pack(os.path.join("story_packs", source_filename_specific))
-                elif os.path.exists(os.path.join("story_packs", source_filename_generic)):
-                    CacheManager.load_source_pack(os.path.join("story_packs", source_filename_generic))
+                if os.path.exists(source_path_specific):
+                    CacheManager.load_source_pack(source_path_specific)
+                elif os.path.exists(source_path_generic):
+                    CacheManager.load_source_pack(source_path_generic)
                     
             else:
                 # If no pack exists for this new state, we should probably clear the old pack to avoid confusion?

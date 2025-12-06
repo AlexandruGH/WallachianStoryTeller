@@ -26,28 +26,12 @@ from campaign import CAMPAIGN_EPISODES # Needed for content_data
 
 CONFIGS = [
     {
-        "source": "story_packs/ep1_strajer_source.json",
-        "output": "story_packs/ep1_strajer_draculesti.json",
-        "class": CharacterClassType.STRAJER,
+        "source": "story_packs/episode_1/negustor_draculesti_source.json",
+        "output": "story_packs/episode_1/negustor_draculesti.json",
+        "class": CharacterClassType.NEGUSTOR,
         "faction": FactionType.DRACULESTI,
-        "stats": {"constitution": 1, "perception": 1, "archery": 1},
-        "desc": "Manual DM Flow for Străjer Drăculești Episode 1"
-    },
-    {
-        "source": "story_packs/ep1_spion_source.json",
-        "output": "story_packs/ep1_spion_draculesti.json",
-        "class": CharacterClassType.SPION,
-        "faction": FactionType.DRACULESTI,
-        "stats": {"agility": 1, "stealth": 2, "intelligence": 1},
-        "desc": "Manual DM Flow for Spion Drăculești Episode 1"
-    },
-    {
-        "source": "story_packs/ep1_spion_danesti_source.json",
-        "output": "story_packs/ep1_spion_danesti.json",
-        "class": CharacterClassType.SPION,
-        "faction": FactionType.DANESTI,
-        "stats": {"agility": 1, "stealth": 2, "intelligence": 1},
-        "desc": "Manual DM Flow for Spion Dănești Episode 1"
+        "stats": {"charisma": 2, "negotiation": 1, "intelligence": 1},
+        "desc": "Manual DM Flow for Negustor Drăculești Episode 1"
     }
 ]
 

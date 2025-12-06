@@ -61,7 +61,6 @@ AVAILABLE_CLASSES = [
     CharacterClassType.AVENTURIER,
     CharacterClassType.NEGUSTOR,
     CharacterClassType.SPION,
-    CharacterClassType.LIBER,
     CharacterClassType.STRAJER
 ]
 
@@ -82,7 +81,7 @@ FACTIONS: Dict[FactionType, Dict[str, Any]] = {
         "bonuses": "+2 Intrigă, +1 Furt",
         "passive": "Alianțe Nepătrunse – acces la spioni, comploturi și contacte ungurești.",
         "disadvantage": "Drăculeștii vor să te vadă mort.",
-        "icon": "🦁"
+        "icon": "🦊"
     },
     FactionType.BOIERI_ARGESENI: {
         "description": "Străjerii Munților. Boierimea argeșeană provine din familii ce controlau drumurile comerciale și trecătorile Carpaților Meridionali, în special spre Brașov. Ei au fost adesea cei mai influenți la curtea de la Curtea de Argeș, capitala veche a Țării Românești. Conducători de oști locale, străjeri și cunoscători ai muntelui, acești boieri sunt recunoscuți pentru loialitate fluctuantă, fiind adesea responsabili pentru ridicări sau căderi ale domnilor în funcție de interesele lor.",
@@ -204,12 +203,7 @@ FACTIONS: Dict[FactionType, Dict[str, Any]] = {
 }
 
 AVAILABLE_FACTIONS = [
-    FactionType.DRACULESTI,
-    FactionType.DANESTI,
-    FactionType.SASI,
-    FactionType.CRAIOVESTI,
-    FactionType.DOBROGENI,
-    FactionType.LIBER
+    FactionType.DRACULESTI
 ]
 
 # =========================
@@ -546,7 +540,7 @@ def render_character_creation(game_state, db=None, user_id=None, db_session_id=N
             
             st.markdown(card_html, unsafe_allow_html=True)
             
-            if st.button(f"🛡️ JUR CREDINȚĂ: {fac_type.value.upper()}", key=f"btn_fac_{idx}", type="primary", use_container_width=True, disabled=not is_available):
+            if st.button(f"🛡️ Mă alătur: {fac_type.value.upper()}", key=f"btn_fac_{idx}", type="primary", use_container_width=True, disabled=not is_available):
                 apply_faction_modifiers(game_state.character, fac_type)
                 
                 # FINAL STEP: Update Intro Text if Free World

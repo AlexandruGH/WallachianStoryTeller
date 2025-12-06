@@ -393,6 +393,33 @@ def inject_css():
             color: #ffd700;
         }
 
+        /* ================== KO-FI BUTTON ================== */
+        .kofi-button {
+            display: inline-block;
+            background: linear-gradient(to bottom, #2c1e16, #1a0f0b);
+            color: #d4af37 !important;
+            font-family: 'Cinzel', serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 6px;
+            text-decoration: none !important;
+            border: 1px solid #5a3921;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
+            transition: all 0.3s ease;
+            letter-spacing: 0.05em;
+        }
+        .kofi-button:hover {
+            background: linear-gradient(to bottom, #3a2516, #2c1e16);
+            border-color: #d4af37;
+            color: #fff !important;
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+            transform: translateY(-1px);
+        }
+        .kofi-icon {
+            margin-right: 5px;
+        }
+
         </style>
     """, unsafe_allow_html=True)
 
@@ -478,9 +505,23 @@ def display_story(story: List[Dict]):
     st.markdown(html_content, unsafe_allow_html=True)
 
 def render_header():
-    """Render main title header"""
-    st.markdown('<h1 class="main-header">WALLACHIA</h1>', unsafe_allow_html=True)
-    st.markdown('<p class="subtitle">Aventura în Secolul XV pe timpul domniei lui Vlad Țepeș</p>', unsafe_allow_html=True)
+    """Render main title header with support button"""
+    # Use symmetrical columns to keep title perfectly centered
+    c1, c2, c3 = st.columns([2, 6, 2]) 
+    with c2:
+        st.markdown('<h1 class="main-header">WALLACHIA</h1>', unsafe_allow_html=True)
+        st.markdown('<p class="subtitle">Aventura în Secolul XV pe timpul domniei lui Vlad Țepeș</p>', unsafe_allow_html=True)
+    with c3:
+        st.markdown(
+            """
+            <div style="text-align: right; padding-top: 10px;">
+            <a href="https://ko-fi.com/wallachiastory" target="_blank" class="kofi-button">
+                Susține Cronicarul
+            </a>
+            </div>
+            """, 
+            unsafe_allow_html=True
+        )
 
 def render_loading_screen():
     """Display a medieval loading screen animation"""
