@@ -1,0 +1,453 @@
+{
+  "character_class": "Spion",
+  "faction": "Sașii din Brașov/Sibiu",
+  "episode": 1,
+  "description": "Manual DM Flow for Spion Sași Episode 1",
+  "cache_data": {
+    "bcdb56cb78de4114eb9b7a1cf0e8dec057c7e44337ad1b9dbd23df1b7eafefc9b2acac43359ac20bc00bc4b8b78792ab0171e2ca37e1227c631332cf090eda9f": {
+      "narrative": "Te așezi la o masă a Breslei, prefăcându-te că bei bere. Zvonurile curg: \"Un transport secret a intrat aseară. Fără taxă la Podul Dâmboviței. Cică ar fi protejați de un boier.\" Un calfa îți șoptește că a văzut lăzi marcate cu 'Foc Grecesc' ascunse sub paie.",
+      "health_change": 0,
+      "reputation_change": 1,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Caută legătura cu boierii.",
+        "Urmărește vizitiul când pleacă.",
+        "Raportează la Șeful Breslei (Brașov)."
+      ],
+      "episode_progress": null
+    },
+    "4e103bbe72c7ed45bd38eb7ee89a09f0dfc81154837005a18d7f2e9331cd0abc2f103e1ddf9659ba0bf0f723cf16710e813563654f4795d5a1819eb7f3f8a9a1": {
+      "narrative": "Te apropii cu aerul unui negustor plictisit. Ochii tăi de sas, obișnuiți cu registrele și aurul, observă imediat neregula: osiile sunt întărite cu fier de calitate germană, dar carul e vopsit grosolan, valah. Vizitiul evită privirea ta. Ascunde ceva ce nu a trecut prin vamă.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Cere documentele de transport (Bluf).",
+        "Verifică 'marfa' sub pretextul unei oferte.",
+        "Notează simbolurile de pe lăzi."
+      ],
+      "episode_progress": null
+    },
+    "15c2559ed2887c95ae9c57b2aac028f245698967d53a86b45e229903394b877f17506c969fe9afae55907ea27e7e681bc17737184c4bb37e85219777bef1911b": {
+      "narrative": "De pe acoperișul Casei Sfatului, ai o vedere perfectă. Vizitiul discută aprins cu un mercenar în armură ușoară. Mercenarul îi dă o pungă grea și primește un tub sigilat. Sigiliul nu e valah, e un dragon... dar stilizat ciudat. Dăneștii?",
+      "health_change": 0,
+      "reputation_change": 1,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Urmărește mercenarul.",
+        "Interceptează vizitiul.",
+        "Trage cu arbaleta după tub."
+      ],
+      "episode_progress": null
+    },
+    "59d704567e822d8309a19a04ed4eee09bdf122866bac6e1c17f192c5f7df0f4bedf9dd5e5f0f2b23fb8dbe2392147ba7fba96afed2550f286656040712f634b5": {
+      "narrative": "Discuți cu un servitor nemulțumit. Îți spune că stăpânul său, un boier Dănești, a închiriat Pivnița XII pentru \"depozitare\". Știi unde e aia.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi la Pivnița XII.",
+        "Trimite un mesaj lui Vlad.",
+        "Cere mită servitorului."
+      ],
+      "episode_progress": 0.2
+    },
+    "40b8ba683a21a0a845436aaa7d79f385a025a1ab3e0e94c9ab9855d67ef0934715937d7234a9cbe560fe7967f3a0576f00c667c75171eab4cbbfea07acd18283": {
+      "narrative": "Îl urmărești până la o casă dărăpănată care are acces la Pivnițele Saxone. A intrat acolo.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi la Pivnița XII.",
+        "Așteaptă întăriri.",
+        "Intră după el."
+      ],
+      "episode_progress": 0.2
+    },
+    "829e581e4410c5d588b0c15b6b589cd3ebfe9ebcedc485d1796568b3ba83012539b71ce4dcf1b82e50e6193c576043cfbd6791628023487cbef81ff9e87ae7e2": {
+      "narrative": "Trimiți un porumbel. Răspunsul vine rapid: \"Protejează interesele noastre. Investighează Pivnița XII. Ai mână liberă.\"",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi la Pivnița XII.",
+        "Cere ajutor de la Breaslă.",
+        "Ignoră ordinul și mergi la Vlad."
+      ],
+      "episode_progress": 0.2
+    },
+    "8fbad18cf9d0ee6b447975ae42b5149fbd7b9dca999960d2af29752135835cd28f492a3e5970854b496ca5b662c5baac102015014e4f16343e531366b8190af8": {
+      "narrative": "Pivnița e sub o casă negustorească părăsită. Ușa e grea, ferecată. Cheia se potrivește perfect. Mecanismul german clicăie satisfăcător. Dinăuntru se aude o limbă cunoscută: săsească veche.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": "Pivnițele Saxone",
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Intră și ascultă.",
+        "Intră negociind.",
+        "Pregătește o capcană la ieșire."
+      ],
+      "episode_progress": 0.4
+    },
+    "196386e1a0f5253ab21b333c7c79bc857a7c23cbc17cf59c0f64c1b30f3f198a5488c93cb7b6b89365c1962926310e4d8151aafe132f8d3a17e550bee58b51eb": {
+      "narrative": "Acțiunea ta nu a avut efectul scontat. Situația e confuză. Trebuie să iei o decizie clară.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Privește în jur.",
+        "Așteaptă.",
+        "Încearcă altceva."
+      ],
+      "episode_progress": 0.0
+    },
+    "5d90a4e22b0d621baac0156aada5bac5b6a4372bf0c3531b948382a99c7fc2adcb7b584d9370af53b9e6754ccdd1297d6ff7b64195a739c30626ebf722f9b8b5": {
+      "narrative": "Acțiunea ta nu a avut efectul scontat. Situația e confuză. Trebuie să iei o decizie clară.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Privește în jur.",
+        "Așteaptă.",
+        "Încearcă altceva."
+      ],
+      "episode_progress": 0.0
+    },
+    "af9113526e6edabfede49d1ae943e6a1b72ce656fc215032a0ee3aac3311d31c8a8422f01806d5b53a99edde93f7e19d61bf8e490c0282c6caf3961c8310638c": {
+      "narrative": "Sunt trei bărbați. Unul e un trădător din Brașov, Hans. \"Vlad trebuie să cadă. Taxele ne omoară comerțul. Dăneștii au promis scutiri.\" Pe masă e Pecetea Drăculeștilor, furată! O vor folosi pentru a falsifica un ordin de retragere a armatei.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Omoară-l pe Hans (Trădător!).",
+        "Fură Pecetea și lasă-i să vorbească.",
+        "Confruntă-i cu autoritatea Breslei."
+      ],
+      "episode_progress": 0.6
+    },
+    "77d7c04709bdb6fed4209b57edad796a9c1450ba9ffa23679fb52bc205db79298f8c448f861be1df267dee6d7fe106c501627ed7c7fee8a94caef835d2454b89": {
+      "narrative": "Acțiunea ta nu a avut efectul scontat. Situația e confuză. Trebuie să iei o decizie clară.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Privește în jur.",
+        "Așteaptă.",
+        "Încearcă altceva."
+      ],
+      "episode_progress": 0.0
+    },
+    "246c49dc479ad30c0f033dcdb5472c54237eaa4762d37a5cff23c7eb0046c5a2fa58cdb6eaa91de3265e211c600c9b36b6372cb3f8542d59dc1e78d09a8b98cb": {
+      "narrative": "Acțiunea ta nu a avut efectul scontat. Situația e confuză. Trebuie să iei o decizie clară.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Privește în jur.",
+        "Așteaptă.",
+        "Încearcă altceva."
+      ],
+      "episode_progress": 0.0
+    },
+    "b13d49d574e7f0ee2f8d067f2221484948591bcb0d1ee269959f270593504de54430f31a8d64ddd74cd7647363879bab2bded35a2bb184faf4f24e7bf27e5519": {
+      "narrative": "Arbaleta ta nu greșește. Săgeata îl țintuiește pe Hans de masă. Ceilalți doi scot săbiile. \"Spion valah!\" Dar tu ești sas. \"Nu, sunt justiția Brașovului!\"",
+      "health_change": 0,
+      "reputation_change": 5,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Luptă cu cei doi.",
+        "Folosește o bombă fumigenă și ia Pecetea.",
+        "Negociază (Bluf)."
+      ],
+      "episode_progress": 0.7
+    },
+    "22e69d2c7c161a5cf8fa1449eef6b16bfd1d0c4070c277fc9cce807b7bdb219aedbb83a2160e58ada85473b2ba74694e2decdc62fc77776b78251d4d67379141": {
+      "narrative": "Folosești un cârlig și o sfoară fină. Pecetea alunecă de pe masă în mâna ta. Ei continuă să se certe pe împărțirea banilor. Ieși nevăzut.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [
+        {
+          "name": "Pecetea Drăculeștilor",
+          "type": "obiect_important",
+          "value": 0,
+          "quantity": 1,
+          "description": null
+        }
+      ],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Fugi spre ieșire.",
+        "Blochează ușa în urma ta.",
+        "Lasă un mesaj de amenințare."
+      ],
+      "episode_progress": 0.85
+    },
+    "2b4d28f424a4f1e6b3ff89c448bf006cbf6dc3c272e5f5ee927c4e6001daac8f6d5c906f6613d9bd7c54ea70601a0f6283b2861d0ffb4316e2816148db86cbce": {
+      "narrative": "Acțiunea ta nu a avut efectul scontat. Situația e confuză. Trebuie să iei o decizie clară.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Privește în jur.",
+        "Așteaptă.",
+        "Încearcă altceva."
+      ],
+      "episode_progress": 0.0
+    },
+    "fa2adc78ed18b5c8c274d9f6facfac3f69ed8e95abba4dae48f776813d027048d319b8ea82b9075f5b6657f2009659fb28bd864c3211b87ed163bcd6a1aa343b": {
+      "narrative": "Sunt negustori, nu războinici. Îi dezarmezi rapid. Unul fuge, celălalt cere milă. Pecetea e a ta.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [
+        {
+          "name": "Pecetea Drăculeștilor",
+          "type": "obiect_important",
+          "value": 0,
+          "quantity": 1,
+          "description": null
+        }
+      ],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Ia Pecetea și documentele.",
+        "Interoghează prizonierul.",
+        "Execută-l."
+      ],
+      "episode_progress": 0.8
+    },
+    "0947596258706028db629859b8fc7adb55bf43aa6296557c12225eb8d59e2e1c4b17bbfd029fcdd9b0f89d353b90e69191506a51dfc600db05a2ff62f8ebbbff": {
+      "narrative": "Acțiunea ta nu a avut efectul scontat. Situația e confuză. Trebuie să iei o decizie clară.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Privește în jur.",
+        "Așteaptă.",
+        "Încearcă altceva."
+      ],
+      "episode_progress": 0.0
+    },
+    "276c23fd38fb0476d213a58cf46181bcf078c27636e86be6c31566695dc390637fa467d70d0b741903c36a7cc381347c30ca57f5ece69b2910ba3dc317519de5": {
+      "narrative": "Acțiunea ta nu a avut efectul scontat. Situația e confuză. Trebuie să iei o decizie clară.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Privește în jur.",
+        "Așteaptă.",
+        "Încearcă altceva."
+      ],
+      "episode_progress": 0.0
+    },
+    "8a1d5441e37b54e6140c717ddac27b2e12b2273006bcca704dc3c273147ee2d3d851fd7316bdadef92156b13ca3da0c498d29687bb20e4bb4367e702e7d35b53": {
+      "narrative": "Ai totul. Dovada trădării lui Hans și Pecetea lui Vlad. Ieși în noaptea rece. Orașul doarme, neștiind cât de aproape a fost de haos. Dar acum ai o dilemă.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Du Pecetea lui Vlad (Loialitate).",
+        "Du Pecetea la Brașov (Putere pentru Sasi).",
+        "Păstrează Pecetea (Șantaj)."
+      ],
+      "episode_progress": 0.9
+    },
+    "6c54901c4cb79f0c083035defada90d57ebeeefa504fd112883d944646fc04ebce53e45b0fd4040abf7c5f9da429046456831586d0417e51233ab465daee97f7": {
+      "narrative": "Acțiunea ta nu a avut efectul scontat. Situația e confuză. Trebuie să iei o decizie clară.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Privește în jur.",
+        "Așteaptă.",
+        "Încearcă altceva."
+      ],
+      "episode_progress": 0.0
+    },
+    "5912209034330c14982d1d0ad9ded19b08cdce759eef3b84e56ae8298d745e5a30a9f62f438008dd5dfbe7cbec8b48bc342b0c328ca147288dc1725ca0fcb48f": {
+      "narrative": "Acțiunea ta nu a avut efectul scontat. Situația e confuză. Trebuie să iei o decizie clară.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Privește în jur.",
+        "Așteaptă.",
+        "Încearcă altceva."
+      ],
+      "episode_progress": 0.0
+    },
+    "0b4f10c23b1f3d5dbfbb3b19a033957343867cc3bd118d5bbdca6cc41fe7bd131c3cb892a4cade55e92e873ea933feb2daaf3df49408d03f97e622ae3fba278c": {
+      "narrative": "Intri la Curte. Vlad te așteaptă, informat de spionii săi. Pui Pecetea pe masă. \"Un sas loial?\" întreabă el ironic. \"Nu, Măria Ta. Un sas pragmatic. Haosul nu e bun pentru afaceri.\"",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": true,
+      "suggestions": [
+        "Cere privilegii comerciale.",
+        "Cere capul trădătorilor.",
+        "Acceptă aurul."
+      ],
+      "episode_progress": 1.0
+    },
+    "15484fe08aaf21505eaf0529bda91dac2e2cc3804c0c457f87e285d4c00c14fb7c68fa49e28b6d300edc0d74cd88e4164ae25f122baa61eb3acf3bcc72057b64": {
+      "narrative": "Fugi spre munți. Pecetea ajunge la Judele Brașovului. \"Vlad va trebui să negocieze acum,\" zâmbește el. Ai adus o pârghie politică imensă orașului tău. Vlad va fi furios, dar neputincios.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": true,
+      "suggestions": [
+        "Devino consilierul Judelui.",
+        "Cere protecție împotriva lui Vlad."
+      ],
+      "episode_progress": 1.0
+    },
+    "986408759fa85a02172cd3c9fafe7effe40ef2fbc50e637a88c00217536bd039d64b1728ca353071bfe8264a985022f7e7208b47ec428ba5aac1efea66d3ea4e": {
+      "narrative": "Ascunzi Pecetea. Trimiți scrisori anonime ambelor tabere. Aurul curge din ambele părți. Ești cel mai bogat spion din Valahia, dar și cel mai vânat. Jocul abia a început.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 500,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": true,
+      "suggestions": [
+        "Dispari în umbră."
+      ],
+      "episode_progress": 1.0
+    }
+  }
+}

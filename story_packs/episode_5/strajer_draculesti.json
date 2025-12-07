@@ -1,0 +1,124 @@
+{
+  "character_class": "Străjer",
+  "faction": "Drăculești",
+  "episode": 5,
+  "description": "Recompiled Pack Ep 5",
+  "cache_data": {
+    "4c0962d0215602f217b995f160b0e266f6f3e45a38022b6c63067f9354724bdb839f52b677726888a64ccef73e1a3965193fd243534d0f9a207b7eb535e1f4ad": {
+      "narrative": "Tabăra e tensionată. Ostașii își ascut săbiile. Cineva lipsește de la apel.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Caută-l pe cel lipsă.",
+        "Verifică cortul Voievodului.",
+        "Stai de pază."
+      ],
+      "episode_progress": 0.2
+    },
+    "619a94b5e8e86209b40e70e53b5ab83419d5df323565591336ca54eae42eac1ccdbddb99d4c0941aa45a403ab2a9c252d2a8c585cb32573ee9e7a06eff17b83f": {
+      "narrative": "Îl găsești lângă fântână, punând ceva în apă. Otravă!",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Omoară-l pe loc.",
+        "Prinde-l viu.",
+        "Dă alarma."
+      ],
+      "episode_progress": 0.7
+    },
+    "3cf1f19ed0b6e02b88ddf8ce63ee49aed972da9f5c87c835d644c49200d620c3c4cb266f250f09c1dded72f4c0cb0d271b608caac837176e5b85148da213e7af": {
+      "narrative": "Continuând pe acest drum, reușești să avansezi spre obiectivul tău.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi înainte."
+      ],
+      "episode_progress": 0.30000000000000004
+    },
+    "d931973204099c99d215e4a5a82db9530dd749becef168c410e59f337f6c29e1e2fd8747fcf89b9a15d9e26ed596d77587459ff514c5dbf634356492a1eae9a2": {
+      "narrative": "Continuând pe acest drum, reușești să avansezi spre obiectivul tău.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi înainte."
+      ],
+      "episode_progress": 0.30000000000000004
+    },
+    "301be5715684460a0c7b54788cf171f3623b5af401acbb12152b1a25916bf39aded6299dc4b1ff955db335e003d6183be256cb9cf64cb6fa54090ab224b804c7": {
+      "narrative": "O lovitură curată. Ai salvat armata de la otrăvire. Găsești un bilet de la Dănești.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": true,
+      "suggestions": [
+        "Raportează căpitanului."
+      ],
+      "episode_progress": 1.0
+    },
+    "950f61f559f1cdf1753d8f6edb8f8488bffeb320583bf537c419b91ad43c74887d002fcf4a4d633ecd69f62e81e01e3b7896324aac8f1fcf347f4373464148b5": {
+      "narrative": "Continuând pe acest drum, reușești să avansezi spre obiectivul tău.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi înainte."
+      ],
+      "episode_progress": 0.7999999999999999
+    },
+    "e37eb34ef5e0e76ebd7d1b63e6698bbc9efd489c8860df0f7b4ccea030c61af97d2bf4861057eacd3b598aad6466f5b86af2a34d683a5eb74c25598c2625f6b0": {
+      "narrative": "Continuând pe acest drum, reușești să avansezi spre obiectivul tău.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi înainte."
+      ],
+      "episode_progress": 0.7999999999999999
+    }
+  }
+}

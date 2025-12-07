@@ -1,0 +1,47 @@
+{
+  "Caut urme de căruță pe potecă.": {
+    "narrative": "Investighezi zona. Găsești contrabandiștii.",
+    "suggestions": [
+      "Observă.",
+      "Acționează."
+    ],
+    "episode_progress": 0.5,
+    "win_condition": false,
+    "items_gained": [],
+    "gold_change": 0,
+    "health_change": 0,
+    "reputation_change": 0
+  },
+  "Acționează.": {
+    "narrative": "Reușești să iei Condica.",
+    "suggestions": [
+      "Finalizează."
+    ],
+    "episode_progress": 1.0,
+    "win_condition": true,
+    "items_gained": [],
+    "gold_change": 0,
+    "health_change": 0,
+    "reputation_change": 0
+  },
+  "Observă.": {
+    "narrative": "Continuând pe acest drum, reușești să avansezi spre obiectivul tău.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 0.6
+  },
+  "Mergi înainte.": {
+    "narrative": "Ai ajuns la capătul acestei ramuri a destinului. Misiunea continuă.",
+    "suggestions": [],
+    "episode_progress": 1.0,
+    "win_condition": true
+  },
+  "Finalizează.": {
+    "narrative": "Continuând pe acest drum, reușești să avansezi spre obiectivul tău.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 1.1
+  }
+}

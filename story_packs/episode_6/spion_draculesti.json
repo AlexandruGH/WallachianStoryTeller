@@ -1,0 +1,74 @@
+{
+  "character_class": "Spion",
+  "faction": "Drăculești",
+  "episode": 6,
+  "description": "Recompiled Pack Ep 6",
+  "cache_data": {
+    "c8c137f7a69027dabc0e92db73e66779c28289bcd4b7f7b9f96e6b9c7465a6265e333beccbf78890acb39cf76815f7e033cb730c7fdbb0e15d9a6c71e967d82f": {
+      "narrative": "Găsești pasajul secret al zidarilor.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Dezactivează capcanele.",
+        "Mergi prin întuneric.",
+        "Ascultă paznicii."
+      ],
+      "episode_progress": 0.3
+    },
+    "5f99b82224748c356b8a3899415b91ec61d7ce7e52bfecc75f7d1360d4e649f155b4957e70a04c08516c43b327b96b632f8fd4b416fa00346ba894bbaeafc765": {
+      "narrative": "Ajungi la seif. Îl deschizi.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": true,
+      "suggestions": [
+        "Fură Fragmentul."
+      ],
+      "episode_progress": 1.0
+    },
+    "292fbfa32f4296c4cb6b896c23938eec7916cb1cdffd4e89b82940c5fc543c1a29ffed18636ff78d5781d2b15738c8d4b417bc1d56da124aa410ed5dabc7cc68": {
+      "narrative": "Acțiunea continuă conform planului tău.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi mai departe."
+      ],
+      "episode_progress": 0.4
+    },
+    "6619393faef9bf7bc55e4029d77db6a25077f172ea2275069c0fff71acc623835b5b699540018c5fab63aa6def078436f670c690a09fcc27a27b908d229e1f8e": {
+      "narrative": "Acțiunea continuă conform planului tău.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi mai departe."
+      ],
+      "episode_progress": 0.4
+    }
+  }
+}

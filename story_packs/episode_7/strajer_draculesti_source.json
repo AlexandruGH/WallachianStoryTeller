@@ -1,0 +1,75 @@
+{
+  "Prezint dovezile în fața tuturor.": {
+    "narrative": "Sala e plină. Solul maghiar te privește sceptic. Boierul trădător transpiră.",
+    "suggestions": [
+      "Prezintă Condica (Ep3).",
+      "Prezintă Scrisoarea (Ep2).",
+      "Acuză direct."
+    ],
+    "episode_progress": 0.4,
+    "win_condition": false,
+    "items_gained": [],
+    "gold_change": 0,
+    "health_change": 0,
+    "reputation_change": 0
+  },
+  "Prezintă Condica (Ep3).": {
+    "narrative": "Solul citește. \"Semnătura Dăneștilor... deci ei sabotau comerțul!\" Boierul trădător încearcă să fugă.",
+    "suggestions": [
+      "Prinde-l!",
+      "Lasă gărzile să-l ia."
+    ],
+    "episode_progress": 0.9,
+    "win_condition": false,
+    "items_gained": [],
+    "gold_change": 0,
+    "health_change": 0,
+    "reputation_change": 0
+  },
+  "Prinde-l!": {
+    "narrative": "Îl imobilizezi. Sala aplaudă. Ai câștigat susținerea politică.",
+    "suggestions": [
+      "Sărbătorește."
+    ],
+    "episode_progress": 1.0,
+    "win_condition": true,
+    "items_gained": [],
+    "gold_change": 0,
+    "health_change": 0,
+    "reputation_change": 0
+  },
+  "Prezintă Scrisoarea (Ep2).": {
+    "narrative": "Continuând pe acest drum, reușești să avansezi spre obiectivul tău.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 0.5
+  },
+  "Mergi înainte.": {
+    "narrative": "Ai ajuns la capătul acestei ramuri a destinului. Misiunea continuă.",
+    "suggestions": [],
+    "episode_progress": 1.0,
+    "win_condition": true
+  },
+  "Acuză direct.": {
+    "narrative": "Continuând pe acest drum, reușești să avansezi spre obiectivul tău.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 0.5
+  },
+  "Lasă gărzile să-l ia.": {
+    "narrative": "Continuând pe acest drum, reușești să avansezi spre obiectivul tău.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 1.0
+  },
+  "Sărbătorește.": {
+    "narrative": "Continuând pe acest drum, reușești să avansezi spre obiectivul tău.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 1.1
+  }
+}

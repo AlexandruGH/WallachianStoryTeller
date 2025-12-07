@@ -1,0 +1,67 @@
+{
+  "Îi prezint Pecetea lui Vlad.": {
+    "narrative": "Vlad unește fragmentele. Pecetea e completă.",
+    "suggestions": [
+      "Cere moartea trădătorilor.",
+      "Cere iertare (pentru unitate).",
+      "Taci și așteaptă."
+    ],
+    "episode_progress": 0.3,
+    "win_condition": false,
+    "items_gained": [],
+    "gold_change": 0,
+    "health_change": 0,
+    "reputation_change": 0
+  },
+  "Cere moartea trădătorilor.": {
+    "narrative": "Vlad aprobă. \"Vor fi trași în țeapă.\" Tu ești mâna dreaptă.",
+    "suggestions": [
+      "Final Drăculești: Justițiarul."
+    ],
+    "episode_progress": 1.0,
+    "win_condition": true,
+    "items_gained": [],
+    "gold_change": 0,
+    "health_change": 0,
+    "reputation_change": 0
+  },
+  "Cere iertare (pentru unitate).": {
+    "narrative": "Vlad se încruntă, dar acceptă. \"Să lupte cu turcii.\" Ești un unificator.",
+    "suggestions": [
+      "Final Drăculești: Diplomatul."
+    ],
+    "episode_progress": 1.0,
+    "win_condition": true,
+    "items_gained": [],
+    "gold_change": 0,
+    "health_change": 0,
+    "reputation_change": 0
+  },
+  "Taci și așteaptă.": {
+    "narrative": "Acțiunea continuă conform planului tău.",
+    "suggestions": [
+      "Mergi mai departe."
+    ],
+    "episode_progress": 0.4
+  },
+  "Mergi mai departe.": {
+    "narrative": "Te apropii de final.",
+    "suggestions": [],
+    "episode_progress": 1.0,
+    "win_condition": true
+  },
+  "Final Drăculești: Justițiarul.": {
+    "narrative": "Acțiunea continuă conform planului tău.",
+    "suggestions": [
+      "Mergi mai departe."
+    ],
+    "episode_progress": 1.1
+  },
+  "Final Drăculești: Diplomatul.": {
+    "narrative": "Acțiunea continuă conform planului tău.",
+    "suggestions": [
+      "Mergi mai departe."
+    ],
+    "episode_progress": 1.1
+  }
+}

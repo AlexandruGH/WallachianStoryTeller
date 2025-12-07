@@ -1,0 +1,74 @@
+{
+  "character_class": "Negustor",
+  "faction": "Drăculești",
+  "episode": 3,
+  "description": "Recompiled Pack Ep 3",
+  "cache_data": {
+    "74f44e9eed3e73f4df563cccad87add33bfa538aebaf33dd0b8a4e8c3a0e5e254caeab8eaac2c782248d8385c1280130e89424d5393e2a902f95017b7932e69d": {
+      "narrative": "Te arăți cu mâinile ridicate. \"Cumpăr tot ce aveți.\"",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Negociază prețul.",
+        "Oferă un parteneriat fals.",
+        "Mituieste șeful."
+      ],
+      "episode_progress": 0.3
+    },
+    "7823cf2969d9e9acbeef6cf02e3a86343c155fc901a06007e953bfef08999097c2dd84c186c58718803e4561d5ac8b8ed5ab5a8fce55ec0bc42c34b28a216c15": {
+      "narrative": "\"Aurul tău e bun,\" zice șeful. Îți dă Condica ca garanție.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": -50,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": true,
+      "suggestions": [
+        "Ia Condica și pleacă."
+      ],
+      "episode_progress": 1.0
+    },
+    "076b51ed95f875a4c2448af39dc4b2da2cb1d1282e2476c1be9bbcecdbe4dd79ffa12a8d9dace4b46c495ec38d1922255c39ed7f88ba3690b5bb9e52ffae5b83": {
+      "narrative": "Acțiunea continuă conform planului tău.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi mai departe."
+      ],
+      "episode_progress": 0.4
+    },
+    "ddda6733cd79580729fa53ccb126dd6c2c6b149122202a64cdef87b1b6dd1e3292a676ee7bd97e09a7ca5e240a4ba7a811fffb763a332ae6aeadc0543fd4dee2": {
+      "narrative": "Acțiunea continuă conform planului tău.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi mai departe."
+      ],
+      "episode_progress": 0.4
+    }
+  }
+}

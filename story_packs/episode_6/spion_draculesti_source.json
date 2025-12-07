@@ -1,0 +1,55 @@
+{
+  "Aprind o torță și intru în tunel.": {
+    "narrative": "Găsești pasajul secret al zidarilor.",
+    "suggestions": [
+      "Dezactivează capcanele.",
+      "Mergi prin întuneric.",
+      "Ascultă paznicii."
+    ],
+    "episode_progress": 0.3,
+    "win_condition": false,
+    "items_gained": [],
+    "gold_change": 0,
+    "health_change": 0,
+    "reputation_change": 0
+  },
+  "Dezactivează capcanele.": {
+    "narrative": "Ajungi la seif. Îl deschizi.",
+    "suggestions": [
+      "Fură Fragmentul."
+    ],
+    "episode_progress": 1.0,
+    "win_condition": true,
+    "items_gained": [],
+    "gold_change": 0,
+    "health_change": 0,
+    "reputation_change": 0
+  },
+  "Mergi prin întuneric.": {
+    "narrative": "Acțiunea continuă conform planului tău.",
+    "suggestions": [
+      "Mergi mai departe."
+    ],
+    "episode_progress": 0.4
+  },
+  "Mergi mai departe.": {
+    "narrative": "Te apropii de final.",
+    "suggestions": [],
+    "episode_progress": 1.0,
+    "win_condition": true
+  },
+  "Ascultă paznicii.": {
+    "narrative": "Acțiunea continuă conform planului tău.",
+    "suggestions": [
+      "Mergi mai departe."
+    ],
+    "episode_progress": 0.4
+  },
+  "Fură Fragmentul.": {
+    "narrative": "Acțiunea continuă conform planului tău.",
+    "suggestions": [
+      "Mergi mai departe."
+    ],
+    "episode_progress": 1.1
+  }
+}

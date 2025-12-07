@@ -1,0 +1,348 @@
+{
+  "character_class": "Aventurier",
+  "faction": "Drăculești",
+  "episode": 1,
+  "description": "Recompiled Pack Ep 1",
+  "cache_data": {
+    "ecd7bb0fd99c95d41459a0cb81a51bf92f9a6dbe54c2fbd386c3bf995c9e704ec7d609a63e828ace1e7c0cc2e600e5f45beb3c955581883009d8e589eb91878e": {
+      "narrative": "Te amesteci printre târgoveți. Oamenii sunt speriați. \"Au venit iar Dăneștii,\" șoptește o bătrână. \"Am văzut blazoane ascunse sub mantii. Vor să-l taie pe Vodă cum l-au tăiat pe tatăl său!\" Sângele îți clocotește în vene.",
+      "health_change": 0,
+      "reputation_change": 1,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Caută acești 'Dănești'.",
+        "Întreabă unde se ascund.",
+        "Strânge câțiva patrioți (Charisma)."
+      ],
+      "episode_progress": null
+    },
+    "3854a1744429b69728375e1a222f679088eb0c67960e3d47049e335b769b64f566850406cd643941df02be675872fe476d9550aff599736fbedbcdb48ef1593a": {
+      "narrative": "Te apropii, cu mâna pe mânerul sabiei. Nu ești străjer să ceri socoteală, dar ești un Drăculești. Ceva pute a trădare. Vizitiul are o cicatrice pe obraz și o privire sfidătoare. Când te vede, scuipă grosolan. \"Drum bun, călătorule. Nu-i loc de gură-cască aici.\"",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Provoacă-l (Intimidare).",
+        "Prefă-te beat și împiedică-te de car.",
+        "Studiază roțile (Urme de noroi roșu)."
+      ],
+      "episode_progress": null
+    },
+    "0b4b12b37997c9815641d6c3d596736d195506d7a36852e55a675ada832a2cb2b6a62605bf5582d04603c020c86e2564f59bb37feec55c2eaa10f07b3d4f6bf1": {
+      "narrative": "De pe zidul unei biserici, vezi totul. Vizitiul primește o pungă de la un boier îmbrăcat în haine de vânătoare. Boierul are un inel masiv cu cap de lup... stema Dăneștilor! Trădătorii sunt chiar în inima cetății.",
+      "health_change": 0,
+      "reputation_change": 1,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Sari și atacă-l pe boier.",
+        "Urmărește boierul.",
+        "Memorează fața boierului."
+      ],
+      "episode_progress": null
+    },
+    "e7553d0950e466af291642559c605b887324f4a16cfc79f09cd394e67c4a51e2c2b30269d4355d23bce84cc2714974ea4603d5bc98ebb0f2bdc12155575ac3f1": {
+      "narrative": "Întrebi în stânga și în dreapta. Un cerșetor îți spune că i-a văzut plecând spre Mănăstirea Dealu. \"Au arme ascunse,\" spune el. Se pregătește ceva rău.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Pleacă imediat spre Mănăstirea Dealu.",
+        "Anunță gărzile (dar poate nu te cred).",
+        "Mergi singur să-i oprești."
+      ],
+      "episode_progress": 0.2
+    },
+    "e280a6e69c341995f8fa26217bb6d6d1f18d20a39d24b1fcaa6330f930e807f4b4f6ec791f4141c4e2b6ee980eec0f6078bb23ecfb6f804dfd5762265af82af7": {
+      "narrative": "Lumea vorbește de Mănăstirea Dealu. Se pare că au făcut tabără acolo, profanând locul. E clar unde trebuie să mergi.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Pleacă imediat spre Mănăstirea Dealu.",
+        "Cere un cal și pornește.",
+        "Roagă-te înainte de luptă."
+      ],
+      "episode_progress": 0.2
+    },
+    "0d62fd7c201a9287e64694c34359d4ff18c58d7ef0807893fbeef40efa858facfc63aa1ac6ac0c60912daa3bb95a97d8363431b3618f75b808272b0b01b0a50e": {
+      "narrative": "\"Fraților! Dăneștii vor să ne vândă țara!\" Oamenii se strâng. Cu o mică ceată după tine, afli că trădătorii sunt la Mănăstirea Dealu.",
+      "health_change": 0,
+      "reputation_change": 2,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Pleacă imediat spre Mănăstirea Dealu.",
+        "Înmarchează-i pe voluntari.",
+        "Trimite-i înainte ca iscoade."
+      ],
+      "episode_progress": 0.2
+    },
+    "a39adcf45b8d6b80b9ccc1099b757fa580dc22e22f3fbda313798a67bc9d72b820fe2575b844c1863f38f35af2c48fcd296459c3fec523a8b4976c424693ee26": {
+      "narrative": "Ajungi la mănăstire. Liniște suspectă. Călugării lipsesc. În curte, soldați cu blazoane străine (Dănești) descarcă lăzi. Pregătesc o ambuscadă pentru Vlad, care vine mâine la rugăciune!",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": "Mănăstirea Dealu",
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Atacă comandantul.",
+        "Dă foc la depozitul de arme.",
+        "Furișează-te să afli planul exact."
+      ],
+      "episode_progress": 0.4
+    },
+    "76125c0ebf8eebbe8c38f9da8a6691ef2c445915bcf66dfee3b78a6231912854aef2a45f18836467d2e94eaff925553b89736b129dcc64c1e0df7535030b816e": {
+      "narrative": "Cuvintele tale sunt bine alese. Interlocutorul te privește cu respect (sau frică). Îți spune ce vrei să auzi, sperând să scape de tine.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mulțumește și pleacă.",
+        "Cere mai multe detalii.",
+        "Amenință-l să tacă."
+      ],
+      "episode_progress": 0.0
+    },
+    "015cdb5f88807f90d0f0856da375b831e57fd2d31b7a7b00e5a90d6b007d07617469fd2e7732541b368a3b61e657158cacff82d3e235fc00495c0bcf8f3d88c1": {
+      "narrative": "Drumul este greu, dar ești obișnuit cu efortul. Peisajul se schimbă. Ajungi într-un loc nou, plin de posibilități... și pericole.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Investighează zona.",
+        "Ascultă zgomotele.",
+        "Verifică harta."
+      ],
+      "episode_progress": 0.0
+    },
+    "49e697d9d507a151487759f154b21a9a954cfc8622ecc4faaf0c9cc33f54c04e3dd6d6e401de5fb48c58a4502f75e0c6ed5861509affda70a78e4a3d8dffb057": {
+      "narrative": "Te repezi ca un lup. Comandantul e surprins, dar e un spadasin bun. \"Un vierme Drăculești!\" rânjește el. Lupta e grea. Soldații se apropie.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Luptă defensiv până vin ajutoare (dacă ai chemat).",
+        "Risca totul pe o lovitură în inimă.",
+        "Aruncă praf în ochi și fugi în criptă."
+      ],
+      "episode_progress": 0.6
+    },
+    "23141314fe1524b2c7714aa87d2bbc38c02f833520d46d25e3c00120377210e1858886a71cc423fac743293f92ce85153734abeeae01b0007296a86eab916e88": {
+      "narrative": "O torță aruncată în butoiul cu praf de pușcă. BOOM! Explozia zguduie dealul. Soldații sunt aruncați la pământ. Comandantul, ars și furios, iese din flăcări cu un tub de pergament în mână - ordinele regale!",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Luptă cu el pentru ordine.",
+        "Trage cu arcul în el.",
+        "Râzi și dispari în fum."
+      ],
+      "episode_progress": 0.7
+    },
+    "fad2de47522cca0f5e1bf69e54cdab0931c3221f2dd7a86acdf598482b95c915d9e8178d6492bf2c223bfab2e0b8a9ca43d446bfbd7640ef44b54bb390fb3e9e": {
+      "narrative": "Evenimentele se precipită. Ești în mijlocul acțiunii. Nu e timp de ezitare. Instinctul îți spune să continui.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Continuă misiunea.",
+        "Ia o pauză.",
+        "Verifică echipamentul."
+      ],
+      "episode_progress": 0.0
+    },
+    "835385f020b56091a487f1885db4fd519730eafd0539164f42c5de369527e2607d91299cf10a40912344101e018c9d9f31dbcd9f399e1d6337d62839204d49d4": {
+      "narrative": "Te ferești de o lovitură mortală și ripostezi decisiv. Lupta este scurtă, dar brutală. Îți ștergi lama de sânge și privești în jur.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Recuperează suflul.",
+        "Curăță sabia.",
+        "Pregătește-te de următoarea luptă."
+      ],
+      "episode_progress": 0.0
+    },
+    "208a68cbad502d2c18ece53d8d96d74896e187e323594f62163481b522f78e6e943d0ac65243a22e8b01c10bba175fa149e8e5d858acc00292dedfa0d090c7a8": {
+      "narrative": "Te arunci înainte, ignorând apărarea. Sabia lui îți taie obrazul, dar a ta îi străpunge pieptul. Cade. Soldații încremenesc. Ai ucis liderul. Pe pieptul lui e un tub cu Pecetea furată!",
+      "health_change": -15,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [
+        {
+          "name": "Pecetea Drăculeștilor",
+          "type": "obiect_important",
+          "value": 0,
+          "quantity": 1,
+          "description": null
+        }
+      ],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Ia Pecetea și fugi.",
+        "Provocă-i pe soldați: \"Cine urmează?\"",
+        "Taie capul comandantului."
+      ],
+      "episode_progress": 0.8
+    },
+    "00e28f11e3d9fe45f05fae53b4ff421de0e82847d371032f6f68a780b508d0f85cf2ba54d0983bb2ee407458b04779598de2f26a54cfb635422d93055d88d89c": {
+      "narrative": "Alergi până simți gust de sânge în gură. Ai lăsat pericolul în urmă. Acum ești într-o zonă liniștită, cel puțin aparent.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Odihnește-te puțin.",
+        "Pregătește armele.",
+        "Caută urme."
+      ],
+      "episode_progress": 0.0
+    },
+    "37bb20152e611af94260774e08b1321db1fdb76a88cc3533710bb17327082db9a9554c13e8912b98eb7427b3665539999dfec00e050cbc149b6991ed74b79fd8": {
+      "narrative": "Acțiunea continuă. Ești pe drumul cel bun.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi înainte."
+      ],
+      "episode_progress": 0.1
+    },
+    "9da197837f60e214968ffc4416f26b5d38e2158436969557f0d1a4f09e8d715f071191d278dc257c462e08ad505268e4e21c24807a4915249df83573c7ca060f": {
+      "narrative": "Acțiunea continuă. Ești pe drumul cel bun.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi înainte."
+      ],
+      "episode_progress": 0.1
+    },
+    "ec1f7d001501487ffe583da95bcecc406a01d4ed1030d8b2632c7c908a4df33700b1333fa6931fe6ba32e7fb151c9025dc84580875ddea74adcfef4caf8c0f0e": {
+      "narrative": "Acțiunea continuă. Ești pe drumul cel bun.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi înainte."
+      ],
+      "episode_progress": 0.1
+    },
+    "32c6c46613d90754edd0ec1947b6f12e99f08ec954cba76b864eb1aadf8ba131a515616b59c81b843740bf509e4724b4d3b5c4bae8bc7e3741eb498a68d9c1b8": {
+      "narrative": "Te apropii de deznodământ.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": true,
+      "suggestions": [],
+      "episode_progress": 1.0
+    }
+  }
+}

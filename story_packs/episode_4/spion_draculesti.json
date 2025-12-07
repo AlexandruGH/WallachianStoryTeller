@@ -1,0 +1,88 @@
+{
+  "character_class": "Spion",
+  "faction": "Drăculești",
+  "episode": 4,
+  "description": "Recompiled Pack Ep 4",
+  "cache_data": {
+    "5e6b14cbfabcb41707e0f502553e25ed36b156058b5031414591e51e143740a734c030602fcb964628c7b8df86f6a51f12683dd79b5b3e498a7b4c46c563d329": {
+      "narrative": "Baba știe cine ești. \"Secretele tale nu sunt sigure aici.\" Trebuie să găsești simbolurile.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Caută în colibă.",
+        "Urmărește ritualul.",
+        "Fură cartea babei."
+      ],
+      "episode_progress": 0.3
+    },
+    "b52f315ebc705b35cdc745ddcb90d9477630d148473a4139ab9aed112ccdca73cf0cf72aead58b21eca2f6fbd65a791f279bb4f3211d7e192452d7c8292edc51": {
+      "narrative": "Acțiunea continuă conform planului tău.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi mai departe."
+      ],
+      "episode_progress": 0.4
+    },
+    "8c076ced9688d6d33468c26ae19f5d2584d7946bbd0b111ccb2ce275a6e7a7aa032473f5247c9118e85e24d3eb77b4e3fc244b2164f8ae077bb14d1a1dd65de3": {
+      "narrative": "Acțiunea continuă conform planului tău.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi mai departe."
+      ],
+      "episode_progress": 0.4
+    },
+    "6420e8ba43a3fbf11efd8b87dd1db2fc2c1d3a928b6a4c7b063d97365bae99185ed00f56b8ec50d11260ea3fd8e2cfc3f294b8a879283e4cc2f60ae423c71e72": {
+      "narrative": "Găsești pagina cu cifrul sigiliului.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": true,
+      "suggestions": [
+        "Copiază simbolurile."
+      ],
+      "episode_progress": 1.0
+    },
+    "587672922ef66aa22688ba1c6cd15a516d0402494db27a7c7cb5a8d1f59f6e3f389935a4448145c2c9cbdcc84eec50479429ae1440e6eda4c911d1335884df07": {
+      "narrative": "Te apropii de final.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": true,
+      "suggestions": [],
+      "episode_progress": 1.0
+    }
+  }
+}

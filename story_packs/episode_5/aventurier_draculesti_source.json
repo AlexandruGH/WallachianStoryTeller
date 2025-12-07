@@ -1,0 +1,75 @@
+{
+  "Patrulez prin tabără.": {
+    "narrative": "Găsești urme de pași străini lângă cortul Căpitanului.",
+    "suggestions": [
+      "Urmărește urmele.",
+      "Pândește cortul.",
+      "Alertează gărzile."
+    ],
+    "episode_progress": 0.3,
+    "win_condition": false,
+    "items_gained": [],
+    "gold_change": 0,
+    "health_change": 0,
+    "reputation_change": 0
+  },
+  "Pândește cortul.": {
+    "narrative": "Un asasin sare! Îl blochezi în ultima secundă.",
+    "suggestions": [
+      "Duel pe viață și pe moarte.",
+      "Prinde-l viu."
+    ],
+    "episode_progress": 0.8,
+    "win_condition": false,
+    "items_gained": [],
+    "gold_change": 0,
+    "health_change": 0,
+    "reputation_change": 0
+  },
+  "Duel pe viață și pe moarte.": {
+    "narrative": "Îl învingi. Vlad te laudă.",
+    "suggestions": [
+      "Primește onoarea."
+    ],
+    "episode_progress": 1.0,
+    "win_condition": true,
+    "items_gained": [],
+    "gold_change": 0,
+    "health_change": 0,
+    "reputation_change": 0
+  },
+  "Urmărește urmele.": {
+    "narrative": "Acțiunea continuă conform planului tău.",
+    "suggestions": [
+      "Mergi mai departe."
+    ],
+    "episode_progress": 0.4
+  },
+  "Mergi mai departe.": {
+    "narrative": "Te apropii de final.",
+    "suggestions": [],
+    "episode_progress": 1.0,
+    "win_condition": true
+  },
+  "Alertează gărzile.": {
+    "narrative": "Acțiunea continuă conform planului tău.",
+    "suggestions": [
+      "Mergi mai departe."
+    ],
+    "episode_progress": 0.4
+  },
+  "Prinde-l viu.": {
+    "narrative": "Acțiunea continuă conform planului tău.",
+    "suggestions": [
+      "Mergi mai departe."
+    ],
+    "episode_progress": 0.9
+  },
+  "Primește onoarea.": {
+    "narrative": "Acțiunea continuă conform planului tău.",
+    "suggestions": [
+      "Mergi mai departe."
+    ],
+    "episode_progress": 1.1
+  }
+}

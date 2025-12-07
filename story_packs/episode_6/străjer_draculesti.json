@@ -1,0 +1,74 @@
+{
+  "character_class": "Străjer",
+  "faction": "Drăculești",
+  "episode": 6,
+  "description": "Auto-Generated Ep 6",
+  "cache_data": {
+    "290bc7875d0968a98f8ccc26170ea8cb1b601c88f02d60577661f6279508bbbcb66c02ce1fbfc0f844546c17dea2b15c592a3df917adfa3f64e8deaf95d9fc2b": {
+      "narrative": "Preiei comanda gărzilor loiale. \"Trădătorii să se predea!\"",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Asalt frontal.",
+        "Negociere armată.",
+        "Blocadă."
+      ],
+      "episode_progress": 0.3
+    },
+    "6e5fe15344f198c654aad210507a3cb2ba8dfd1e2387b8da43bb3b3b4fc9c4fc3377fe0a328c8160c3133e8421a77d3d1ac6023c91745a2927f9e4e5c7f46ef8": {
+      "narrative": "Gărzile te urmează. Îi copleșiți pe rebeli.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": true,
+      "suggestions": [
+        "Recuperează Fragmentul."
+      ],
+      "episode_progress": 1.0
+    },
+    "d314af158206eb8dd36a61f94f54475d8dc2ffa8d2e3521d52e7be6c2470244345a14b26ca8e5f3ee38bcf32892fd2bc4e6d1d1e447dd1415815e48c4261e505": {
+      "narrative": "Acțiunea continuă conform planului tău.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi mai departe."
+      ],
+      "episode_progress": 0.4
+    },
+    "bff0b29e44d2ced4ee605b2eb1e0158cd02c8fc0dfdec9a029e7edde04c7ee05c637eba3b7333e79704622237675125b92ba5daccb5176ab5a96ee670b7ccb35": {
+      "narrative": "Acțiunea continuă conform planului tău.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi mai departe."
+      ],
+      "episode_progress": 0.4
+    }
+  }
+}

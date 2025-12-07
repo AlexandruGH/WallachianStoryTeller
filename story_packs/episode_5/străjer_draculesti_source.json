@@ -1,0 +1,55 @@
+{
+  "Patrulez prin tabără.": {
+    "narrative": "Ești de gardă la cortul lui Vlad. Cineva nu știe parola.",
+    "suggestions": [
+      "Somație!",
+      "Atacă direct.",
+      "Dă alarma."
+    ],
+    "episode_progress": 0.3,
+    "win_condition": false,
+    "items_gained": [],
+    "gold_change": 0,
+    "health_change": 0,
+    "reputation_change": 0
+  },
+  "Somație!": {
+    "narrative": "Intrusul atacă. Îl dobori cu sulița. Era asasinul.",
+    "suggestions": [
+      "Raportează."
+    ],
+    "episode_progress": 1.0,
+    "win_condition": true,
+    "items_gained": [],
+    "gold_change": 0,
+    "health_change": 0,
+    "reputation_change": 0
+  },
+  "Atacă direct.": {
+    "narrative": "Acțiunea continuă conform planului tău.",
+    "suggestions": [
+      "Mergi mai departe."
+    ],
+    "episode_progress": 0.4
+  },
+  "Mergi mai departe.": {
+    "narrative": "Te apropii de final.",
+    "suggestions": [],
+    "episode_progress": 1.0,
+    "win_condition": true
+  },
+  "Dă alarma.": {
+    "narrative": "Acțiunea continuă conform planului tău.",
+    "suggestions": [
+      "Mergi mai departe."
+    ],
+    "episode_progress": 0.4
+  },
+  "Raportează.": {
+    "narrative": "Acțiunea continuă conform planului tău.",
+    "suggestions": [
+      "Mergi mai departe."
+    ],
+    "episode_progress": 1.1
+  }
+}

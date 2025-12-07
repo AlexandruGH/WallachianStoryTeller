@@ -1,0 +1,125 @@
+{
+  "character_class": "Străjer",
+  "faction": "Drăculești",
+  "episode": 4,
+  "description": "Recompiled Pack Ep 4",
+  "cache_data": {
+    "5e6b14cbfabcb41707e0f502553e25ed36b156058b5031414591e51e143740a734c030602fcb964628c7b8df86f6a51f12683dd79b5b3e498a7b4c46c563d329": {
+      "narrative": "Baba Dochia stă pe prispă. \"Ai venit după adevăr, maică?\" Ochii ei sunt albi.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Cer descifrarea fragmentului.",
+        "Îi ofer un dar.",
+        "O ameninț."
+      ],
+      "episode_progress": 0.2
+    },
+    "04e0b04da17a269d03ada7f457c6cf66949a35abcc16f5f55b99266169a6b2a0be4a00f7fd9c39f72da1ae44db591433bd98ac7641409ee30e51c643dfe28c26": {
+      "narrative": "\"Adevărul costă. Rezolvă ghicitoarea: Ce trece prin apă și nu se udă?\"",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Umbra.",
+        "Lumina.",
+        "Sunetul."
+      ],
+      "episode_progress": 0.5
+    },
+    "8414ec3729ecbe27584c3f5659745c972f9edde49c534ab62e75bf93a3992dc3a830836870cedfc1c7356665073e670ac758eecfe67994ce50f2596638c392ea": {
+      "narrative": "Continuând pe acest drum, reușești să avansezi spre obiectivul tău.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi înainte."
+      ],
+      "episode_progress": 0.30000000000000004
+    },
+    "fccdde0cffbeb61f6eb8916dfe5180d9976a9f8f72716bb640b5edf98368d290a2ecd5804b55a66200a1f014b8f1856ae020a6bf45fa76cdcc52532011c7eed5": {
+      "narrative": "Continuând pe acest drum, reușești să avansezi spre obiectivul tău.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi înainte."
+      ],
+      "episode_progress": 0.30000000000000004
+    },
+    "a1b53449cf4940a24c271df13ce806057cd6347284d381ab3fb0fb17a5884328bb7df0b2697cbbf4e672b5385cfef9ba23a3a7b2d9ee7399da38fb64d7676fb4": {
+      "narrative": "\"Corect. Fragmentul vorbește despre o trădare la Curte.\" Îți dă traducerea.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": true,
+      "suggestions": [
+        "Mulțumește și pleacă."
+      ],
+      "episode_progress": 1.0
+    },
+    "cb5d41de6720572a3c6a9880fb8a4fc852ed2fb6f8795a13656a43b6cfb31dab62a7af9106cdb55570117ee9d87a8f3fd64d6a1500889b00fdaf70079935c7f3": {
+      "narrative": "\"Și ea, dar nu. Mai încearcă.\"",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Umbra.",
+        "Sunetul."
+      ],
+      "episode_progress": 0.5
+    },
+    "55e6905aecc84ac588c9a5fab4361f637b59193642cc6a8b1680c440e8ea18690e56f1e18144d751afc75125757fab5fb6bac2a23704850690daefc3fb8dab97": {
+      "narrative": "Continuând pe acest drum, reușești să avansezi spre obiectivul tău.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi înainte."
+      ],
+      "episode_progress": 0.6
+    }
+  }
+}

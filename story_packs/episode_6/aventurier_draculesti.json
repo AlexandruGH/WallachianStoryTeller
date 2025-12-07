@@ -1,0 +1,88 @@
+{
+  "character_class": "Aventurier",
+  "faction": "Drăculești",
+  "episode": 6,
+  "description": "Recompiled Pack Ep 6",
+  "cache_data": {
+    "c8c137f7a69027dabc0e92db73e66779c28289bcd4b7f7b9f96e6b9c7465a6265e333beccbf78890acb39cf76815f7e033cb730c7fdbb0e15d9a6c71e967d82f": {
+      "narrative": "Cobori în rapel pe zidurile Poenariului. Ajungi la fereastra paznicului.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Intră prin geam.",
+        "Coboară în temniță.",
+        "Luptă cu paznicul."
+      ],
+      "episode_progress": 0.3
+    },
+    "2a0d2514431ea21343cbb4ee0c4f0d7cd99a9296d9521d31b27a0f72e0ef2db61c3759eb30fb7805114842a833167b416450e9b649f3ca7d47b292b3b36d23f0": {
+      "narrative": "Acțiunea continuă conform planului tău.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi mai departe."
+      ],
+      "episode_progress": 0.4
+    },
+    "a80f73d51bcdf3bdada8b0dc07b25764dc55a998d03903274822b08ece9065fa6f570eea6fcda43040027b5e8a6660431791c989085844102aa77afa1d718a5b": {
+      "narrative": "Acțiunea continuă conform planului tău.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi mai departe."
+      ],
+      "episode_progress": 0.4
+    },
+    "ff08dd65865d36815752c94930d52c01d6e21d0253beceb4950e8b28ed672ab7e07cfd45b372c868dff61061a1be890166b56accf202842572cd2cd0bfda1c89": {
+      "narrative": "Paznicul e puternic, dar tu ești rapid. Îl învingi.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": true,
+      "suggestions": [
+        "Ia Fragmentul Principal."
+      ],
+      "episode_progress": 1.0
+    },
+    "0abf151a2ee3b2a2d75b1c80017de1fc23190ee3904a17c2f99cf00daeee845496c6102dba6655183e89dee885f61993cbd1a487a868f20f521a0b1764d53bbe": {
+      "narrative": "Te apropii de final.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": true,
+      "suggestions": [],
+      "episode_progress": 1.0
+    }
+  }
+}

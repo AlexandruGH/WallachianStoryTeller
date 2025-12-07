@@ -1,0 +1,451 @@
+{
+  "character_class": "Spion",
+  "faction": "Dănești",
+  "episode": 1,
+  "description": "Recompiled Pack Ep 1",
+  "cache_data": {
+    "ecd7bb0fd99c95d41459a0cb81a51bf92f9a6dbe54c2fbd386c3bf995c9e704ec7d609a63e828ace1e7c0cc2e600e5f45beb3c955581883009d8e589eb91878e": {
+      "narrative": "Radu Șchiopul, vizitiul, pare un om simplu pentru alții, dar tu știi că lucrează pentru Dănești. Îl auzi certându-se în șoaptă cu un străin. \"Nu pot să aștept! Vlad e aici!\"",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Intervine și \"salvează-l\" de străin.",
+        "Urmărește străinul.",
+        "Așteaptă să rămână singur."
+      ],
+      "episode_progress": null
+    },
+    "3854a1744429b69728375e1a222f679088eb0c67960e3d47049e335b769b64f566850406cd643941df02be675872fe476d9550aff599736fbedbcdb48ef1593a": {
+      "narrative": "Te apropii relaxat, fredonând un cântec vechi. Îl recunoști pe vizitiu: e Radu Șchiopul, un curier mărunt al Dăneștilor. Când te vede, se albește la față. Știe cine ești. Știe că ești \"Curățătorul\".",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Fă-i semnul secret al Dăneștilor.",
+        "Șoptește-i: \"Ai dat-o în bară, Radule.\"",
+        "Prefă-te că îl arestezi (pentru spectacol)."
+      ],
+      "episode_progress": null
+    },
+    "0b4b12b37997c9815641d6c3d596736d195506d7a36852e55a675ada832a2cb2b6a62605bf5582d04603c020c86e2564f59bb37feec55c2eaa10f07b3d4f6bf1": {
+      "narrative": "Rămâi nevăzut. Radu pare terifiat. Un bărbat cu turban ascuns sub glugă se apropie de el. Turci? Folosind un car Dăneștean? Asta e o înscenare. Sau o trădare.",
+      "health_change": 0,
+      "reputation_change": 1,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Urmărește turcul.",
+        "Interceptează schimbul.",
+        "Omoară-l pe Radu de la distanță."
+      ],
+      "episode_progress": null
+    },
+    "3c5f30d80c442a278f13020ee51dfe264d965ded33956d6177ff99acb60a5ea0f5a0c5d4b94d104541fd75a25e49855e0b9606e385223417dcc0e0e5e8162f01": {
+      "narrative": "Te pui între ei. \"Radu! Prietene! Cine te supără?\" Străinul se retrage rapid în mulțime. Radu tremură. \"M-au obligat... Turcii... La Moara Veche...\" Apoi, o săgeată șuieră din mulțime și îl lovește în gât!",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Fugi spre Moara Veche imediat.",
+        "Caută asasinul în mulțime.",
+        "Percheziționează cadavrul rapid."
+      ],
+      "episode_progress": 0.2
+    },
+    "e46b1d0ca056f15604da1a7f2a80e9039ccb6f7905e7c24702f2f556a3a02f9b37a6ce38b610507d98aa34b0107c197045032b322737db29e17d92cd65ec153c": {
+      "narrative": "Îl lași pe Radu și te ții după străin. Ajunge la Moara Veche. E clar, acolo e baza lor.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Intră prin acoperiș.",
+        "Intră pe fereastra morii.",
+        "Dă foc la moară."
+      ],
+      "episode_progress": 0.2
+    },
+    "14f34c0aa7a7da767efe27efeb206bf8a85d56e623b7eabdaab6d1b7cea397294529aef54a32f5e5f338143a608e58c999f1af845b7c959022977388c1988066": {
+      "narrative": "Străinul pleacă. Radu rămâne singur, plângând. Te apropii de el. \"Iartă-mă! Au luat Pecetea! Sunt la Moară!\" Înainte să poți reacționa, carul explodează!",
+      "health_change": -5,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Verifică dacă ești rănit și fugi la Moară.",
+        "Caută indicii printre resturi.",
+        "Ajută răniții (pentru acoperire)."
+      ],
+      "episode_progress": 0.25
+    },
+    "b1f52a0067086899bbc5c5a2e2929927e7e043fa5b3a718f53d1fc4f66723bef913b9f49e7c38c1d047607b1d2f024aa05235c2c86e23584af3b380a1cf48bcd": {
+      "narrative": "Moara Veche e pe malul Ialomiței, o ruină folosită de contrabandiști. Ajungi acolo gâfâind. Vezi doi bărbați târând o ladă grea înăuntru. Vorbesc turcește.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": "Moara Veche",
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Intră prin acoperiș.",
+        "Intră pe fereastra morii.",
+        "Dă foc la moară."
+      ],
+      "episode_progress": 0.4
+    },
+    "d6c0a511f7da16420f2e3cc5e92619e41a57f4a07c2bea986d3c384075875625fd8ab76f2303163c73b78d905a42d8f0a993e86b27250a58d41fef60b8bc3416": {
+      "narrative": "Vezi o siluetă fugind pe acoperișuri. E un arcaș bun. Dar nu ai timp. Prioritatea e Pecetea. Radu a zis \"Moara Veche\" înainte să moară.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi la Moară.",
+        "Trimite un mesaj lui Vlad.",
+        "Analizează săgeata din gâtul lui Radu."
+      ],
+      "episode_progress": 0.3
+    },
+    "46d93f41a38d66e5060797777d4873ec4e534b9204142fdb0dd8aac70deb7f7b7f7e958a0659ca4a2c9840c22607f27a926fa53ccd845aa707eda73a8be01519": {
+      "narrative": "Acțiunea ta are consecințe neașteptate. Situația se schimbă, deschizând noi oportunități. Trebuie să te adaptezi rapid.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi mai departe.",
+        "Fii precaut.",
+        "Grăbește-te."
+      ],
+      "episode_progress": 0.0
+    },
+    "21f8eec5de25bc29801df35ad702f8c3a3ff6b0ecf83a470edaa481fa48a82f879f3924e07419256098ff13e377e63395f519d5dde5428998c6dcb8ca17a30ee": {
+      "narrative": "Te cațeri pe roata morii și ajungi sus. Prin podeaua putredă, vezi trei turci și un trădător valah. Deschid lada. Pecetea e acolo! Valahul spune: \"Dăneștii vor fi învinuiți, iar Vlad va ataca Brașovul. Planul pașei e perfect.\"",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Asasinează valahul trădător.",
+        "Aruncă o bombă (dacă ai).",
+        "Coboară silențios între ei."
+      ],
+      "episode_progress": 0.5
+    },
+    "5ba5155ef22737d4b53047324d764587a4ca0fb57740da0a633027942cf33a169bba1da47cd016525e626d5939a6e68263d3ea48b1bef68b5b2bea4497ee35c1": {
+      "narrative": "Sari înăuntru. Podeaua scârțâie! Cei patru bărbați se întorc brusc. Valahul trădător rânjește. \"Un șobolan Dăneștean! Prindeți-l!\"",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Luptă defensiv.",
+        "Sari în mecanismul morii.",
+        "Negociază (Bluf)."
+      ],
+      "episode_progress": 0.5
+    },
+    "ca9e26b8d26956fcddd6287d5592e09952b3954263926f08cd767c15bca2f787435042ac78efb869fd63b6fb7acb4d959cb0a21af0e8a87aa6cd3e8b7e7b7c88": {
+      "narrative": "Reușești să duci planul la bun sfârșit. Totul a decurs conform așteptărilor. Acum, drumul este liber pentru următoarea mișcare.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Evaluează situația.",
+        "Caută avantaje.",
+        "Pregătește-te."
+      ],
+      "episode_progress": 0.0
+    },
+    "f98a2f96d680e9567f7bd053141ab88b1cc10647ba47137202f2aa8fbfbe64fc4d1daa683b6dd04d449000a47647c770b59c99a58e4543ec2789728c6b280761": {
+      "narrative": "Sari cu pumnalele scoase. Valahul cade cu gâtul tăiat. Turcii sunt șocați o secundă. E suficient. Ești un vârtej de oțel. Dar sunt trei ieniceri antrenați.",
+      "health_change": 0,
+      "reputation_change": 2,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Folosește mediul (făină/praf).",
+        "Luptă murdar (otravă).",
+        "Fugi cu lada."
+      ],
+      "episode_progress": 0.6
+    },
+    "dbab19d20cdad974c69bd51b92d1fee423271fa9d8d288ee5b017e294c05c90e4fec59550437f52af59e62a616a53ae9d9ecfd8f5786bf4216141607d31f84db": {
+      "narrative": "Acțiunea ta are consecințe neașteptate. Situația se schimbă, deschizând noi oportunități. Trebuie să te adaptezi rapid.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi mai departe.",
+        "Fii precaut.",
+        "Grăbește-te."
+      ],
+      "episode_progress": 0.0
+    },
+    "6fd57a8b59a51953302762fe3cf1d31d8845f49b9fe20a65cb2300fd6ed3951ce0a5962a390cac7886e19e15102d179698726a97d45ca41f78fd361b7465ca2a": {
+      "narrative": "Drumul este greu, dar ești obișnuit cu efortul. Peisajul se schimbă. Ajungi într-un loc nou, plin de posibilități... și pericole.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Investighează zona.",
+        "Ascultă zgomotele.",
+        "Verifică harta."
+      ],
+      "episode_progress": 0.0
+    },
+    "fe2179929247b1d2b6e87a930fc13491af323b11781c20054a3e19b56b46501fb2b2669bc8fed7cf5955c100bc837b9b28e7a31be48f76f083e16c776dfcfa7c": {
+      "narrative": "Tai un sac cu făină. Un nor alb umple camera. Turcii tușesc și nu văd nimic. Tu te miști prin memorie. Tai, lovești, dispari. Când praful se așează, doar tu stai în picioare.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [
+        {
+          "name": "Fragment Pecete",
+          "type": "obiect_important",
+          "value": 0,
+          "quantity": 1,
+          "description": null
+        },
+        {
+          "name": "Scrisoare otomană",
+          "type": "obiect_important",
+          "value": 0,
+          "quantity": 1,
+          "description": null
+        }
+      ],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Ia Pecetea și documentele turcilor.",
+        "Dă foc la cadavre.",
+        "Pleacă înainte să vină alții."
+      ],
+      "episode_progress": 0.8
+    },
+    "7b5ec854579b08f1a55693c0db540072ddfe74a56e194d795193d7a8d4406b40ea662c89eecd54bc317a2fa60659dda77fe920668896bf1d8781683aeff9c1fb": {
+      "narrative": "Te ferești de o lovitură mortală și ripostezi decisiv. Lupta este scurtă, dar brutală. Îți ștergi lama de sânge și privești în jur.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Recuperează suflul.",
+        "Curăță sabia.",
+        "Pregătește-te de următoarea luptă."
+      ],
+      "episode_progress": 0.0
+    },
+    "413db17d259c1b024ed762e7603d1588b458b626b1eb0cd0dd35600f3a51a34e95aaa455f59bbaaae92d97807684a4adb484d1195663e81464bd43490b8814bd": {
+      "narrative": "Înșfacă lada și sari pe fereastră. Cazi în râu! Apa rece te trezește. Ienicerii trag după tine, dar curentul te duce departe. Ai lada, dar ești ud și înghețat.",
+      "health_change": -3,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Ieși la mal și ascunde lada.",
+        "Mergi la un adăpost sigur.",
+        "Verifică dacă Pecetea mai e în ladă."
+      ],
+      "episode_progress": 0.8
+    },
+    "1be85717372145acbf83cf6f417b294e1bb10c779f22ff532d04976aa5034086972d4e745d04268656d90ac73781047818a79610416e8b34dc4ad42d7dd4d1af": {
+      "narrative": "Ai dovezile. Turcii au înscenat furtul ca să pară opera Dăneștilor. Dacă îi arăți asta lui Vlad, îți salvezi facțiunea de furia lui și capeți încrederea Voievodului.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi la Vlad triumfător.",
+        "Șantajează-l pe liderul Dăneștilor.",
+        "Distruge scrisoarea (păstrează haosul)."
+      ],
+      "episode_progress": 0.9
+    },
+    "8f99eaeae29d117d75199254b99d99e744c13f07537b29b6c3b0808009c7a0fe37a5c83f4c71a5574200704aa93679284d68624791ba3125572596148c4ee1e2": {
+      "narrative": "Reușești să duci planul la bun sfârșit. Totul a decurs conform așteptărilor. Acum, drumul este liber pentru următoarea mișcare.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Evaluează situația.",
+        "Caută avantaje.",
+        "Pregătește-te."
+      ],
+      "episode_progress": 0.0
+    },
+    "f3ee7a6a587cb30e84ce336ea520acdb03da228ccb54de379a27c839a20c99ac3dbcbb99e799567292457333bdb18ac8dc856f331efe2edd97bdf8eddd36f14e": {
+      "narrative": "Alergi până simți gust de sânge în gură. Ai lăsat pericolul în urmă. Acum ești într-o zonă liniștită, cel puțin aparent.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Odihnește-te puțin.",
+        "Pregătește armele.",
+        "Caută urme."
+      ],
+      "episode_progress": 0.0
+    },
+    "5231a15b30e4d880f3c9b6459fc0faef611eee74c74a14cb396477ed0529ff09cf9fab401c4326629d287a1310d52a0513046d5e8a663ad00f7e857ffc766a4f": {
+      "narrative": "Pătrunzi în Sala Tronului. Arunci capul valahului trădător și scrisoarea otomană la picioarele lui Vlad. \"Nu Dăneștii te-au trădat, Măria Ta. Ci turcii.\" Vlad citește scrisoarea. \"Interesant. Un Dăneștean fidel... țării. Păstrează Pecetea. Vei avea nevoie de ea.\"",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": true,
+      "suggestions": [
+        "Acceptă misiunea următoare."
+      ],
+      "episode_progress": 1.0
+    },
+    "81512d94a821c83415cf4aa9c32707d450fdbd909071de390e5fdd6b8fb712ba720c50ab823318c7049b8e958540f3f5ce9dfcef40afb05821f8224f00bfc399": {
+      "narrative": "Evenimentele se precipită. Ești în mijlocul acțiunii. Nu e timp de ezitare. Instinctul îți spune să continui.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Continuă misiunea.",
+        "Ia o pauză.",
+        "Verifică echipamentul."
+      ],
+      "episode_progress": 0.0
+    },
+    "5e64e16074c2103ea370c032c0dfcfb212b406dfb6f60f1150aba99a48e1ca9a19dd8fc682703d4689d084953dd50e8892b4c196c53d411920ae549ba0ca120f": {
+      "narrative": "Arzi scrisoarea. Îi duci lui Vlad doar Pecetea. El va continua să urască Dăneștii, iar Dăneștii îl vor urî pe el. Haosul e o scară. Ești un adevărat spion.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": true,
+      "suggestions": [
+        "Dispari în umbră."
+      ],
+      "episode_progress": 1.0
+    }
+  }
+}

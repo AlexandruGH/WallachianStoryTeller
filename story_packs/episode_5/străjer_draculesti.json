@@ -1,0 +1,74 @@
+{
+  "character_class": "Străjer",
+  "faction": "Drăculești",
+  "episode": 5,
+  "description": "Auto-Generated Ep 5",
+  "cache_data": {
+    "8eea22343531008921b05dafde676593c5c4371f0030a3c8a28877e749328c18e709dc7e8bc1328283ca294219362281f820572d3a103d35e89ada1df84a331c": {
+      "narrative": "Ești de gardă la cortul lui Vlad. Cineva nu știe parola.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Somație!",
+        "Atacă direct.",
+        "Dă alarma."
+      ],
+      "episode_progress": 0.3
+    },
+    "816719bf6340bc1d6c328b7df4ea48420cf7e392ea30109d49061d6fa80c7999d0e1565e0888cbc351e0115df3b96abae86e55dd77619a4f7a4b22ecdc21428b": {
+      "narrative": "Intrusul atacă. Îl dobori cu sulița. Era asasinul.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": true,
+      "suggestions": [
+        "Raportează."
+      ],
+      "episode_progress": 1.0
+    },
+    "d39053c920ec159454b5dad68dc3e91d606c95635fdf0eb2c536aba2a0425c394eb8acbc79023e959aa6ad87fb7f657d0732750da9ecf6525790a48d716931ad": {
+      "narrative": "Acțiunea continuă conform planului tău.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi mai departe."
+      ],
+      "episode_progress": 0.4
+    },
+    "a84b195ab7de002363f666992f9f6b62e5aefc4723ff4ecffeb7b8f58334b1f3bb0e911b391d841afe1e28c11713154dc660b69a7d3b4d5452c0295a80304070": {
+      "narrative": "Acțiunea continuă conform planului tău.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi mai departe."
+      ],
+      "episode_progress": 0.4
+    }
+  }
+}

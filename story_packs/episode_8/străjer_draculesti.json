@@ -1,0 +1,74 @@
+{
+  "character_class": "Străjer",
+  "faction": "Drăculești",
+  "episode": 8,
+  "description": "Auto-Generated Ep 8",
+  "cache_data": {
+    "3a0546f37d9d319c41d178be313f7356dd28692eea9103fc74e93d68ee6fa81d68f79352614064a825c25b6a5b0f4b49cc0ae43b26344d7511eafa4bca0fe942": {
+      "narrative": "Vlad unește fragmentele. Pecetea e completă.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Cere moartea trădătorilor.",
+        "Cere iertare (pentru unitate).",
+        "Taci și așteaptă."
+      ],
+      "episode_progress": 0.3
+    },
+    "ad76d615a96482e2beb43db396f28cc0eefc69a4d74b2b413f7f7a14dce5972f96c66bd974eadca4f302e4a92a0acfaee17819cecab14efdbbd4b2f0d6c75384": {
+      "narrative": "Vlad aprobă. \"Vor fi trași în țeapă.\" Tu ești mâna dreaptă.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": true,
+      "suggestions": [
+        "Final Drăculești: Justițiarul."
+      ],
+      "episode_progress": 1.0
+    },
+    "1c8db9febf5c28064adb34e0a83988d60d572b03c67e07b3cadbca8f0470b0be5ca681b811d4b15f4198d21582505bff4c46b87a8ffb55e522292f7c887b5467": {
+      "narrative": "Vlad se încruntă, dar acceptă. \"Să lupte cu turcii.\" Ești un unificator.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": true,
+      "suggestions": [
+        "Final Drăculești: Diplomatul."
+      ],
+      "episode_progress": 1.0
+    },
+    "69da13e1bbb27b4d127c4df11757c8e1e92b165b31fdfafcac14f9c134502d58ccf259c67d2ce96e86a3bbf4134b826cd786605930b7c54e878666369d45e7f1": {
+      "narrative": "Acțiunea continuă conform planului tău.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi mai departe."
+      ],
+      "episode_progress": 0.4
+    }
+  }
+}

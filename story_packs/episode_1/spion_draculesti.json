@@ -1,0 +1,524 @@
+{
+  "character_class": "Spion",
+  "faction": "Drăculești",
+  "episode": 1,
+  "description": "Recompiled Pack Ep 1",
+  "cache_data": {
+    "ecd7bb0fd99c95d41459a0cb81a51bf92f9a6dbe54c2fbd386c3bf995c9e704ec7d609a63e828ace1e7c0cc2e600e5f45beb3c955581883009d8e589eb91878e": {
+      "narrative": "Te amesteci în mulțime. Auzi șoapte despre \"străini\" și \"aur ascuns\". Un cerșetor îți spune că a văzut vizitiul întâlnindu-se cu un negustor dubios lângă ruine.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Caută negustorul dubios.",
+        "Urmărește cerșetorul (poate știe mai multe).",
+        "Întoarce-te la car."
+      ],
+      "episode_progress": null
+    },
+    "3854a1744429b69728375e1a222f679088eb0c67960e3d47049e335b769b64f566850406cd643941df02be675872fe476d9550aff599736fbedbcdb48ef1593a": {
+      "narrative": "Te apropii, dar nu ca un soldat, ci ca un gură-cască. Vizitiul te ignoră, dar observi un detaliu pe care alții l-au ratat: roțile sunt unse recent, pentru liniște, nu pentru viteză. Un bărbat cu glugă îi face un semn discret dinspre ulița Fierarilor.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Urmărește bărbatul cu glugă.",
+        "Rămâi să studiezi vizitiul.",
+        "Fură ceva din car (riscant)."
+      ],
+      "episode_progress": null
+    },
+    "0b4b12b37997c9815641d6c3d596736d195506d7a36852e55a675ada832a2cb2b6a62605bf5582d04603c020c86e2564f59bb37feec55c2eaa10f07b3d4f6bf1": {
+      "narrative": "Te urci pe acoperișul unei magazii. De sus, vezi totul clar. Un tub de pergament trece de la vizitiu la un individ cu haine de negustor, dar cu cizme de călărie. Individul pleacă grăbit spre zona ruinelor.",
+      "health_change": 0,
+      "reputation_change": 1,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Urmărește 'negustorul'.",
+        "Interceptează vizitiul.",
+        "Trimite un aurolac să-l urmărească."
+      ],
+      "episode_progress": null
+    },
+    "4182c3839ca6294ceed247e22c84b234522e7beaf6c77c965f4ed5b67b68bbc86098dc7316d00dcd1bafeb2740cdce8a32927427ccbc4e574a67d08d1c164bfd": {
+      "narrative": "Îl găsești într-o alee, numărând bani. Pare grăbit. Are un tub de pergament la brâu.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Fură tubul (Sleight of Hand).",
+        "Urmărește-l.",
+        "Interoghează-l."
+      ],
+      "episode_progress": 0.2
+    },
+    "8b06bbbddc67da032d510883ece328ff4f1c7007100d0bf8deec940234718451901e4f553cb1ab042e1ea43b53558af67cdad126f93319b22e81fe60c9187160": {
+      "narrative": "Te deplasezi rapid prin umbre. Nimeni nu te observă. Ajungi la destinație fără incidente, dar simți că ești urmărit.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Privește în jur cu atenție.",
+        "Caută un adăpost.",
+        "Așteaptă să vezi ce se întâmplă."
+      ],
+      "episode_progress": 0.0
+    },
+    "9544bfe5f709b5f87bfee4e0e260a1f68472a8869a808df9578407b53948207051e29d71a400bdc9bf368b292a46c332a9af38fe954259562975373e145261b2": {
+      "narrative": "Acțiunea ta are consecințe neașteptate. Situația se schimbă, deschizând noi oportunități. Trebuie să te adaptezi rapid.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi mai departe.",
+        "Fii precaut.",
+        "Grăbește-te."
+      ],
+      "episode_progress": 0.0
+    },
+    "40cce2dffc5ccc4c1cc1038097446257f45dc41fea7eacbb39cb41ba38a1246fa4df583fdb091ab42e33182dc44bd24371270a8f4246cda32bc1ecc60458f05d": {
+      "narrative": "Te ciocnești de el. \"Pardon, stăpâne!\" În secunda de contact, tubul e al tău. Dispară în mulțime înainte să realizeze.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [
+        {
+          "name": "Tub Sigilat",
+          "type": "obiect_important",
+          "value": 0,
+          "quantity": 1,
+          "description": null
+        }
+      ],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Citește mesajul într-un loc sigur.",
+        "Du-l la Vlad.",
+        "Urmărește reacția negustorului."
+      ],
+      "episode_progress": 0.3
+    },
+    "013301678965f317eb88472df71cb8417da7c65bc620640ae4d14543d42e45e6495eb76beb35c92904df63815cbf9a3a459f82ad8db3e3536e48f41ef478d368": {
+      "narrative": "Drumul este greu, dar ești obișnuit cu efortul. Peisajul se schimbă. Ajungi într-un loc nou, plin de posibilități... și pericole.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Investighează zona.",
+        "Ascultă zgomotele.",
+        "Verifică harta."
+      ],
+      "episode_progress": 0.0
+    },
+    "203a5c6f4cdc3f2afc65e60788f6cda270fc91237ff20372744f9126172a6944928e9cabc9ad762407af18946c97dc0b36deccf5b43e578de0160afc215887e8": {
+      "narrative": "Evenimentele se precipită. Ești în mijlocul acțiunii. Nu e timp de ezitare. Instinctul îți spune să continui.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Continuă misiunea.",
+        "Ia o pauză.",
+        "Verifică echipamentul."
+      ],
+      "episode_progress": 0.0
+    },
+    "0fdc24fc55087106c6818e3a315e8b9f58f4a5ca8b9b473a263a9454d1c69bd0ac14e08eb31a3d85d263e454ef993696d7a1cb481ca6d500fd6fa9b12af1f3b6": {
+      "narrative": "Deschizi tubul. E o hartă a catacombelor și un mesaj: \"Pecetea e în Sala Rotundă. Mutați-o la noapte.\" Ai un avantaj.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi la Sala Rotundă (Catacombe).",
+        "Organizează o ambuscadă.",
+        "Arde mesajul."
+      ],
+      "episode_progress": 0.4
+    },
+    "a45c09143dd6bafb03396d552c842973554c6e801a9b5d231f4c4e2de51fe87ffec74d070dd7f9776a4db56758cc27f0b068c04ef7426f74218cde86b2fd6f95": {
+      "narrative": "Evenimentele se precipită. Ești în mijlocul acțiunii. Nu e timp de ezitare. Instinctul îți spune să continui.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Continuă misiunea.",
+        "Ia o pauză.",
+        "Verifică echipamentul."
+      ],
+      "episode_progress": 0.0
+    },
+    "c716dcf6894f0b3ed41c99ca463476ebe505e5662e7c9afaf3ca35daea20e6f58e8efe7ed99a2be2edfacf1f64d529aa35af216cc5f903aa6379e15c737fdce5": {
+      "narrative": "Drumul este greu, dar ești obișnuit cu efortul. Peisajul se schimbă. Ajungi într-un loc nou, plin de posibilități... și pericole.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Investighează zona.",
+        "Ascultă zgomotele.",
+        "Verifică harta."
+      ],
+      "episode_progress": 0.0
+    },
+    "ba81db862583584bad4998d64cb4bdff637c4d44455a86710c44d7062a3e5d57b661afb7e217a3c99601ed638f077a8a8fdb3c93e1a80dd1f2d1705b1c96ded0": {
+      "narrative": "Intri în catacombe prin fântână. Ajungi la Sala Rotundă. E liniște. Dar simți că nu ești singur.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Ascunde-te și observă.",
+        "Pune o capcană.",
+        "Strigă pentru a atrage atenția (Bluf)."
+      ],
+      "episode_progress": 0.5
+    },
+    "d424ebfe39516646e6fbb09cb2b09b825e711977e3c6210eb23826f0745bf4af02cd1660e9b26851dbdc0611ddc7ecf7511808601a2c5f35a56ff5a570a24c38": {
+      "narrative": "Evenimentele se precipită. Ești în mijlocul acțiunii. Nu e timp de ezitare. Instinctul îți spune să continui.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Continuă misiunea.",
+        "Ia o pauză.",
+        "Verifică echipamentul."
+      ],
+      "episode_progress": 0.0
+    },
+    "58b0924bd5b61248c695b3d6b4a966fb044a5a5e779f03070ff362be84b9fcfa7b6a36debb8a8301074b58cb6992370ba06fe3f19b4f960444f1691383b6e5b6": {
+      "narrative": "Acțiunea ta are consecințe neașteptate. Situația se schimbă, deschizând noi oportunități. Trebuie să te adaptezi rapid.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi mai departe.",
+        "Fii precaut.",
+        "Grăbește-te."
+      ],
+      "episode_progress": 0.0
+    },
+    "d3d175dbfa743431cf4c900708c13bbf99df177bdc8c58bef3965df96fe8b4b55bbcb8b0a8944a720e38f16c03c5a695888fda5814557f9b1c8caf84bbf57b5d": {
+      "narrative": "Din umbră, vezi un mercenar care aduce o cutie de catifea și o pune pe piedestal. Apoi se roagă? Nu, recită un cod. Se deschide un perete secret.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Atacă-l pe la spate.",
+        "Intră în camera secretă după el.",
+        "Fură cutia când pleacă."
+      ],
+      "episode_progress": 0.6
+    },
+    "fb693c495147c675f8db3639c2add64309ccf9094a7da23d23692ebd3458b0d90c6dbdab032f00b5350d319a4b9c6de378b9325127c5f27d6c5aaa3d2797aeb1": {
+      "narrative": "Acțiunea ta are consecințe neașteptate. Situația se schimbă, deschizând noi oportunități. Trebuie să te adaptezi rapid.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi mai departe.",
+        "Fii precaut.",
+        "Grăbește-te."
+      ],
+      "episode_progress": 0.0
+    },
+    "23b15c70602937a0ee695ec4ba11b4e3b12e981c400976e05a1c528ee64784176bd846f5859f1319d80848fe8a9bb86369a64dc5a809701d7ce5167d7c9e970b": {
+      "narrative": "Atacul tău este rapid și precis. Nu le lași timp de reacție. În scurt timp, ești singurul care mai stă în picioare. Adrenalina îți pulsează în vene.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Ia armele lor.",
+        "Ascunde corpurile.",
+        "Caută martori."
+      ],
+      "episode_progress": 0.0
+    },
+    "042cb15fda877b25bba306c2cd238b2ba364a6c9b9a0bf0b1b907137a33362dc5163f40bbb38e0fa8a0495427864ff63c72cce6643db36eb0f0ac608f02a9e68": {
+      "narrative": "O mișcare fluidă. Pumnalul tău îi găsește inima. Cade fără zgomot. Camera secretă e deschisă. Înăuntru e o comoară de documente și Fragmentul.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [
+        {
+          "name": "Fragment Pecete",
+          "type": "obiect_important",
+          "value": 0,
+          "quantity": 1,
+          "description": null
+        }
+      ],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Ia totul și pleacă.",
+        "Caută doar Fragmentul.",
+        "Pune o bombă în cameră."
+      ],
+      "episode_progress": 0.75
+    },
+    "77253e901a322c24ec83916db4ee50ddade60020babf8d1f95bf90b5991759a3ae1a1947e2e7cd1af28efad10d8ddade8e7236ec8b1b9af01a3190ab778a22ec": {
+      "narrative": "Te deplasezi rapid prin umbre. Nimeni nu te observă. Ajungi la destinație fără incidente, dar simți că ești urmărit.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Privește în jur cu atenție.",
+        "Caută un adăpost.",
+        "Așteaptă să vezi ce se întâmplă."
+      ],
+      "episode_progress": 0.0
+    },
+    "697771c5993c72ec08a191187c490d1688aad6c825402a28dd79bb8a9ab20a88769d2481b09c4120c4db45cfa233e32c8f4839b87c9fe67f4c839f4ae06b3ffd": {
+      "narrative": "Te deplasezi rapid prin umbre. Nimeni nu te observă. Ajungi la destinație fără incidente, dar simți că ești urmărit.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Privește în jur cu atenție.",
+        "Caută un adăpost.",
+        "Așteaptă să vezi ce se întâmplă."
+      ],
+      "episode_progress": 0.0
+    },
+    "82e2deffe4f49359dd81ef54674c7fb070824bfe9066eb5aa8eee907b7ea827f967abaf963dc418da100374c48f920c63383ab2a5117c72c8d4e0374e5efbc4c": {
+      "narrative": "Nu lași nimic în urmă. Ai dovezile trădării și Fragmentul. Ieși din catacombe chiar când sosește schimbul de gardă al mercenarilor.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Evită-i și fugi.",
+        "Luptă (riscant).",
+        "Folosește uniforma mortului."
+      ],
+      "episode_progress": 0.85
+    },
+    "fce794309fe31d5cea5b008d20fea2aa44f9d061dccf02d934e008df835a1fa928e5c2f7ada3596d853fa1b7488c84eb0b67b6147d3169bab8155219a8bb5e7f": {
+      "narrative": "Analizezi situația la rece. Detaliile se leagă. Acum înțelegi mai bine ce s-a întâmplat aici. Piesa lipsă din puzzle este în mâinile tale.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Păstrează secretul.",
+        "Folosește indiciul.",
+        "Mergi mai departe."
+      ],
+      "episode_progress": 0.0
+    },
+    "aa4e0a70d93160047a35d359898bc5d9e6c30d82e5ca3961b748f8671206e228b4bef4a365f505dde92c69fe59e1a3630f6b6f00889dfc94101c1d1730c32dcd": {
+      "narrative": "Acțiunea ta are consecințe neașteptate. Situația se schimbă, deschizând noi oportunități. Trebuie să te adaptezi rapid.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi mai departe.",
+        "Fii precaut.",
+        "Grăbește-te."
+      ],
+      "episode_progress": 0.0
+    },
+    "aca7a7a8bce26849d799ebdee7c1c6712c2c2232e14f2b7bd0ff25bae54cac9f3b1078a193f595700910dc0f24d9d3afcbfd3eb41a296c75cabc2317b85565ea": {
+      "narrative": "Te strecori ca o umbră. Ești afară, în aerul curat al nopții. Misiune îndeplinită. Nimeni nu știe cine a fost.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi la Vlad."
+      ],
+      "episode_progress": 0.9
+    },
+    "aaa7fb61b63d0475b8d104a10ae2f51db1b1b61bd0f1d0b3d6e3c71635c0f3b08585f76868f4aebca763447e2b58f619aba51605aa3d1778332b34556a4072eb": {
+      "narrative": "Te ferești de o lovitură mortală și ripostezi decisiv. Lupta este scurtă, dar brutală. Îți ștergi lama de sânge și privești în jur.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Recuperează suflul.",
+        "Curăță sabia.",
+        "Pregătește-te de următoarea luptă."
+      ],
+      "episode_progress": 0.0
+    },
+    "b0b0dc10f46e9f13318a2edfcec23bd49b7657a8b9a6feb30feefa3687c1029ca073f787efc62aaabe7c195670f1fac31b3509eea0c16a2be0aac21b1e791dd6": {
+      "narrative": "Evenimentele se precipită. Ești în mijlocul acțiunii. Nu e timp de ezitare. Instinctul îți spune să continui.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Continuă misiunea.",
+        "Ia o pauză.",
+        "Verifică echipamentul."
+      ],
+      "episode_progress": 0.0
+    },
+    "781770e7a307788c13743d4d91bf0d382b9429a222be0f5fc3c4b3a377062fe44e98a3fe371ccecd5b73f0aec0a3c7c084d3adf0fd0c5e22d869ff423859561f": {
+      "narrative": "Raportezi succesul. Vlad îți oferă o pungă cu galbeni și un zâmbet rar. \"Ai ochii și urechile mele, spionule.\"",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": true,
+      "suggestions": [
+        "Acceptă plata."
+      ],
+      "episode_progress": 1.0
+    }
+  }
+}

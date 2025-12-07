@@ -1,0 +1,891 @@
+{
+  "Mă apropii discret de carul negru.": {
+    "narrative": "Te apropii cu aerul unui negustor plictisit. Ochii tăi de sas, obișnuiți cu registrele și aurul, observă imediat neregula: osiile sunt întărite cu fier de calitate germană, dar carul e vopsit grosolan, valah. Vizitiul evită privirea ta. Ascunde ceva ce nu a trecut prin vamă.",
+    "suggestions": [
+      "Cere documentele de transport (Bluf).",
+      "Verifică 'marfa' sub pretextul unei oferte.",
+      "Notează simbolurile de pe lăzi."
+    ],
+    "reputation_change": 0
+  },
+  "Merg în piață să ascult zvonurile.": {
+    "narrative": "Te așezi la o masă a Breslei, prefăcându-te că bei bere. Zvonurile curg: \"Un transport secret a intrat aseară. Fără taxă la Podul Dâmboviței. Cică ar fi protejați de un boier.\" Un calfa îți șoptește că a văzut lăzi marcate cu 'Foc Grecesc' ascunse sub paie.",
+    "suggestions": [
+      "Caută legătura cu boierii.",
+      "Urmărește vizitiul când pleacă.",
+      "Raportează la Șeful Breslei (Brașov)."
+    ],
+    "reputation_change": 1
+  },
+  "Caut un loc înalt pentru a observa.": {
+    "narrative": "De pe acoperișul Casei Sfatului, ai o vedere perfectă. Vizitiul discută aprins cu un mercenar în armură ușoară. Mercenarul îi dă o pungă grea și primește un tub sigilat. Sigiliul nu e valah, e un dragon... dar stilizat ciudat. Dăneștii?",
+    "suggestions": [
+      "Urmărește mercenarul.",
+      "Interceptează vizitiul.",
+      "Trage cu arbaleta după tub."
+    ],
+    "reputation_change": 1
+  },
+  "Caută legătura cu boierii.": {
+    "narrative": "Discuți cu un servitor nemulțumit. Îți spune că stăpânul său, un boier Dănești, a închiriat Pivnița XII pentru \"depozitare\". Știi unde e aia.",
+    "suggestions": [
+      "Mergi la Pivnița XII.",
+      "Trimite un mesaj lui Vlad.",
+      "Cere mită servitorului."
+    ],
+    "episode_progress": 0.2
+  },
+  "Urmărește vizitiul când pleacă.": {
+    "narrative": "Îl urmărești până la o casă dărăpănată care are acces la Pivnițele Saxone. A intrat acolo.",
+    "suggestions": [
+      "Mergi la Pivnița XII.",
+      "Așteaptă întăriri.",
+      "Intră după el."
+    ],
+    "episode_progress": 0.2
+  },
+  "Raportează la Șeful Breslei (Brașov).": {
+    "narrative": "Trimiți un porumbel. Răspunsul vine rapid: \"Protejează interesele noastre. Investighează Pivnița XII. Ai mână liberă.\"",
+    "suggestions": [
+      "Mergi la Pivnița XII.",
+      "Cere ajutor de la Breaslă.",
+      "Ignoră ordinul și mergi la Vlad."
+    ],
+    "episode_progress": 0.2
+  },
+  "Urmărește mercenarul.": {
+    "narrative": "Mercenarul se îndreaptă spre Biserica Catolică. Intră grăbit. Ceva nu e curat.",
+    "suggestions": [
+      "Mergi la Biserica Catolică.",
+      "Prinde-l înainte să intre.",
+      "Cheamă gărzile."
+    ],
+    "episode_progress": 0.2
+  },
+  "Interceptează vizitiul.": {
+    "narrative": "Îl blochezi pe o alee. \"Unde e marfa?\" Vizitiul scoate un cuțit. \"În iad!\"",
+    "suggestions": [
+      "Luptă cu el.",
+      "Fugi și urmărește-l.",
+      "Cheamă ajutor."
+    ],
+    "episode_progress": 0.2
+  },
+  "Trage cu arbaleta după tub.": {
+    "narrative": "Ești un trăgător de elită. Săgeata lovește mâna mercenarului. Tubul cade. Se crează panică.",
+    "suggestions": [
+      "Fugi să iei tubul.",
+      "Trage din nou.",
+      "Dispari de pe acoperiș."
+    ],
+    "episode_progress": 0.2
+  },
+  "Cere documentele de transport (Bluf).": {
+    "narrative": "\"Controlul Breslei!\" strigi autoritar, fluturând un pergament vechi. Vizitiul pălește. \"Nu... nu am știut... stăpâne.\" Îți întinde un document tremurând. E un fals grosolan, semnat de un 'Voievod' care nu mai domnește. Dar în document e ascunsă o cheie.",
+    "suggestions": [
+      "Confiscă cheia și documentul.",
+      "Șantajează-l pentru informații.",
+      "Cheamă gărzile lui Vlad (Riscant)."
+    ],
+    "episode_progress": 0.2
+  },
+  "Verifică 'marfa' sub pretextul unei oferte.": {
+    "narrative": "\"Dau doi galbeni pe sacul ăla!\" pui mâna pe prelată. Vizitiul sare ca ars. \"Nu e de vânzare!\" În scurta luptă, prelata cade. Sub ea nu e grâu, ci butoaie cu pulbere neagră. Praf de pușcă! Destul să dărâme un zid de cetate.",
+    "suggestions": [
+      "Strigă 'Trădare!' și atacă.",
+      "Fugi și alertează Breasla.",
+      "Taie frânghiile cailor (Sabotaj)."
+    ],
+    "episode_progress": 0.2
+  },
+  "Confiscă cheia și documentul.": {
+    "narrative": "Vizitiul fuge mâncând pământul. Ai cheia. Pe ea e gravat un număr: 'XII'. Corespunde cu pivnițele vechi ale sașilor, confiscate de Vlad. Acolo e baza lor.",
+    "suggestions": [
+      "Mergi la Pivnița XII.",
+      "Descifrează documentul fals.",
+      "Vinde informația unui boier loial."
+    ],
+    "items_gained": [
+      {
+        "name": "Cheie Pivniță XII",
+        "type": "obiect_important",
+        "value": 0,
+        "quantity": 1
+      }
+    ],
+    "episode_progress": 0.3
+  },
+  "Șantajează-l pentru informații.": {
+    "narrative": "\"Taci și plătești, sau Vlad află.\" Omul plânge. \"Sunt Dăneștii! Vor să arunce în aer Turnul Chindiei la noapte! Depozitul e în catacombe, intrarea prin Biserica Catolică.\"",
+    "suggestions": [
+      "Mergi la Biserica Catolică.",
+      "Cere plata și lasă-l să plece.",
+      "Omoară-l pentru a șterge urmele."
+    ],
+    "gold_change": 10,
+    "episode_progress": 0.3
+  },
+  "Mergi la Pivnița XII.": {
+    "narrative": "Pivnița e sub o casă negustorească părăsită. Ușa e grea, ferecată. Cheia se potrivește perfect. Mecanismul german clicăie satisfăcător. Dinăuntru se aude o limbă cunoscută: săsească veche.",
+    "suggestions": [
+      "Intră și ascultă.",
+      "Intră negociind.",
+      "Pregătește o capcană la ieșire."
+    ],
+    "location_change": "Pivnițele Saxone",
+    "episode_progress": 0.4
+  },
+  "Mergi la Biserica Catolică.": {
+    "narrative": "Intri în confesional. Peretele din spate e mobil. Un pasaj secret duce spre catacombe. Auzi pași grei. Mercenari.",
+    "suggestions": [
+      "Atacă din umbră.",
+      "Urmărește-i în liniște.",
+      "Folosește un pasaj lateral (Cunoaștere Arhitectură)."
+    ],
+    "episode_progress": 0.4
+  },
+  "Intră și ascultă.": {
+    "narrative": "Sunt trei bărbați. Unul e un trădător din Brașov, Hans. \"Vlad trebuie să cadă. Taxele ne omoară comerțul. Dăneștii au promis scutiri.\" Pe masă e Pecetea Drăculeștilor, furată! O vor folosi pentru a falsifica un ordin de retragere a armatei.",
+    "suggestions": [
+      "Omoară-l pe Hans (Trădător!).",
+      "Fură Pecetea și lasă-i să vorbească.",
+      "Confruntă-i cu autoritatea Breslei."
+    ],
+    "episode_progress": 0.6
+  },
+  "Omoară-l pe Hans (Trădător!).": {
+    "narrative": "Arbaleta ta nu greșește. Săgeata îl țintuiește pe Hans de masă. Ceilalți doi scot săbiile. \"Spion valah!\" Dar tu ești sas. \"Nu, sunt justiția Brașovului!\"",
+    "suggestions": [
+      "Luptă cu cei doi.",
+      "Folosește o bombă fumigenă și ia Pecetea.",
+      "Negociază (Bluf)."
+    ],
+    "reputation_change": 5,
+    "episode_progress": 0.7
+  },
+  "Luptă cu cei doi.": {
+    "narrative": "Sunt negustori, nu războinici. Îi dezarmezi rapid. Unul fuge, celălalt cere milă. Pecetea e a ta.",
+    "suggestions": [
+      "Ia Pecetea și documentele.",
+      "Interoghează prizonierul.",
+      "Execută-l."
+    ],
+    "items_gained": [
+      {
+        "name": "Pecetea Drăculeștilor",
+        "type": "obiect_important",
+        "value": 0,
+        "quantity": 1
+      }
+    ],
+    "episode_progress": 0.8
+  },
+  "Fură Pecetea și lasă-i să vorbească.": {
+    "narrative": "Folosești un cârlig și o sfoară fină. Pecetea alunecă de pe masă în mâna ta. Ei continuă să se certe pe împărțirea banilor. Ieși nevăzut.",
+    "suggestions": [
+      "Fugi spre ieșire.",
+      "Blochează ușa în urma ta.",
+      "Lasă un mesaj de amenințare."
+    ],
+    "items_gained": [
+      {
+        "name": "Pecetea Drăculeștilor",
+        "type": "obiect_important",
+        "value": 0,
+        "quantity": 1
+      }
+    ],
+    "episode_progress": 0.85
+  },
+  "Ia Pecetea și documentele.": {
+    "narrative": "Ai totul. Dovada trădării lui Hans și Pecetea lui Vlad. Ieși în noaptea rece. Orașul doarme, neștiind cât de aproape a fost de haos. Dar acum ai o dilemă.",
+    "suggestions": [
+      "Du Pecetea lui Vlad (Loialitate).",
+      "Du Pecetea la Brașov (Putere pentru Sasi).",
+      "Păstrează Pecetea (Șantaj)."
+    ],
+    "episode_progress": 0.9
+  },
+  "Fugi spre ieșire.": {
+    "narrative": "Alergi prin tuneluri. Ieși lângă zidul cetății. Ești liber. Pecetea arde în buzunar. Ce faci cu ea?",
+    "suggestions": [
+      "O predai lui Vlad direct.",
+      "O ascunzi și ceri recompensă.",
+      "O trimiți la Sibiu."
+    ],
+    "episode_progress": 0.9
+  },
+  "Du Pecetea lui Vlad (Loialitate).": {
+    "narrative": "Intri la Curte. Vlad te așteaptă, informat de spionii săi. Pui Pecetea pe masă. \"Un sas loial?\" întreabă el ironic. \"Nu, Măria Ta. Un sas pragmatic. Haosul nu e bun pentru afaceri.\"",
+    "suggestions": [
+      "Cere privilegii comerciale.",
+      "Cere capul trădătorilor.",
+      "Acceptă aurul."
+    ],
+    "win_condition": true,
+    "episode_progress": 1.0
+  },
+  "Du Pecetea la Brașov (Putere pentru Sasi).": {
+    "narrative": "Fugi spre munți. Pecetea ajunge la Judele Brașovului. \"Vlad va trebui să negocieze acum,\" zâmbește el. Ai adus o pârghie politică imensă orașului tău. Vlad va fi furios, dar neputincios.",
+    "suggestions": [
+      "Devino consilierul Judelui.",
+      "Cere protecție împotriva lui Vlad."
+    ],
+    "win_condition": true,
+    "episode_progress": 1.0
+  },
+  "Păstrează Pecetea (Șantaj).": {
+    "narrative": "Ascunzi Pecetea. Trimiți scrisori anonime ambelor tabere. Aurul curge din ambele părți. Ești cel mai bogat spion din Valahia, dar și cel mai vânat. Jocul abia a început.",
+    "suggestions": [
+      "Dispari în umbră."
+    ],
+    "win_condition": true,
+    "episode_progress": 1.0,
+    "gold_change": 500
+  },
+  "Taie frânghiile cailor (Sabotaj).": {
+    "narrative": "Reușești să duci planul la bun sfârșit. Totul a decurs conform așteptărilor. Acum, drumul este liber pentru următoarea mișcare.",
+    "suggestions": [
+      "Evaluează situația.",
+      "Caută avantaje.",
+      "Pregătește-te."
+    ],
+    "episode_progress": 0.0
+  },
+  "Cere protecție împotriva lui Vlad.": {
+    "narrative": "Negocierea este o artă, iar tu ești un maestru. După câteva replici schimbate, ajungeți la o înțelegere. Ai obținut informația dorită.",
+    "suggestions": [
+      "Aruncă-i un ban.",
+      "Notează informația.",
+      "Verifică dacă minte."
+    ],
+    "episode_progress": 0.0
+  },
+  "Omoară-l pentru a șterge urmele.": {
+    "narrative": "Scoți arma și te arunci în luptă. Inamicul este surprins de ferocitatea ta. Oțelul se ciocnește de oțel. După câteva schimburi dure, adversarul cade la pământ, învins.",
+    "suggestions": [
+      "Verifică cadavrele.",
+      "Pleacă rapid din zonă.",
+      "Bandajează-te."
+    ],
+    "episode_progress": 0.0
+  },
+  "Fugi să iei tubul.": {
+    "narrative": "Drumul este greu, dar ești obișnuit cu efortul. Peisajul se schimbă. Ajungi într-un loc nou, plin de posibilități... și pericole.",
+    "suggestions": [
+      "Investighează zona.",
+      "Ascultă zgomotele.",
+      "Verifică harta."
+    ],
+    "episode_progress": 0.0
+  },
+  "O trimiți la Sibiu.": {
+    "narrative": "Evenimentele se precipită. Ești în mijlocul acțiunii. Nu e timp de ezitare. Instinctul îți spune să continui.",
+    "suggestions": [
+      "Continuă misiunea.",
+      "Ia o pauză.",
+      "Verifică echipamentul."
+    ],
+    "episode_progress": 0.0
+  },
+  "Folosește o bombă fumigenă și ia Pecetea.": {
+    "narrative": "Reușești să duci planul la bun sfârșit. Totul a decurs conform așteptărilor. Acum, drumul este liber pentru următoarea mișcare.",
+    "suggestions": [
+      "Evaluează situația.",
+      "Caută avantaje.",
+      "Pregătește-te."
+    ],
+    "episode_progress": 0.0
+  },
+  "Dispari în umbră.": {
+    "narrative": "Acțiunea ta are consecințe neașteptate. Situația se schimbă, deschizând noi oportunități. Trebuie să te adaptezi rapid.",
+    "suggestions": [
+      "Mergi mai departe.",
+      "Fii precaut.",
+      "Grăbește-te."
+    ],
+    "episode_progress": 0.0
+  },
+  "Intră după el.": {
+    "narrative": "Te deplasezi rapid prin umbre. Nimeni nu te observă. Ajungi la destinație fără incidente, dar simți că ești urmărit.",
+    "suggestions": [
+      "Privește în jur cu atenție.",
+      "Caută un adăpost.",
+      "Așteaptă să vezi ce se întâmplă."
+    ],
+    "episode_progress": 0.0
+  },
+  "Așteaptă întăriri.": {
+    "narrative": "Acțiunea ta are consecințe neașteptate. Situația se schimbă, deschizând noi oportunități. Trebuie să te adaptezi rapid.",
+    "suggestions": [
+      "Mergi mai departe.",
+      "Fii precaut.",
+      "Grăbește-te."
+    ],
+    "episode_progress": 0.0
+  },
+  "Fugi și alertează Breasla.": {
+    "narrative": "Drumul este greu, dar ești obișnuit cu efortul. Peisajul se schimbă. Ajungi într-un loc nou, plin de posibilități... și pericole.",
+    "suggestions": [
+      "Investighează zona.",
+      "Ascultă zgomotele.",
+      "Verifică harta."
+    ],
+    "episode_progress": 0.0
+  },
+  "Vinde informația unui boier loial.": {
+    "narrative": "Evenimentele se precipită. Ești în mijlocul acțiunii. Nu e timp de ezitare. Instinctul îți spune să continui.",
+    "suggestions": [
+      "Continuă misiunea.",
+      "Ia o pauză.",
+      "Verifică echipamentul."
+    ],
+    "episode_progress": 0.0
+  },
+  "Pregătește o capcană la ieșire.": {
+    "narrative": "Te deplasezi rapid prin umbre. Nimeni nu te observă. Ajungi la destinație fără incidente, dar simți că ești urmărit.",
+    "suggestions": [
+      "Privește în jur cu atenție.",
+      "Caută un adăpost.",
+      "Așteaptă să vezi ce se întâmplă."
+    ],
+    "episode_progress": 0.0
+  },
+  "Intră negociind.": {
+    "narrative": "Te deplasezi rapid prin umbre. Nimeni nu te observă. Ajungi la destinație fără incidente, dar simți că ești urmărit.",
+    "suggestions": [
+      "Privește în jur cu atenție.",
+      "Caută un adăpost.",
+      "Așteaptă să vezi ce se întâmplă."
+    ],
+    "episode_progress": 0.0
+  },
+  "Trage din nou.": {
+    "narrative": "Atacul tău este rapid și precis. Nu le lași timp de reacție. În scurt timp, ești singurul care mai stă în picioare. Adrenalina îți pulsează în vene.",
+    "suggestions": [
+      "Ia armele lor.",
+      "Ascunde corpurile.",
+      "Caută martori."
+    ],
+    "episode_progress": 0.0
+  },
+  "Cheamă gărzile.": {
+    "narrative": "Reușești să duci planul la bun sfârșit. Totul a decurs conform așteptărilor. Acum, drumul este liber pentru următoarea mișcare.",
+    "suggestions": [
+      "Evaluează situația.",
+      "Caută avantaje.",
+      "Pregătește-te."
+    ],
+    "episode_progress": 0.0
+  },
+  "Urmărește-i în liniște.": {
+    "narrative": "Drumul este greu, dar ești obișnuit cu efortul. Peisajul se schimbă. Ajungi într-un loc nou, plin de posibilități... și pericole.",
+    "suggestions": [
+      "Investighează zona.",
+      "Ascultă zgomotele.",
+      "Verifică harta."
+    ],
+    "episode_progress": 0.0
+  },
+  "Folosește un pasaj lateral (Cunoaștere Arhitectură).": {
+    "narrative": "Acțiunea ta are consecințe neașteptate. Situația se schimbă, deschizând noi oportunități. Trebuie să te adaptezi rapid.",
+    "suggestions": [
+      "Mergi mai departe.",
+      "Fii precaut.",
+      "Grăbește-te."
+    ],
+    "episode_progress": 0.0
+  },
+  "Lasă un mesaj de amenințare.": {
+    "narrative": "Reușești să duci planul la bun sfârșit. Totul a decurs conform așteptărilor. Acum, drumul este liber pentru următoarea mișcare.",
+    "suggestions": [
+      "Evaluează situația.",
+      "Caută avantaje.",
+      "Pregătește-te."
+    ],
+    "episode_progress": 0.0
+  },
+  "O ascunzi și ceri recompensă.": {
+    "narrative": "Reușești să duci planul la bun sfârșit. Totul a decurs conform așteptărilor. Acum, drumul este liber pentru următoarea mișcare.",
+    "suggestions": [
+      "Evaluează situația.",
+      "Caută avantaje.",
+      "Pregătește-te."
+    ],
+    "episode_progress": 0.0
+  },
+  "Devino consilierul Judelui.": {
+    "narrative": "Acțiunea ta are consecințe neașteptate. Situația se schimbă, deschizând noi oportunități. Trebuie să te adaptezi rapid.",
+    "suggestions": [
+      "Mergi mai departe.",
+      "Fii precaut.",
+      "Grăbește-te."
+    ],
+    "episode_progress": 0.0
+  },
+  "Cere privilegii comerciale.": {
+    "narrative": "Negocierea este o artă, iar tu ești un maestru. După câteva replici schimbate, ajungeți la o înțelegere. Ai obținut informația dorită.",
+    "suggestions": [
+      "Aruncă-i un ban.",
+      "Notează informația.",
+      "Verifică dacă minte."
+    ],
+    "episode_progress": 0.0
+  },
+  "Prinde-l înainte să intre.": {
+    "narrative": "Evenimentele se precipită. Ești în mijlocul acțiunii. Nu e timp de ezitare. Instinctul îți spune să continui.",
+    "suggestions": [
+      "Continuă misiunea.",
+      "Ia o pauză.",
+      "Verifică echipamentul."
+    ],
+    "episode_progress": 0.0
+  },
+  "Cere capul trădătorilor.": {
+    "narrative": "Ridici tonul și mulțimea se dă înapoi. Autoritatea ta este incontestabilă. Oamenii fac loc și răspund la întrebări.",
+    "suggestions": [
+      "Cere o dovadă.",
+      "Pleacă spre noua pistă.",
+      "Recrutează-l."
+    ],
+    "episode_progress": 0.0
+  },
+  "Descifrează documentul fals.": {
+    "narrative": "Acțiunea ta are consecințe neașteptate. Situația se schimbă, deschizând noi oportunități. Trebuie să te adaptezi rapid.",
+    "suggestions": [
+      "Mergi mai departe.",
+      "Fii precaut.",
+      "Grăbește-te."
+    ],
+    "episode_progress": 0.0
+  },
+  "Atacă din umbră.": {
+    "narrative": "Atacul tău este rapid și precis. Nu le lași timp de reacție. În scurt timp, ești singurul care mai stă în picioare. Adrenalina îți pulsează în vene.",
+    "suggestions": [
+      "Ia armele lor.",
+      "Ascunde corpurile.",
+      "Caută martori."
+    ],
+    "episode_progress": 0.0
+  },
+  "Cheamă ajutor.": {
+    "narrative": "Reușești să duci planul la bun sfârșit. Totul a decurs conform așteptărilor. Acum, drumul este liber pentru următoarea mișcare.",
+    "suggestions": [
+      "Evaluează situația.",
+      "Caută avantaje.",
+      "Pregătește-te."
+    ],
+    "episode_progress": 0.0
+  },
+  "Confruntă-i cu autoritatea Breslei.": {
+    "narrative": "Acțiunea ta are consecințe neașteptate. Situația se schimbă, deschizând noi oportunități. Trebuie să te adaptezi rapid.",
+    "suggestions": [
+      "Mergi mai departe.",
+      "Fii precaut.",
+      "Grăbește-te."
+    ],
+    "episode_progress": 0.0
+  },
+  "O predai lui Vlad direct.": {
+    "narrative": "Acțiunea ta are consecințe neașteptate. Situația se schimbă, deschizând noi oportunități. Trebuie să te adaptezi rapid.",
+    "suggestions": [
+      "Mergi mai departe.",
+      "Fii precaut.",
+      "Grăbește-te."
+    ],
+    "episode_progress": 0.0
+  },
+  "Luptă cu el.": {
+    "narrative": "Scoți arma și te arunci în luptă. Inamicul este surprins de ferocitatea ta. Oțelul se ciocnește de oțel. După câteva schimburi dure, adversarul cade la pământ, învins.",
+    "suggestions": [
+      "Verifică cadavrele.",
+      "Pleacă rapid din zonă.",
+      "Bandajează-te."
+    ],
+    "episode_progress": 0.0
+  },
+  "Strigă 'Trădare!' și atacă.": {
+    "narrative": "Te ferești de o lovitură mortală și ripostezi decisiv. Lupta este scurtă, dar brutală. Îți ștergi lama de sânge și privești în jur.",
+    "suggestions": [
+      "Recuperează suflul.",
+      "Curăță sabia.",
+      "Pregătește-te de următoarea luptă."
+    ],
+    "episode_progress": 0.0
+  },
+  "Cere ajutor de la Breaslă.": {
+    "narrative": "Cuvintele tale sunt bine alese. Interlocutorul te privește cu respect (sau frică). Îți spune ce vrei să auzi, sperând să scape de tine.",
+    "suggestions": [
+      "Mulțumește și pleacă.",
+      "Cere mai multe detalii.",
+      "Amenință-l să tacă."
+    ],
+    "episode_progress": 0.0
+  },
+  "Cere mită servitorului.": {
+    "narrative": "Negocierea este o artă, iar tu ești un maestru. După câteva replici schimbate, ajungeți la o înțelegere. Ai obținut informația dorită.",
+    "suggestions": [
+      "Aruncă-i un ban.",
+      "Notează informația.",
+      "Verifică dacă minte."
+    ],
+    "episode_progress": 0.0
+  },
+  "Execută-l.": {
+    "narrative": "Evenimentele se precipită. Ești în mijlocul acțiunii. Nu e timp de ezitare. Instinctul îți spune să continui.",
+    "suggestions": [
+      "Continuă misiunea.",
+      "Ia o pauză.",
+      "Verifică echipamentul."
+    ],
+    "episode_progress": 0.0
+  },
+  "Dispari de pe acoperiș.": {
+    "narrative": "Evenimentele se precipită. Ești în mijlocul acțiunii. Nu e timp de ezitare. Instinctul îți spune să continui.",
+    "suggestions": [
+      "Continuă misiunea.",
+      "Ia o pauză.",
+      "Verifică echipamentul."
+    ],
+    "episode_progress": 0.0
+  },
+  "Blochează ușa în urma ta.": {
+    "narrative": "Acțiunea ta are consecințe neașteptate. Situația se schimbă, deschizând noi oportunități. Trebuie să te adaptezi rapid.",
+    "suggestions": [
+      "Mergi mai departe.",
+      "Fii precaut.",
+      "Grăbește-te."
+    ],
+    "episode_progress": 0.0
+  },
+  "Trimite un mesaj lui Vlad.": {
+    "narrative": "Evenimentele se precipită. Ești în mijlocul acțiunii. Nu e timp de ezitare. Instinctul îți spune să continui.",
+    "suggestions": [
+      "Continuă misiunea.",
+      "Ia o pauză.",
+      "Verifică echipamentul."
+    ],
+    "episode_progress": 0.0
+  },
+  "Cere plata și lasă-l să plece.": {
+    "narrative": "Negocierea este o artă, iar tu ești un maestru. După câteva replici schimbate, ajungeți la o înțelegere. Ai obținut informația dorită.",
+    "suggestions": [
+      "Aruncă-i un ban.",
+      "Notează informația.",
+      "Verifică dacă minte."
+    ],
+    "episode_progress": 0.0
+  },
+  "Notează simbolurile de pe lăzi.": {
+    "narrative": "Acțiunea ta are consecințe neașteptate. Situația se schimbă, deschizând noi oportunități. Trebuie să te adaptezi rapid.",
+    "suggestions": [
+      "Mergi mai departe.",
+      "Fii precaut.",
+      "Grăbește-te."
+    ],
+    "episode_progress": 0.0
+  },
+  "Cheamă gărzile lui Vlad (Riscant).": {
+    "narrative": "Evenimentele se precipită. Ești în mijlocul acțiunii. Nu e timp de ezitare. Instinctul îți spune să continui.",
+    "suggestions": [
+      "Continuă misiunea.",
+      "Ia o pauză.",
+      "Verifică echipamentul."
+    ],
+    "episode_progress": 0.0
+  },
+  "Negociază (Bluf).": {
+    "narrative": "Cuvintele tale sunt bine alese. Interlocutorul te privește cu respect (sau frică). Îți spune ce vrei să auzi, sperând să scape de tine.",
+    "suggestions": [
+      "Mulțumește și pleacă.",
+      "Cere mai multe detalii.",
+      "Amenință-l să tacă."
+    ],
+    "episode_progress": 0.0
+  },
+  "Acceptă aurul.": {
+    "narrative": "Reușești să duci planul la bun sfârșit. Totul a decurs conform așteptărilor. Acum, drumul este liber pentru următoarea mișcare.",
+    "suggestions": [
+      "Evaluează situația.",
+      "Caută avantaje.",
+      "Pregătește-te."
+    ],
+    "episode_progress": 0.0
+  },
+  "Interoghează prizonierul.": {
+    "narrative": "Acțiunea ta are consecințe neașteptate. Situația se schimbă, deschizând noi oportunități. Trebuie să te adaptezi rapid.",
+    "suggestions": [
+      "Mergi mai departe.",
+      "Fii precaut.",
+      "Grăbește-te."
+    ],
+    "episode_progress": 0.0
+  },
+  "Ignoră ordinul și mergi la Vlad.": {
+    "narrative": "Te deplasezi rapid prin umbre. Nimeni nu te observă. Ajungi la destinație fără incidente, dar simți că ești urmărit.",
+    "suggestions": [
+      "Privește în jur cu atenție.",
+      "Caută un adăpost.",
+      "Așteaptă să vezi ce se întâmplă."
+    ],
+    "episode_progress": 0.0
+  },
+  "Fugi și urmărește-l.": {
+    "narrative": "Drumul este greu, dar ești obișnuit cu efortul. Peisajul se schimbă. Ajungi într-un loc nou, plin de posibilități... și pericole.",
+    "suggestions": [
+      "Investighează zona.",
+      "Ascultă zgomotele.",
+      "Verifică harta."
+    ],
+    "episode_progress": 0.0
+  },
+  "Privește în jur.": {
+    "narrative": "Nu observi nimic nou. Situația rămâne neschimbată.",
+    "suggestions": [
+      "Întoarce-te."
+    ],
+    "episode_progress": 0.0
+  },
+  "Întoarce-te.": {
+    "narrative": "Te întorci la punctul anterior sau cauți o altă cale.",
+    "suggestions": [],
+    "episode_progress": 0.0
+  },
+  "Evaluează situația.": {
+    "narrative": "Acțiunea continuă. Ești pe drumul cel bun.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 0.1
+  },
+  "Mergi înainte.": {
+    "narrative": "Te apropii de deznodământ.",
+    "suggestions": [],
+    "episode_progress": 1.0,
+    "win_condition": true
+  },
+  "Caută avantaje.": {
+    "narrative": "Acțiunea continuă. Ești pe drumul cel bun.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 0.1
+  },
+  "Pregătește-te.": {
+    "narrative": "Acțiunea continuă. Ești pe drumul cel bun.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 0.1
+  },
+  "Aruncă-i un ban.": {
+    "narrative": "Acțiunea continuă. Ești pe drumul cel bun.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 0.1
+  },
+  "Notează informația.": {
+    "narrative": "Acțiunea continuă. Ești pe drumul cel bun.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 0.1
+  },
+  "Verifică dacă minte.": {
+    "narrative": "Acțiunea continuă. Ești pe drumul cel bun.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 0.1
+  },
+  "Verifică cadavrele.": {
+    "narrative": "Acțiunea continuă. Ești pe drumul cel bun.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 0.1
+  },
+  "Pleacă rapid din zonă.": {
+    "narrative": "Acțiunea continuă. Ești pe drumul cel bun.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 0.1
+  },
+  "Bandajează-te.": {
+    "narrative": "Acțiunea continuă. Ești pe drumul cel bun.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 0.1
+  },
+  "Investighează zona.": {
+    "narrative": "Acțiunea continuă. Ești pe drumul cel bun.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 0.1
+  },
+  "Ascultă zgomotele.": {
+    "narrative": "Acțiunea continuă. Ești pe drumul cel bun.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 0.1
+  },
+  "Verifică harta.": {
+    "narrative": "Acțiunea continuă. Ești pe drumul cel bun.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 0.1
+  },
+  "Continuă misiunea.": {
+    "narrative": "Acțiunea continuă. Ești pe drumul cel bun.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 0.1
+  },
+  "Ia o pauză.": {
+    "narrative": "Acțiunea continuă. Ești pe drumul cel bun.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 0.1
+  },
+  "Verifică echipamentul.": {
+    "narrative": "Acțiunea continuă. Ești pe drumul cel bun.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 0.1
+  },
+  "Mergi mai departe.": {
+    "narrative": "Acțiunea continuă. Ești pe drumul cel bun.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 0.1
+  },
+  "Fii precaut.": {
+    "narrative": "Acțiunea continuă. Ești pe drumul cel bun.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 0.1
+  },
+  "Grăbește-te.": {
+    "narrative": "Acțiunea continuă. Ești pe drumul cel bun.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 0.1
+  },
+  "Privește în jur cu atenție.": {
+    "narrative": "Acțiunea continuă. Ești pe drumul cel bun.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 0.1
+  },
+  "Caută un adăpost.": {
+    "narrative": "Acțiunea continuă. Ești pe drumul cel bun.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 0.1
+  },
+  "Așteaptă să vezi ce se întâmplă.": {
+    "narrative": "Acțiunea continuă. Ești pe drumul cel bun.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 0.1
+  },
+  "Ia armele lor.": {
+    "narrative": "Acțiunea continuă. Ești pe drumul cel bun.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 0.1
+  },
+  "Ascunde corpurile.": {
+    "narrative": "Acțiunea continuă. Ești pe drumul cel bun.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 0.1
+  },
+  "Caută martori.": {
+    "narrative": "Acțiunea continuă. Ești pe drumul cel bun.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 0.1
+  },
+  "Cere o dovadă.": {
+    "narrative": "Acțiunea continuă. Ești pe drumul cel bun.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 0.1
+  },
+  "Pleacă spre noua pistă.": {
+    "narrative": "Acțiunea continuă. Ești pe drumul cel bun.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 0.1
+  },
+  "Recrutează-l.": {
+    "narrative": "Acțiunea continuă. Ești pe drumul cel bun.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 0.1
+  },
+  "Recuperează suflul.": {
+    "narrative": "Acțiunea continuă. Ești pe drumul cel bun.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 0.1
+  },
+  "Curăță sabia.": {
+    "narrative": "Acțiunea continuă. Ești pe drumul cel bun.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 0.1
+  },
+  "Pregătește-te de următoarea luptă.": {
+    "narrative": "Acțiunea continuă. Ești pe drumul cel bun.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 0.1
+  },
+  "Mulțumește și pleacă.": {
+    "narrative": "Acțiunea continuă. Ești pe drumul cel bun.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 0.1
+  },
+  "Cere mai multe detalii.": {
+    "narrative": "Acțiunea continuă. Ești pe drumul cel bun.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 0.1
+  },
+  "Amenință-l să tacă.": {
+    "narrative": "Acțiunea continuă. Ești pe drumul cel bun.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 0.1
+  }
+}

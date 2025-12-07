@@ -1,0 +1,55 @@
+{
+  "O caut pe Baba Dochia în sat.": {
+    "narrative": "Baba știe cine ești. \"Secretele tale nu sunt sigure aici.\" Trebuie să găsești simbolurile.",
+    "suggestions": [
+      "Caută în colibă.",
+      "Urmărește ritualul.",
+      "Fură cartea babei."
+    ],
+    "episode_progress": 0.3,
+    "win_condition": false,
+    "items_gained": [],
+    "gold_change": 0,
+    "health_change": 0,
+    "reputation_change": 0
+  },
+  "Fură cartea babei.": {
+    "narrative": "Găsești pagina cu cifrul sigiliului.",
+    "suggestions": [
+      "Copiază simbolurile."
+    ],
+    "episode_progress": 1.0,
+    "win_condition": true,
+    "items_gained": [],
+    "gold_change": 0,
+    "health_change": 0,
+    "reputation_change": 0
+  },
+  "Caută în colibă.": {
+    "narrative": "Acțiunea continuă conform planului tău.",
+    "suggestions": [
+      "Mergi mai departe."
+    ],
+    "episode_progress": 0.4
+  },
+  "Mergi mai departe.": {
+    "narrative": "Te apropii de final.",
+    "suggestions": [],
+    "episode_progress": 1.0,
+    "win_condition": true
+  },
+  "Urmărește ritualul.": {
+    "narrative": "Acțiunea continuă conform planului tău.",
+    "suggestions": [
+      "Mergi mai departe."
+    ],
+    "episode_progress": 0.4
+  },
+  "Copiază simbolurile.": {
+    "narrative": "Acțiunea continuă conform planului tău.",
+    "suggestions": [
+      "Mergi mai departe."
+    ],
+    "episode_progress": 1.1
+  }
+}

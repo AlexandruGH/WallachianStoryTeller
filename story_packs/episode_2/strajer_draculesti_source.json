@@ -1,0 +1,211 @@
+{
+  "Intru în han și comand o băutură.": {
+    "narrative": "Hanul Argeșean e plin de călători dubioși. Fumul gros de la sobă se amestecă cu mirosul de bere acră și sudoare. Te așezi la tejghea în uniforma străjii domnești. Hangiul, un individ gras cu mustață, te privește suspicios. \"Ce poftește straja pe aici?\" Lumea din sală amuțește brusc, privirile se întorc către tine.",
+    "suggestions": [
+      "Arată-i sigiliul domnesc și cere să vorbești cu hangiul între patru ochi.",
+      "Comandă o bere și ascultă conversațiile din jur.",
+      "Patrulează prin sală cu privirea, observând fețele suspicioase."
+    ],
+    "episode_progress": 0.1,
+    "win_condition": false
+  },
+  "Arată-i sigiliul domnesc și cere să vorbești cu hangiul între patru ochi.": {
+    "narrative": "Scoți sigiliul domnesc din buzunar. Hangiul pălește vizibil. \"Prea bine, domnule strajă. Să mergem în spate.\" În camera din dos, îți șoptește: \"Hanul ăsta e plin de spioni. Un otoman cu turban albastru a sosit azi-dimineață. Dar să nu spui că eu ți-am zis.\"",
+    "suggestions": [
+      "Întreabă despre ghicitoarea medievală pentru a intra în cercul conspiratorilor.",
+      "Cere să-ți descrie agentul otoman mai detaliat.",
+      "Mulțumește-i și ieși să cauți turbanul albastru."
+    ],
+    "episode_progress": 0.25,
+    "reputation_change": 2
+  },
+  "Întreabă despre ghicitoarea medievală pentru a intra în cercul conspiratorilor.": {
+    "narrative": "Hangiul șovăie. \"E periculos să știi prea multe. Dar dacă insiști... În fiecare joi, la miezul nopții, cei din cercul trădătorilor spun: 'Ce e mai puternic decât moartea, mai dulce decât mierea, mai iute decât săgeata?' Răspunsul deschide ușa camerei secrete.\"",
+    "suggestions": [
+      "Îți notezi ghicitoarea și ieși să cauți camera secretă.",
+      "Întreabă dacă știe răspunsul ghicitorii.",
+      "Cere să te ducă personal la camera secretă."
+    ],
+    "episode_progress": 0.4
+  },
+  "Îți notezi ghicitoarea și ieși să cauți camera secretă.": {
+    "narrative": "În sala principală, observi o ușă ascunsă în perete, camuflată cu un tapet vechi. Te apropii și spui cu voce fermă: \"Ce e mai puternic decât moartea, mai dulce decât mierea, mai iute decât săgeata?\" Ușa se deschide scârțâind, dezvăluind o cameră plină de bărbați înarmați.",
+    "suggestions": [
+      "Intră și cere să vorbești cu liderul lor.",
+      "Ascultă conversația lor înainte să intri.",
+      "Întoarce-te și raportează ce ai descoperit."
+    ],
+    "episode_progress": 0.6
+  },
+  "Intră și cere să vorbești cu liderul lor.": {
+    "narrative": "Cei dinăuntru te privesc ostil. Un bărbat cu barbă căruntă se ridică. \"Tu cine ești, străjerule? Ce cauți aici?\" Arăți sigiliul domnesc. \"Vlad Țepeș mă trimite să demasc conspiratorii. Vorbiți și poate veți scăpa cu viață.\"",
+    "suggestions": [
+      "Ascultă ce au de spus despre Radu cel Frumos.",
+      "Identifică agentul otoman printre ei.",
+      "Arestează-i pe toți pentru trădare."
+    ],
+    "episode_progress": 0.75
+  },
+  "Ascultă ce au de spus despre Radu cel Frumos.": {
+    "narrative": "Liderul conspirației vorbește cu pasiune: \"Radu cel Frumos ne-a promis pământuri și aur dacă-l ajutăm să-l detroneze pe Vlad. Otomanii ne vor lăsa în pace, iar sașii ne vor da comerț liber.\" Unul dintre ei, un tânăr cu accent străin, adaugă: \"Sultanul va fi mulțumit de serviciile noastre.\"",
+    "suggestions": [
+      "Confruntă agentul otoman cu dovezi.",
+      "Întreabă despre menestrelul brașovean.",
+      "Încearcă să-i convingi să renunțe la trădare."
+    ],
+    "episode_progress": 0.85
+  },
+  "Confruntă agentul otoman cu dovezi.": {
+    "narrative": "Îți scoți sabia și o îndrepți către tânărul cu accent străin. \"Tu ești agentul otoman! Ai ordine scrise de la sultan în buzunar.\" El scoate un iatagan, dar ceilalți conspiratori nu-l ajută. \"Trădătorule!\" strigă unul dintre ei.",
+    "suggestions": [
+      "Luptă cu agentul otoman.",
+      "Cheamă ajutoare din sala principală.",
+      "Încearcă să-l capturezi viu."
+    ],
+    "episode_progress": 0.9
+  },
+  "Luptă cu agentul otoman.": {
+    "narrative": "Duelul e scurt și violent. Agentul otoman e antrenat, dar tu ai avantajul disciplinei străjii domnești. Îl dezarmezi și-l legi. Găsești ordinele sultanului asupra lui - dovezi clare ale invaziei planificate.",
+    "suggestions": [
+      "Interoghează conspiratorii rămași.",
+      "Du prizonierul la cetate.",
+      "Caută menestrelul brașovean printre ei."
+    ],
+    "episode_progress": 0.95,
+    "health_change": -5
+  },
+  "Interoghează conspiratorii rămași.": {
+    "narrative": "Cei rămași vorbesc acum. Unul dintre ei, un bărbat cu lăută la brâu, se prezintă ca menestrelul brașovean. \"Eu nu sunt trădător! Am venit să cânt pentru ei, dar am auzit planurile lor. Ajută-mă să scap și îți voi fi loial lui Vlad.\"",
+    "suggestions": [
+      "Acceptă să-l recrutezi pe menestrel.",
+      "Refuză și arestează-i pe toți.",
+      "Întreabă mai multe despre Radu cel Frumos."
+    ],
+    "episode_progress": 0.98
+  },
+  "Acceptă să-l recrutezi pe menestrel.": {
+    "narrative": "Menestrelul îți mulțumește. \"Îți voi cânta cântece despre loialitatea față de Vlad în toate târgurile țării.\" Îl lași să plece, dar îi iei lăuta ca garanție a loialității. Ceilalți conspiratori sunt arestați.",
+    "suggestions": [
+      "Du prizonierii la cetate."
+    ],
+    "episode_progress": 1.0,
+    "win_condition": true,
+    "reputation_change": 8,
+    "gold_change": 10,
+    "items_gained": [
+      {
+        "name": "Lăuta Menestrelului",
+        "type": "obiect_important",
+        "value": 0,
+        "quantity": 1
+      }
+    ]
+  },
+  "Du prizonierii la cetate.": {
+    "narrative": "Îi legi pe conspiratori și pe agentul otoman. Drumul înapoi la cetate e lung, dar reușit. Vlad va fi mulțumit de serviciile tale. Ai demascat o conspirație majoră la răscrucea drumurilor.",
+    "suggestions": [],
+    "episode_progress": 1.0,
+    "win_condition": true,
+    "reputation_change": 10,
+    "gold_change": 15
+  },
+  "Comandă o bere și ascultă conversațiile din jur.": {
+    "narrative": "Hangiul îți aduce o halbă mare de bere. Te așezi la o masă retrasă și asculți. Doi bărbați discută în șoaptă despre \"Radu cel Frumos\" și „ordine de la sultan\". Unul are accent străin, turcesc. Mai departe, un menestrel cântă la lăută despre iubiri pierdute.",
+    "suggestions": [
+      "Apropie-te discret de masa cu cei doi bărbați.",
+      "Ascultă cântecul menestrelului.",
+      "Observă dacă cineva te urmărește."
+    ],
+    "episode_progress": 0.2
+  },
+  "Apropie-te discret de masa cu cei doi bărbați.": {
+    "narrative": "Te ridici și te apropii ca să „iei sare de pe masă". Auzi clar: „...la miezul nopții, când clopotele bat, vom deschide porțile trădătorilor." Cel cu accent turcesc adaugă: „Sultanul va răsplăti bine serviciile voastre.\"",
+    "suggestions": [
+      "Confruntă-i direct pentru trădare.",
+      "Ascultă mai mult fără să intervii.",
+      "Întoarce-te la tejghea și raportează hangiului."
+    ],
+    "episode_progress": 0.4
+  },
+  "Confruntă-i direct pentru trădare.": {
+    "narrative": "Scoți sabia și strigi: „În numele lui Vlad Țepeș, sunteți arestați pentru trădare!" Sala intră în panică. Cel cu accent turcesc scoate un iatagan și se repede la tine, ceilalți conspiratori fug către ieșire.",
+    "suggestions": [
+      "Luptă cu agentul otoman.",
+      "Blochează ieșirea și cheamă ajutoare.",
+      "Urmărește conspiratorii care fug."
+    ],
+    "episode_progress": 0.6
+  },
+  "Ascultă cântecul menestrelului.": {
+    "narrative": "Menestrelul cântă despre un „frate trădător care vinde țara pentru aur străin". Te apropii și-i dai o monedă. „Frumos cântec. Despre cine vorbește?" El șoptește: „Despre Radu cel Frumos și aliații lui otomani. Dar să nu spui că eu ți-am zis.\"",
+    "suggestions": [
+      "Întreabă-l dacă vrea să ajute cauza lui Vlad.",
+      "Ascultă mai multe cântece de la el.",
+      "Întoarce-te să observi masa cu conspiratorii."
+    ],
+    "episode_progress": 0.35
+  },
+  "Întreabă-l dacă vrea să ajute cauza lui Vlad.": {
+    "narrative": "Menestrelul ezită, apoi încuviințează. „Da, domnule strajă. Am cântece care pot demasca trădătorii în toată Valahia. Dar trebuie să mă aperi de răzbunarea lor.\"",
+    "suggestions": [
+      "Acceptă să-l iei sub protecția străjii.",
+      "Cere să cânte imediat despre trădare.",
+      "Întreabă despre ceilalți conspiratori."
+    ],
+    "episode_progress": 0.5
+  },
+  "Acceptă să-l iei sub protecția străjii.": {
+    "narrative": "Îl iei pe menestrel sub protecția ta. Împreună, vă îndreptați către masa cu conspiratorii. „Cântă-le cântecul despre trădătorii lui Radu!" Menestrelul începe să cânte, iar conspiratorii devin agitați.",
+    "suggestions": [
+      "Atacă-i în timpul cântecului.",
+      "Așteaptă să vadă reacția lor.",
+      "Cheamă oamenii din han să-i aresteze."
+    ],
+    "episode_progress": 0.7
+  },
+  "Patrulează prin sală cu privirea, observând fețele suspicioase.": {
+    "narrative": "Parcurgi sala cu privirea autoritară. Majoritatea își feresc privirile, dar observi un individ cu turban albastru care se foiește nervos. Mai departe, un menestrel cu lăută privește către tine cu interes. La o masă din colț, doi bărbați discută aprins în șoaptă.",
+    "suggestions": [
+      "Apropie-te de individul cu turban albastru.",
+      "Vorbește cu menestrelul.",
+      "Ascultă conversația de la masa din colț."
+    ],
+    "episode_progress": 0.2
+  },
+  "Apropie-te de individul cu turban albastru.": {
+    "narrative": "Te apropii și te așezi la masa lui. „Salutări, străine. Ce te aduce în Valahia?" El răspunde cu accent turcesc: „Comerț, domnule. Dar văd că străja e vigilentă pe aici.\" Îți dă de înțeles că știe cine ești.",
+    "suggestions": [
+      "Întreabă direct despre ordinele de la sultan.",
+      "Pretinde că ești interesat de comerț.",
+      "Arestează-l pentru suspiciune de spionaj."
+    ],
+    "episode_progress": 0.4
+  },
+  "Întreabă direct despre ordinele de la sultan.": {
+    "narrative": "El pălește. „Ce știi tu despre asta?" Scoate un iatagan de sub masă. „Trădătorule! Sultanul mă va răzbuna!" Conspiratorii din jur se ridică să-l ajute.",
+    "suggestions": [
+      "Luptă singur împotriva tuturor.",
+      "Strigă după ajutor din partea hangiului.",
+      "Folosește masa ca baricadă."
+    ],
+    "episode_progress": 0.7
+  },
+  "Arestează-l pentru suspiciune de spionaj.": {
+    "narrative": "Îl iei de braț și-i pui cătușele. „Ești arestat în numele lui Vlad!" El rezistă scurt, apoi se calmează când vezi că nimeni nu-l ajută. Ceilalți conspiratori privesc speriați.",
+    "suggestions": [
+      "Percheziționează-l pentru dovezi.",
+      "Interoghează-l în camera din spate.",
+      "Întreabă despre ceilalți conspiratori."
+    ],
+    "episode_progress": 0.6
+  },
+  "Percheziționează-l pentru dovezi.": {
+    "narrative": "Îi găsești ordine scrise de la sultan, sigilate cu pecetea otomană. „Acestea dovedesc planurile de invazie!" Agentul otoman mărturisește totul sub presiune.",
+    "suggestions": [
+      "Întreabă despre Radu cel Frumos.",
+      "Caută menestrelul pentru recrutare.",
+      "Du prizonierul la cetate."
+    ],
+    "episode_progress": 0.9
+  }
+}

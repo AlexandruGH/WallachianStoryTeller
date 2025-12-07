@@ -1,0 +1,55 @@
+{
+  "O caut pe Baba Dochia în sat.": {
+    "narrative": "Baba spune că satul e atacat de strigoi (mercenari). \"Apără-ne și te ajut.\"",
+    "suggestions": [
+      "Organizează apărarea.",
+      "Patrulează ulițele.",
+      "Atacă tabăra mercenarilor."
+    ],
+    "episode_progress": 0.3,
+    "win_condition": false,
+    "items_gained": [],
+    "gold_change": 0,
+    "health_change": 0,
+    "reputation_change": 0
+  },
+  "Organizează apărarea.": {
+    "narrative": "Respingeți atacul. Baba îți dă pergamentul.",
+    "suggestions": [
+      "Ia fragmentul descifrat."
+    ],
+    "episode_progress": 1.0,
+    "win_condition": true,
+    "items_gained": [],
+    "gold_change": 0,
+    "health_change": 0,
+    "reputation_change": 0
+  },
+  "Patrulează ulițele.": {
+    "narrative": "Acțiunea continuă conform planului tău.",
+    "suggestions": [
+      "Mergi mai departe."
+    ],
+    "episode_progress": 0.4
+  },
+  "Mergi mai departe.": {
+    "narrative": "Te apropii de final.",
+    "suggestions": [],
+    "episode_progress": 1.0,
+    "win_condition": true
+  },
+  "Atacă tabăra mercenarilor.": {
+    "narrative": "Acțiunea continuă conform planului tău.",
+    "suggestions": [
+      "Mergi mai departe."
+    ],
+    "episode_progress": 0.4
+  },
+  "Ia fragmentul descifrat.": {
+    "narrative": "Acțiunea continuă conform planului tău.",
+    "suggestions": [
+      "Mergi mai departe."
+    ],
+    "episode_progress": 1.1
+  }
+}

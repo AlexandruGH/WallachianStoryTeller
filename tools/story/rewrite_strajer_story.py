@@ -1,0 +1,579 @@
+import json
+import os
+import sys
+
+# Ensure we can run from anywhere by finding root dir
+# Assuming script is in tools/story/
+root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'))
+output_path = os.path.join(root_dir, "story_packs/episode_1/strajer_source.json")
+
+story_data = {
+    # --- SCENA 1: RAMURI INIȚIALE (RĂSPUNSURI LA INTRO) ---
+    
+    # 1. Mă apropii discret (Stealth / Pândă)
+    "Mă apropii discret de carul negru.": {
+        "narrative": "Te lipești de zidul unei case. După câteva minute, o siluetă encapșonată iese de pe ulița fierarilor. Se apropie de car și schimbă câteva vorbe cu vizitiul. Auzi doar fragmente: '...la Mănăstirea Dealu... arme... Dăneștii plătesc bine'. Străinul îi dă un pergament vizitiului.",
+        "suggestions": [
+            "Urmărește-l pe străin.",
+            "Atacă-i pe amândoi acum.",
+            "Așteaptă să plece carul și urmărește-l."
+        ],
+        "episode_progress": 0.1
+    },
+
+    # 2. Merg în piață (Zvonuri / Informații)
+    "Merg în piață să ascult zvonurile.": {
+        "narrative": "Te amesteci printre târgoveți. Oamenii vorbesc în șoaptă. \"Ai auzit? Căruțașul ăla străin caută drumul spre Mănăstirea Dealu... dar mănăstirea e părăsită.\" Zvonurile confirmă suspiciunile. Ceva necurat se întâmplă acolo.",
+        "suggestions": [
+            "Urmărește-l pe străin.",
+            "Mergi la Grămăticul Curții.",
+            "Întoarce-te și raportează Căpitanului."
+        ],
+        "reputation_change": 1
+    },
+
+    # 3. Caut un loc înalt (Observație / Tactică)
+    "Caut un loc înalt pentru a observa.": {
+        "narrative": "Urc pe acoperișul unei magazii din apropiere. De sus, ai o vedere perfectă. Vezi cum vizitiul schimbă semne discrete cu un grup de bărbați înarmați ascunși după colț. Se pregătesc de ceva.",
+        "suggestions": [
+            "Aruncă o piatră pentru a-i distrage atenția.",
+            "Trage cu arcul după el.",
+            "Fugi și dă alarma."
+        ],
+        "episode_progress": 0.1
+    },
+    
+    # --- RAMURA: PÂNDĂ (STEALTH) ---
+    "Privește din umbră.": {
+        "narrative": "Te lipești de zidul unei case. După câteva minute, o siluetă encapșonată iese de pe ulița fierarilor. Se apropie de car și schimbă câteva vorbe cu vizitiul. Auzi doar fragmente: '...la Mănăstirea Dealu... arme... Dăneștii plătesc bine'. Străinul îi dă un pergament vizitiului.",
+        "suggestions": [
+            "Urmărește-l pe străin.",
+            "Atacă-i pe amândoi acum.",
+            "Așteaptă să plece carul și urmărește-l."
+        ],
+        "episode_progress": 0.1
+    },
+    
+    # --- RAMURA: DIVERSIUNE (Din Observație) ---
+    "Aruncă o piatră pentru a-i distrage atenția.": {
+        "narrative": "Piatra lovește caldarâmul cu zgomot. Vizitiul se întoarce brusc, cu mâna pe un cuțit. \"Cine-i acolo?!\" Profitând de moment, te poți strecura în spatele carului. În timp ce se întoarce, observi un tub de pergament prins neglijent la brâul său.",
+        "suggestions": [
+            "Taie prelata să vezi ce ascunde.",
+            "Lovește-l pe la spate.",
+            "Fură pergamentul de la brâu."
+        ],
+        "episode_progress": 0.1
+    },
+    
+    # --- RAMURA: CONFRUNTARE (DIRECT) - Optional paths reachable from other nodes ---
+    "Somează-l să se oprească.": {
+        "narrative": "\"În numele Voievodului Vlad, stai pe loc!\" Vocea ta tună în piață. Vizitiul tresare, dar nu se supune. Mâna lui coboară fulgerător sub capră și scoate o arbaletă încărcată! \"Mori, câine de Drăculești!\"",
+        "suggestions": [
+            "Ferește-te și trage sabia!",
+            "Aruncă-te la pământ și strigă după ajutor.",
+            "Încearcă să-l intimidezi."
+        ],
+        "episode_progress": 0.1
+    },
+    
+    "Încearcă să-l intimidezi.": {
+        "narrative": "Îl privești fix în ochi, cu mâna pe mânerul sabiei. \"Dacă tragi, vei muri înainte să reîncarci. Predă-te și poate Voievodul va fi milostiv.\" Ezită o clipă.",
+        "suggestions": [
+            "Profită de ezitare și atacă.",
+            "Continuă să vorbești calm."
+        ],
+        "episode_progress": 0.15
+    },
+    
+    "Continuă să vorbești calm.": {
+        "narrative": "\"Nu e nevoie să curgă sânge azi. Lasă arma jos.\" Vizitiul, transpirat, aruncă arbaleta. \"Nu am vrut... m-au plătit...\"",
+        "suggestions": [
+            "Dezarmează-l și arestează-l."
+        ],
+        "reputation_change": 5,
+        "episode_progress": 0.3
+    },
+    
+    "Profită de ezitare și atacă.": {
+        "narrative": "Te repezi înainte. El trage, dar săgeata te zgârie doar pe umăr. Îl lovești cu garda sabiei și cade lat.",
+        "suggestions": [
+            "Dezarmează-l și arestează-l."
+        ],
+        "health_change": -5,
+        "episode_progress": 0.3
+    },
+
+    "Aruncă-te la pământ și strigă după ajutor.": {
+        "narrative": "Săgeata trece pe deasupra ta. Strigătele tale atrag atenția târgoveților, dar vizitiul profită de haos, biciuiește caii și fuge cu carul spre poartă.",
+        "suggestions": [
+            "Aleargă după car.",
+            "Cere un cal de la un negustor."
+        ],
+        "episode_progress": 0.2
+    },
+    
+    "Aleargă după car.": {
+        "narrative": "Fugi cât te țin picioarele, dar caii sunt mai rapizi. Vezi carul ieșind pe poarta de Nord. Ai pierdut urma, dar știi direcția.",
+        "suggestions": [
+            "Raportează Căpitanului incidentul."
+        ],
+        "reputation_change": -2,
+        "episode_progress": 0.5
+    },
+    
+    "Cere un cal de la un negustor.": {
+        "narrative": "\"Dă-mi calul! În numele Voievodului!\" Negustorul, speriat, îți cedează armăsarul. Încaleci și pornești în galop.",
+        "suggestions": [
+            "Continuă să-l urmărești pe drum."
+        ],
+        "episode_progress": 0.3
+    },
+
+    "Lovește-l pe la spate.": {
+        "narrative": "O lovitură precisă în ceafă. Vizitiul se prăbușește fără sunet. Ai controlul situației.",
+        "suggestions": [
+            "Dezarmează-l și arestează-l.",
+            "Verifică rapid carul."
+        ],
+        "episode_progress": 0.2
+    },
+    
+    "Verifică rapid carul.": {
+        "narrative": "Sub prelată găsești butoaie cu praf de pușcă și săbii. E clar, se pregătește o revoltă.",
+        "suggestions": [
+            "Du carul la cetate."
+        ],
+        "episode_progress": 0.5
+    },
+    
+    "Fură pergamentul de la brâu.": {
+        "narrative": "Te miști ca o umbră. Iei pergamentul fără să simtă. Te retragi în siguranță.",
+        "suggestions": [
+            "Citește pergamentul."
+        ],
+        "items_gained": [{"name": "Pergament Codificat", "type": "obiect_important", "value": 0, "quantity": 1}],
+        "episode_progress": 0.2
+    },
+    
+    "Citește pergamentul.": {
+        "narrative": "Rupi sigiliul. E scris într-un cifru ciudat: '...la ceasul bufniței...'. Ai nevoie de ajutor pentru a-l descifra.",
+        "suggestions": [
+            "Mergi la Grămăticul Curții.",
+            "Du-te direct la Căpitan."
+        ],
+        "episode_progress": 0.3
+    },
+    
+    "Mergi la Grămăticul Curții.": {
+        "narrative": "Bătrânul logofăt te primește cu greu. Se uită la pergament și pălește. \"Acesta e cifrul Dăneștilor... dar combinat cu cel al Ienicerilor. Dacă traduc asta, capul meu va cădea primul. Îmi trebuie protecție.\"",
+        "suggestions": [
+            "Promite-i protecția Gărzii.",
+            "Amenință-l cu trădarea."
+        ],
+        "episode_progress": 0.4
+    },
+    
+    "Promite-i protecția Gărzii.": {
+        "narrative": "\"Bine...\" tremură el. \"Scrie aici: 'Armele sunt ascunse în pivnițele Mănăstirii Părăsite. Atacul începe când clopotele bat de miezul nopții.'\" Ai locația și ora!",
+        "suggestions": [
+            "Fugi la Căpitan cu traducerea."
+        ],
+        "episode_progress": 0.5
+    },
+    
+    "Amenință-l cu trădarea.": {
+        "narrative": "\"Nu! Te rog! Îți spun!\" Strigă el disperat. \"Mănăstirea Dealu! La miezul nopții! Doar nu mă spune lui Vodă!\"",
+        "suggestions": [
+            "Fugi la Căpitan cu informația."
+        ],
+        "reputation_change": -2,
+        "episode_progress": 0.5
+    },
+    
+    "Du-te direct la Căpitan.": {
+        "narrative": "Căpitanul se uită la foaie. \"Ce e mâzgălitura asta? Fără o traducere sau dovezi clare, nu pot mobiliza garnizoana. Vlad Vodă ne taie capetele pentru alarme false. Adu-mi ceva concret!\"",
+        "suggestions": [
+            "Mergi la Grămăticul Curții."
+        ],
+        "episode_progress": 0.3
+    },
+
+    # --- SCENA 2: ACȚIUNE & INVESTIGAȚIE ---
+    
+    # Urmărire
+    "Urmărește-l pe străin.": {
+        "narrative": "Îl lași pe vizitiu și te iei după mesager. Omul se mișcă repede prin mahalale. Intră într-o casă dărăpănată de lângă zidul cetății. Ușa rămâne întredeschisă.",
+        "suggestions": [
+            "Intră cu sabia în mână.",
+            "Ascultă la geam.",
+            "Dă foc casei să-l scoți afară."
+        ],
+        "episode_progress": 0.2
+    },
+    
+    "Dă foc casei să-l scoți afară.": {
+        "narrative": "Aprinzi o torță și dai foc acoperișului de paie. Flăcările se extind rapid. Străinul iese tușind, cu sabia în mână.",
+        "suggestions": [
+            "Atacă-l prin fum.",
+            "Somează-l să se predea."
+        ],
+        "reputation_change": -5,
+        "episode_progress": 0.3
+    },
+    
+    "Atacă-l prin fum.": {
+        "narrative": "Nu te vede venind. Îl dobori rapid. Găsești asupra lui planurile atacului.",
+        "suggestions": [
+            "Du dovezile la Căpitan."
+        ],
+        "episode_progress": 0.5
+    },
+    
+    "Așteaptă să plece carul și urmărește-l.": {
+        "narrative": "Carul pornește greoi spre ieșirea din Nord. Îl urmărești de la distanță. Se îndreaptă spre dealurile împădurite, spre Mănăstirea Dealu. E clar că acolo e punctul de întâlnire.",
+        "suggestions": [
+            "Ia-o pe scurtătură prin pădure.",
+            "Continuă să-l urmărești pe drum.",
+            "Întoarce-te și raportează Căpitanului."
+        ],
+        "episode_progress": 0.25
+    },
+    
+    "Întoarce-te și raportează Căpitanului.": {
+        "narrative": "Raportezi direcția carului. Căpitanul trimite o patrulă de cavalerie. \"Bine lucrat, soldat. Ai evitat o capcană.\"",
+        "suggestions": [
+            "Rămâi în alertă."
+        ],
+        "episode_progress": 1.0
+    },
+
+    # Combat Direct
+    "Ferește-te și trage sabia!": {
+        "narrative": "Săgeata îți șuieră pe la ureche! Te repezi înainte. Oțelul sabiei tale se izbește de pumnalul lung al vizitiului. E un mercenar antrenat, nu un țăran!",
+        "suggestions": [
+            "Luptă defensiv.",
+            "Atacă furibund.",
+            "Cheamă gărzile de la poartă."
+        ],
+        "episode_progress": 0.15
+    },
+
+    # Investigare Car
+    "Taie prelata să vezi ce ascunde.": {
+        "narrative": "Sfâșii pânza groasă. În lumina palidă a dimineții, vezi... nu grâne, ci săbii scurte și butoaie mici cu praf negru. Arme pentru o revoltă! Vizitiul te aude.",
+        "suggestions": [
+            "Luptă pentru viața ta.",
+            "Fugi și dă alarma.",
+            "Dă foc la praf."
+        ],
+        "episode_progress": 0.2
+    },
+    
+    "Luptă pentru viața ta.": {
+        "narrative": "Scoți sabia și parezi lovitura de pumnal a vizitiului. Ești singur împotriva unui trădător disperat.",
+        "suggestions": [
+            "Luptă defensiv.",
+            "Atacă furibund."
+        ],
+        "episode_progress": 0.3
+    },
+    
+    "Fugi și dă alarma.": {
+        "narrative": "Alergi spre piață strigând \"Trădare!\". Gărzile de la porți aud și blochează ieșirea. Vizitiul este prins.",
+        "suggestions": [
+            "Examinează carul abandonat."
+        ],
+        "episode_progress": 0.5
+    },
+    
+    "Dă foc la praf.": {
+        "narrative": "Arunci torța în car. O explozie asurzitoare spulberă carul și te aruncă la pământ. Ai oprit transportul, dar ai distrus dovezile și ai alertat tot orașul.",
+        "suggestions": [
+            "Recuperează-te."
+        ],
+        "health_change": -50,
+        "episode_progress": 1.0
+    },
+
+    # --- SCENA 3: DEZNODĂMÂNT INTERMEDIAR ---
+
+    "Ascultă la geam.": {
+        "narrative": "Auzi voci. \"Dăneștii atacă în zori. Când clopotele bat de utrenie, deschidem porțile.\" E un complot major! Trebuie să ajungi la Căpitan sau să-i oprești singur.",
+        "suggestions": [
+            "Fugi la Căpitan.",
+            "Intră și luptă cu conspiratorii.",
+            "Fură dovezile și pleacă."
+        ],
+        "episode_progress": 0.4
+    },
+    
+    "Fură dovezile și pleacă.": {
+        "narrative": "Aștepți momentul potrivit, intri pe geam când ei nu sunt atenți, iei harta de pe masă și dispari în noapte.",
+        "suggestions": [
+            "Du dovezile la Căpitan."
+        ],
+        "episode_progress": 0.6
+    },
+
+    "Luptă defensiv.": {
+        "narrative": "Parezi lovitură după lovitură. Mercenarul începe să gâfâie. Face o greșeală, lăsându-și garda jos.",
+        "suggestions": [
+            "Dezarmează-l și arestează-l.",
+            "Curmă-i zilele.",
+            "Întreabă cine l-a trimis."
+        ],
+        "health_change": -5,
+        "episode_progress": 0.3
+    },
+    
+    "Întreabă cine l-a trimis.": {
+        "narrative": "Îi pui sabia la gât. \"Dăneștii!\" scuipă el. \"Dar nu vei opri ce urmează!\"",
+        "suggestions": [
+            "Dezarmează-l și arestează-l."
+        ],
+        "episode_progress": 0.4
+    },
+    
+    "Curmă-i zilele.": {
+        "narrative": "O lovitură rapidă și lupta s-a terminat. Cauți prin hainele lui.",
+        "suggestions": [
+            "Verifică cadavrul."
+        ],
+        "reputation_change": -2,
+        "episode_progress": 0.4
+    },
+    
+    "Verifică cadavrul.": {
+        "narrative": "Găsești un ordin scris: 'Livrați armele la Mănăstirea Dealu'.",
+        "suggestions": [
+            "Fugi la Căpitan cu informația."
+        ],
+        "episode_progress": 0.5
+    },
+
+    "Cheamă gărzile de la poartă.": {
+        "narrative": "Strigătul tău alertează străjerii de pe ziduri. \"La arme!\" Vizitiul vede că e depășit numeric, taie caii de la car și fuge călare.",
+        "suggestions": [
+            "Examinează carul abandonat.",
+            "Trage cu arcul după el.",
+            "Raportează Căpitanului incidentul."
+        ],
+        "episode_progress": 0.3
+    },
+    
+    "Trage cu arcul după el.": {
+        "narrative": "Săgeata ta îl lovește în spate. Cade de pe cal. Gărzile îl înconjoară.",
+        "suggestions": [
+            "Dezarmează-l și arestează-l."
+        ],
+        "episode_progress": 0.4
+    },
+
+    # --- SCENA 4: REZOLVARE & RECOMPENSE ---
+
+    "Dezarmează-l și arestează-l.": {
+        "narrative": "Îl pui la pământ și îi legi mâinile. În buzunarul lui găsești o scrisoare cu sigiliul Dăneștilor. Este dovada trădării!",
+        "suggestions": [
+            "Du-l legat la Căpitan.",
+            "Interoghează-l dur pe loc."
+        ],
+        "items_gained": [{"name": "Scrisoare Dănești", "type": "obiect_important", "value": 0, "quantity": 1}],
+        "episode_progress": 0.8
+    },
+    
+    "Interoghează-l dur pe loc.": {
+        "narrative": "Îl strângi de gât până mărturisește. \"Mănăstirea Dealu... atac la miezul nopții...\"",
+        "suggestions": [
+            "Du-l legat la Căpitan."
+        ],
+        "reputation_change": -5,
+        "episode_progress": 0.9
+    },
+
+    "Du-l legat la Căpitan.": {
+        "narrative": "Căpitanul citește scrisoarea și privește prizonierul. \"Ai salvat cetatea, străjerule. Vlad Vodă va afla de fapta ta.\" Primești o pungă grea de aur și respectul gărzii.",
+        "suggestions": ["Pregătește-te de luptă."],
+        "gold_change": 20,
+        "reputation_change": 10,
+        "items_gained": [{"name": "Sabie de Oțel Valah", "type": "armă", "value": 50, "quantity": 1}],
+        "win_condition": True,
+        "episode_progress": 1.0
+    },
+    
+    "Du dovezile la Căpitan.": {
+        "narrative": "Prezinți planurile Căpitanului. El ordonă imediat dublarea gărzilor și pregătirea tunurilor. Orașul este salvat.",
+        "suggestions": ["Pregătește-te de luptă."],
+        "reputation_change": 8,
+        "gold_change": 15,
+        "win_condition": True,
+        "episode_progress": 1.0
+    },
+
+    "Fugi la Căpitan.": {
+        "narrative": "Ajungi gâfâind la cazarmă. \"Trădare! Dăneștii atacă în zori!\" Căpitanul dă alarma. Datorită ție, garnizoana e pregătită când începe asaltul. Atacul e respins.",
+        "suggestions": ["Sărbătorește victoria."],
+        "reputation_change": 5,
+        "gold_change": 10,
+        "win_condition": True,
+        "episode_progress": 1.0
+    },
+    
+    "Fugi la Căpitan cu informația.": {
+        "narrative": "Ajungi la timp. Informația ta despre atacul de la miezul nopții permite organizarea apărării.",
+        "suggestions": ["Sărbătorește victoria."],
+        "episode_progress": 1.0
+    },
+    
+    "Fugi la Căpitan cu traducerea.": {
+        "narrative": "Căpitanul citește traducerea. \"Mănăstirea Dealu... Îi vom aștepta.\" Atacul surpriză este dejucat.",
+        "suggestions": ["Sărbătorește victoria."],
+        "episode_progress": 1.0
+    },
+
+    "Intră și luptă cu conspiratorii.": {
+        "narrative": "Intri ca o furtună. Sunt trei, dar tu ai dreptatea de partea ta. Lupta e crâncenă. Doi cad, al treilea fuge. Ești rănit, dar ai oprit planul. Găsești harta atacului.",
+        "suggestions": ["Pansează-te și mergi la raport."],
+        "health_change": -30,
+        "items_gained": [{"name": "Harta Atacului", "type": "obiect_important", "value": 0, "quantity": 1}],
+        "reputation_change": 15,
+        "win_condition": True,
+        "episode_progress": 1.0
+    },
+
+    "Examinează carul abandonat.": {
+        "narrative": "Carul e plin cu arme. Ai oprit aprovizionarea trădătorilor, dar spionul a scăpat. Căpitanul e mulțumit, dar îngrijorat.",
+        "suggestions": ["Rămâi în alertă."],
+        "gold_change": 5,
+        "reputation_change": 2,
+        "win_condition": True,
+        "episode_progress": 1.0
+    },
+    
+    "Du carul la cetate.": {
+        "narrative": "Aduci carul cu arme în curtea cazărmii. Căpitanul inspectează captura. \"O lovitură bună dată Dăneștilor.\"",
+        "suggestions": ["Rămâi în alertă."],
+        "reputation_change": 5,
+        "episode_progress": 1.0
+    },
+
+    # --- Alte Căi ---
+    "Atacă furibund.": {
+        "narrative": "Te arunci fără apărare. Îl tai pe vizitiu, dar el îți înfige pumnalul în umăr. Cade mort. Tu sângerezi abundent.",
+        "suggestions": ["Caută rapid indicii și pleacă.", "Cheamă un medic."],
+        "health_change": -40,
+        "episode_progress": 0.5
+    },
+
+    "Caută rapid indicii și pleacă.": {
+        "narrative": "Găsești inelul lui. E de aur. Îl iei și te duci la infirmerie. Ai supraviețuit, dar cu greu.",
+        "suggestions": ["Recuperează-te."],
+        "items_gained": [{"name": "Inel de Aur", "type": "diverse", "value": 15, "quantity": 1}],
+        "win_condition": True,
+        "episode_progress": 1.0
+    },
+
+    # --- Noduri de legătură (Connectors) ---
+    "Urmărește contactul": { # Alias
+        "narrative": "Vezi 'Urmărește-l pe străin'.",
+        "suggestions": ["Urmărește-l pe străin."]
+    },
+    
+    # Fillers for dead ends
+    "Cheamă un medic.": {
+        "narrative": "Te prăbușești în brațele camarazilor. Vei trăi, dar cicatricile vor rămâne.",
+        "suggestions": ["Încearcă din nou."],
+        "win_condition": True
+    },
+    "Pregătește-te de luptă.": { "narrative": "Sfârșit Episod 1.", "suggestions": [], "win_condition": True },
+    "Sărbătorește victoria.": { "narrative": "Sfârșit Episod 1.", "suggestions": [], "win_condition": True },
+    "Pansează-te și mergi la raport.": { "narrative": "Sfârșit Episod 1.", "suggestions": [], "win_condition": True },
+    "Rămâi în alertă.": { "narrative": "Sfârșit Episod 1.", "suggestions": [], "win_condition": True },
+    "Recuperează-te.": { "narrative": "Sfârșit Episod 1.", "suggestions": [], "win_condition": True },
+    "Încearcă din nou.": { "narrative": "Sfârșit.", "suggestions": [], "win_condition": True },
+
+    # Additional options mapping
+    "Atacă-i pe amândoi acum.": {
+        "narrative": "Ești curajos, dar nesăbuit. Doi împotriva unuia. Reușești să-l ucizi pe mesager, dar vizitiul te lovește puternic și fuge cu carul.",
+        "suggestions": ["Verifică cadavrul mesagerului."],
+        "health_change": -20,
+        "episode_progress": 0.5
+    },
+    "Verifică cadavrul mesagerului.": {
+        "narrative": "Găsești o pungă cu bani și un ordin scris: 'Plătiți mercenarii la Mănăstire'.",
+        "suggestions": ["Raportează Căpitanului incidentul."],
+        "items_gained": [{"name": "10 Galbeni", "type": "monedă", "value": 10, "quantity": 1}],
+        "gold_change": 10,
+        "episode_progress": 0.6
+    },
+    "Raportează Căpitanului incidentul.": {
+        "narrative": "Căpitanul ascultă raportul tău sângeros. \"Măcar știm unde sunt. Du-te la vraci.\"",
+        "suggestions": ["Mergi la infirmerie."],
+        "reputation_change": 2,
+        "episode_progress": 1.0
+    },
+    "Mergi la infirmerie.": { "narrative": "Sfârșit Episod 1.", "suggestions": [], "win_condition": True },
+
+    # Forest path
+    "Ia-o pe scurtătură prin pădure.": {
+        "narrative": "Cunoști potecile. Ajungi înaintea carului într-o strâmtoare ideală pentru ambuscadă.",
+        "suggestions": ["Pregătește o capcană.", "Sari pe car din copac."],
+        "episode_progress": 0.6
+    },
+    "Pregătește o capcană.": {
+        "narrative": "Dobori un copac în drum. Carul se oprește. Vizitiul coboară să verifice.",
+        "suggestions": ["Atacă-l prin surprindere.", "Somează-l să se predea."],
+        "episode_progress": 0.7
+    },
+    "Sari pe car din copac.": {
+        "narrative": "Aterizezi în spatele lui! Îi pui sabia la gât înainte să poată reacționa.",
+        "suggestions": ["Du-l legat la Căpitan."],
+        "episode_progress": 0.9
+    },
+    "Atacă-l prin surprindere.": {
+        "narrative": "O singură lovitură precisă. E gata. Carul e al tău.",
+        "suggestions": ["Du carul la cetate."],
+        "episode_progress": 0.9
+    },
+    "Somează-l să se predea.": {
+        "narrative": "El aruncă armele. Știe când a pierdut.",
+        "suggestions": ["Du-l legat la Căpitan."],
+        "episode_progress": 0.9
+    },
+    "Du carul la cetate (Final Bun).": { # Kept for compatibility if referenced, but mapped to new
+        "narrative": "Intri triumfător cu carul plin de arme. Căpitanul te laudă.",
+        "suggestions": ["Pregătește-te de luptă."],
+        "gold_change": 25,
+        "reputation_change": 15,
+        "win_condition": True,
+        "episode_progress": 1.0
+    },
+    "Continuă să-l urmărești pe drum.": {
+        "narrative": "Îl urmărești până la porțile mănăstirii. Vezi zeci de mercenari.",
+        "suggestions": ["Întoarce-te și raportează.", "Încearcă să te infiltrezi."],
+        "episode_progress": 0.6
+    },
+    "Întoarce-te și raportează.": {
+        "narrative": "Informația e valoroasă. Căpitanul pregătește trupele.",
+        "suggestions": ["Rămâi în alertă."],
+        "episode_progress": 1.0
+    },
+    "Încearcă să te infiltrezi.": {
+        "narrative": "Ești prins! Dar fiind un luptător bun, reușești să scapi cu greu, pierzându-ți sabia.",
+        "suggestions": ["Fugi înapoi la cetate."],
+        "items_lost": ["Sabie (dacă aveai)"], # Just flavor text logic here, item system might not remove equipped
+        "health_change": -20,
+        "episode_progress": 0.9
+    },
+    "Fugi înapoi la cetate.": {
+        "narrative": "Ajungi viu, dar fără onoare. Măcar ai adus vestea.",
+        "suggestions": ["Raportează eșecul."],
+        "episode_progress": 1.0
+    }
+}
+
+try:
+    with open(output_path, 'w', encoding='utf-8') as f:
+        json.dump(story_data, f, indent=4, ensure_ascii=False)
+    print("Successfully rewrote Strajer Story Source.")
+except Exception as e:
+    print(f"Error: {e}")

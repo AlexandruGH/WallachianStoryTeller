@@ -1,0 +1,107 @@
+{
+  "character_class": "Aventurier",
+  "faction": "Drăculești",
+  "episode": 3,
+  "description": "Recompiled Pack Ep 3",
+  "cache_data": {
+    "74f44e9eed3e73f4df563cccad87add33bfa538aebaf33dd0b8a4e8c3a0e5e254caeab8eaac2c782248d8385c1280130e89424d5393e2a902f95017b7932e69d": {
+      "narrative": "Găsești o tabără ascunsă. Contrabandiștii beau în jurul focului.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Atacă-i prin surprindere.",
+        "Provoacă-i la luptă dreaptă.",
+        "Fură o armă."
+      ],
+      "episode_progress": 0.3
+    },
+    "c703cb7ce27e71767fa89ca961e7dc453a957492c7740397af8e78abf7e4e6ef0dfdff083e078a8e82d897f48c7c5923d9d7142897327bac325453d7e0671bd0": {
+      "narrative": "Sari din tufișuri. Panică! Șeful lor fuge spre peșteră.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Urmărește șeful.",
+        "Luptă cu restul."
+      ],
+      "episode_progress": 0.6
+    },
+    "b5dda93947f2b764f80e2291eb84c148cade00e8546cb7fb56e9b751a0d978c1b4f40c7e753bbce42fa86f4a9c038c83cf7d03283e05e1d334cd901cdf66e1ef": {
+      "narrative": "Acțiunea continuă conform planului tău.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi mai departe."
+      ],
+      "episode_progress": 0.4
+    },
+    "648b8e27fc3f6f96a5ddcaddcc09be29dc4f0d1696b87c8b194d65da099bdc926a204f26188756304663338788398dfd905d53b00ab8627b85abe86b0d06ca1a": {
+      "narrative": "Acțiunea continuă conform planului tău.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi mai departe."
+      ],
+      "episode_progress": 0.4
+    },
+    "5aad6980af36bcabc76b9539c272740a7ab38741ceec3a081374563b8765b38cf8ceb3da1c7e664b4e8630c46552f88864e79126f5910c9ff14fbe96c3c43965": {
+      "narrative": "Îl prinzi. \"Ia Condica! Doar lasă-mă!\"",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": true,
+      "suggestions": [
+        "Ia Condica."
+      ],
+      "episode_progress": 1.0
+    },
+    "765ac8a260292242e4d0e493c72353c00cdf2da56488544afa232049088d5c885c4e693ab7778d872a1532ded1a99a147a3512e8068ed8c6dafcf9b138968d9d": {
+      "narrative": "Acțiunea continuă conform planului tău.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi mai departe."
+      ],
+      "episode_progress": 0.7
+    }
+  }
+}

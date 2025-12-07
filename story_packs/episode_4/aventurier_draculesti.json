@@ -1,0 +1,107 @@
+{
+  "character_class": "Aventurier",
+  "faction": "Drăculești",
+  "episode": 4,
+  "description": "Recompiled Pack Ep 4",
+  "cache_data": {
+    "5e6b14cbfabcb41707e0f502553e25ed36b156058b5031414591e51e143740a734c030602fcb964628c7b8df86f6a51f12683dd79b5b3e498a7b4c46c563d329": {
+      "narrative": "Baba Dochia te trimite în pădurea blestemată. \"Adu-mi o floare de colț neagră.\"",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Caută floarea.",
+        "Luptă cu lupii.",
+        "Urmărește luminițele."
+      ],
+      "episode_progress": 0.3
+    },
+    "8d67c64e44f413e3f977498f34fd78742bb899cc5023d3adff559d16c758d6364a47b4cf76df6cc4efa05447b7acc8ff58f35c1dd0ac56a992f404d1410caacf": {
+      "narrative": "O găsești pe o stâncă. Un lup te păzește.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Luptă cu lupul.",
+        "Îmblânzește-l."
+      ],
+      "episode_progress": 0.7
+    },
+    "203555a227bdb3e1f6547e84b71e8a3c022eec8c1e7b9ec375fb964ca887bc274722800332e90bc290e068b435a7600e79ec9b5e17ffb32625e42b774a194f2a": {
+      "narrative": "Acțiunea continuă conform planului tău.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi mai departe."
+      ],
+      "episode_progress": 0.4
+    },
+    "210f7e8e7cdd568a12cb180f0d7326fc55f708f3b936fb14cf98b456ff1c0632b7d027159fdc38f7e3eacba21d3c2c5c0c53d46238b21072eada21bf9e1ff9d3": {
+      "narrative": "Acțiunea continuă conform planului tău.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi mai departe."
+      ],
+      "episode_progress": 0.4
+    },
+    "68eb69b706605bc96947af95e577d21c6b790fe55fa8d0204918dafc4aa47c70ca86ec70e9a901ddb7b9fb9b8ac80a7ece5089eab4790cda43baeb1c14879500": {
+      "narrative": "Lupul se transformă în abur. Era un spirit. Baba Dochia îți dă traducerea.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": true,
+      "suggestions": [
+        "Ia fragmentul descifrat."
+      ],
+      "episode_progress": 1.0
+    },
+    "726405f6e34faecb31df5ff1d579d6118aa486a42dcc7474d8271d03d3842064d9514ad741076eea9f8142c8d8ee69424d947509cec804c6aa602a07bd56d7a5": {
+      "narrative": "Acțiunea continuă conform planului tău.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi mai departe."
+      ],
+      "episode_progress": 0.7999999999999999
+    }
+  }
+}

@@ -1,0 +1,88 @@
+{
+  "character_class": "Străjer",
+  "faction": "Drăculești",
+  "episode": 3,
+  "description": "Auto-Generated Ep 3",
+  "cache_data": {
+    "78855a35449dd72167bf21f7ef1d9ff5a489512e1e389f57d87c085d6fcf72d7336d296e33bc80973cdda9feb65bc3120da0b1fa939a9bd480fb0f5063f7885f": {
+      "narrative": "Găsești urmele. Organizezi o ambuscadă cu câțiva săteni loiali.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Dă semnalul de atac.",
+        "Cere-le să se predea.",
+        "Trage un foc de avertisment."
+      ],
+      "episode_progress": 0.3
+    },
+    "9d8b5e034f3602c39b057d48dfba043cef3aba3df7d26ab3ba68e2fad1cedabf557abe2e1b61e916b6878a8cd8969b574be030f91f99d89e5f5f69d6e8cd1678": {
+      "narrative": "Acțiunea continuă conform planului tău.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi mai departe."
+      ],
+      "episode_progress": 0.4
+    },
+    "4c49a2b8bf449ddb6f86f27d7977f4f849a28bf2a061a3a1faf2a29b2763a946a2d20c9016c313fa182cf49796710e122506ceb20e98621f8a512d6af390b6c7": {
+      "narrative": "\"În numele lui Vlad!\" Ei aruncă armele, speriați de reputația ta.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": true,
+      "suggestions": [
+        "Confiscă Condica."
+      ],
+      "episode_progress": 1.0
+    },
+    "feba2f4cbed56e48227e97a1b981031a6da9d92777e34dfafa66b1d30df88bfd9f90d3d86baaccfd15b72f6c9b87f6ed5d5b2154f3682c328b6b53d57719886d": {
+      "narrative": "Acțiunea continuă conform planului tău.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi mai departe."
+      ],
+      "episode_progress": 0.4
+    },
+    "1e20ca893b8c7e92db3ed34aaa1afba18c94f787915c898b34a03042bd89732a5618c15c22ce07da6cac464112e8104981aa3121fb990de293ba8f2f995a92ad": {
+      "narrative": "Te apropii de final.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": true,
+      "suggestions": [],
+      "episode_progress": 1.0
+    }
+  }
+}

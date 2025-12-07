@@ -1,0 +1,452 @@
+{
+  "character_class": "Negustor",
+  "faction": "Drăculești",
+  "episode": 1,
+  "description": "Recompiled Pack Ep 1",
+  "cache_data": {
+    "ecd7bb0fd99c95d41459a0cb81a51bf92f9a6dbe54c2fbd386c3bf995c9e704ec7d609a63e828ace1e7c0cc2e600e5f45beb3c955581883009d8e589eb91878e": {
+      "narrative": "Discuți cu șeful tarabagiilor. \"Marfă nouă, jupâne. Intrată noaptea. Cică prețuri de nimic la fierărie.\" Fier ieftin? Asta miroase a dumping săsesc sau a arme furate.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Investighează fierăria.",
+        "Cumpără informații despre furnizor.",
+        "Trimite un ucenic să spioneze."
+      ],
+      "episode_progress": null
+    },
+    "3854a1744429b69728375e1a222f679088eb0c67960e3d47049e335b769b64f566850406cd643941df02be675872fe476d9550aff599736fbedbcdb48ef1593a": {
+      "narrative": "Te apropii, netezindu-ți haina de catifea. Carul nu are sigiliul niciunei Bresle. Asta înseamnă contrabandă. Și contrabanda îți fură ție din profit. Vizitiul te măsoară din priviri. \"Nu cumpărăm nimic, jupâne.\"",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Cere taxa de tranzit (Bluf).",
+        "Evaluează calitatea roților și cailor.",
+        "Oferă-i o monedă să plece."
+      ],
+      "episode_progress": null
+    },
+    "0b4b12b37997c9815641d6c3d596736d195506d7a36852e55a675ada832a2cb2b6a62605bf5582d04603c020c86e2564f59bb37feec55c2eaa10f07b3d4f6bf1": {
+      "narrative": "De la balconul hanului tău, vezi totul. Carul descarcă lăzi grele într-o curte dosnică, lângă depozitele vechi. Curtea aia aparține unui boier Dănești falit. Ciudat parteneriat.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi la depozit.",
+        "Trimite garda de corp să verifice.",
+        "Notează totul în registru."
+      ],
+      "episode_progress": null
+    },
+    "3b914c63def2006fc12eb2890902ffc887a91ebbd435e43d725466172df9b381b40833c8d0d5980d13c4bb9efbd73ec91682b33614170b0cf558a5d5ecbf9f87": {
+      "narrative": "Fierarul e nervos. Are lăzi pline cu săbii nemțești. \"Nu e treaba ta, jupâne! Am fost plătit să le ascut.\" Plătit cu aur Dănești.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Cumpără tot stocul (Monopol).",
+        "Amenință-l că-l spui lui Vlad.",
+        "Află cine a plătit."
+      ],
+      "episode_progress": 0.3
+    },
+    "464ca01226e4935f079f2ce8a2f056b75315c59502f98dd2ec68151fb0383d2104ed0d3313ddbb963b43b3ff66be7858aba8c8a267e27520eade08e4ce38e5f1": {
+      "narrative": "Plătești bine. Afli că furnizorul e la Mănăstirea Dealu. Pleci într-acolo.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": -5,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi la Mănăstirea Dealu."
+      ],
+      "episode_progress": 0.4
+    },
+    "657ce64e243e1f245cd1301b8b3af76cd16b8b31df4ace018e6ecb2ed23d24a078c4392b2a6a3293038db2501e8772102360bb5438fec0e096404074b3e18bbf": {
+      "narrative": "Ucenicul se întoarce tremurând. \"Sunt la Mănăstire, jupâne!\"",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi la Mănăstirea Dealu."
+      ],
+      "episode_progress": 0.4
+    },
+    "99bbe52be8af22d601aae8ab7b2f9f1f1a703c5c2119f34887ae1e5d3db353a13bf6f8abca10df54dc4f26fad377c922f7103639d1273581db396dcf485671dc": {
+      "narrative": "Pui o pungă grea pe masă. \"Cumpăr tot. Acum.\" Fierarul ezită, dar aurul e aur. \"Bine. Ia-le.\" Mercenarii vor veni și nu vor găsi nimic. Ai dezarmat o mică armată cu bani.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": -50,
+      "items_gained": [
+        {
+          "name": "Lăzi cu Săbii",
+          "type": "diverse",
+          "value": 100,
+          "quantity": 1,
+          "description": null
+        }
+      ],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Ascunde armele în depozitul tău.",
+        "Donează armele lui Vlad.",
+        "Vinde-le înapoi la suprapreț."
+      ],
+      "episode_progress": 0.5
+    },
+    "6406a889f026fc327b69311182d10974b021ffee1c8f3ba60694f0b2f2176f291f319f3d46d5168d49eae105278ee915336e7756e1f56ed649430952a094ae8f": {
+      "narrative": "Reușești să duci planul la bun sfârșit. Totul a decurs conform așteptărilor. Acum, drumul este liber pentru următoarea mișcare.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Evaluează situația.",
+        "Caută avantaje.",
+        "Pregătește-te."
+      ],
+      "episode_progress": 0.0
+    },
+    "027539494e810cfaa0dd559ba7a102aa0b42e374eafdc99f3528e767d12d367bcd7eb13fcf9ee943d4db48a6e22e48e409c7a69b3455ffd4c06cec43051ae43a": {
+      "narrative": "\"Un boier... Dănești. A zis că ne întâlnim la Mănăstirea Dealu.\" Acolo e cartierul general.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi la Mănăstirea Dealu.",
+        "Trimite un mercenar plătit acolo.",
+        "Vinde informația."
+      ],
+      "episode_progress": 0.4
+    },
+    "731dffa5a44fa2f916bbf65402466705c7d09ada5212dccef53c81f9d372863d86fd5c64fdc844ee7f972398df51425e30650b16982d2681b934f4e823fca144": {
+      "narrative": "Îți chemi căruțașii. Încărcați lăzile. Când mercenarii ajung, fierăria e goală. \"Fierarul a vândut!\" urlă ei. Planul lor e dat peste cap. Dar trebuie să afli cine e liderul.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Trimite un spion după mercenari.",
+        "Mergi la Mănăstirea Dealu (unde se duc ei).",
+        "Așteaptă la depozit."
+      ],
+      "episode_progress": 0.6
+    },
+    "07e131664a1e9ec1477812b6c8062b6c813aca79407d020ed11083b4ffe67752759efc67a69373feaa135feae0070295b92c36f078455d3896c69048e892af62": {
+      "narrative": "Trimiți lăzile la Curte cu un mesaj: \"Un cadou de la un negustor loial.\" Vlad va aprecia gestul. Gărzile Domnești arestează fierarul. Afli că Dăneștii sunt la Mănăstirea Dealu.",
+      "health_change": 0,
+      "reputation_change": 5,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi la Mănăstirea Dealu.",
+        "Cere audiență la Vlad.",
+        "Sărbătorește victoria."
+      ],
+      "episode_progress": 0.6
+    },
+    "fe716c35fa7c0b6b43f4bb0ccdb4febf6519771f7060b4ea391a0055923588ed38423697bb7195dcfa0a0f314a9e1794e3ccb1fe3b121e885c93f62eb8cba1fe": {
+      "narrative": "Te întâlnești cu mercenarii. \"Aveți nevoie de arme? Le am eu. Preț dublu.\" Sunt furioși, dar disperați. Plătesc. Acum ai banii lor, iar ei au săbii... dar ai aflat că merg la Mănăstirea Dealu.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 100,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi la Mănăstirea Dealu.",
+        "Fugi cu banii.",
+        "Sabotează săbiile înainte de livrare."
+      ],
+      "episode_progress": 0.6
+    },
+    "27c4c3ac295c323cdd717fbfe57e0fe804299a0d8032946c6cb156aaa1dc5989ac4f32e5aefbc71c3f9fdfaad6d78fb5cecd0edde13b76eae3a6d6071b705a9c": {
+      "narrative": "Spionul se întoarce ud și speriat. \"S-au retras la Mănăstirea Dealu, jupâne. Acolo e tabăra lor principală.\"",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi la Mănăstirea Dealu.",
+        "Trimite garda acolo.",
+        "Vinde informația."
+      ],
+      "episode_progress": 0.6
+    },
+    "7d6d4dab7813436443441ef49d897733306db54b1b4a694713330bf0c54bdc643fe55cfac7177ed13bb48268bcabca24310288d10a71ae54738e4c58d44dd551": {
+      "narrative": "Îi urmărești de la distanță. Ajung la Mănăstire. E clar că acolo e baza operațiunii.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": "Mănăstirea Dealu",
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Fură Pecetea (dacă o au).",
+        "Cumpără loialitatea mercenarilor.",
+        "Află că Pecetea e deja în Palat."
+      ],
+      "episode_progress": 0.6
+    },
+    "6ff5ed84e382270bbf549a43cc76f4f407dfda3a9248651e2d0f4283be49195f9a8fb9359a46be06cfb510dab022b7773937c2e0a2e2c03dc033ad28cb867ea2": {
+      "narrative": "Aștepți. Nimic nu se întâmplă. Doar zvonuri despre o explozie la Mănăstirea Dealu. Ai ratat momentul.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi la Mănăstirea Dealu.",
+        "Mergi acasă.",
+        "Verifică armele."
+      ],
+      "episode_progress": 0.6
+    },
+    "4902d076890384d980538753aa3f081b0959d530dc93b2f713437fc57cb456f437208b24138b803a59ce3bbdc828c1e093dd5c2b5fb474f743c543c70c8f60e9": {
+      "narrative": "Ajungi cu caleașca ta, pretinzând că ești în pelerinaj. Dar mănăstirea e ocupată. Vezi trădătorii planificând atacul. Au nevoie de Pecetea Regală pentru a intra în Palat.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": "Mănăstirea Dealu",
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Fură Pecetea (dacă o au).",
+        "Cumpără loialitatea mercenarilor.",
+        "Află că Pecetea e deja în Palat."
+      ],
+      "episode_progress": 0.5
+    },
+    "e366792f6d1d00e80a9a6a1a40f870d9197d451b160e28d45b4edf410a3baf95e4a04e461098ad8d283783585480f8764b1da6d2a624da2be5b772ec2559572c": {
+      "narrative": "Evenimentele se precipită. Ești în mijlocul acțiunii. Nu e timp de ezitare. Instinctul îți spune să continui.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Continuă misiunea.",
+        "Ia o pauză.",
+        "Verifică echipamentul."
+      ],
+      "episode_progress": 0.0
+    },
+    "6bb968d6fe2385c01ba3fad8c770c313c331abafea93c8e80d2bc81d8dba1b952c3cb96e6d06e97c70cb7a628a3a5c8a5b342919b2da0f0bcb8ba08366b400ad": {
+      "narrative": "Reușești să duci planul la bun sfârșit. Totul a decurs conform așteptărilor. Acum, drumul este liber pentru următoarea mișcare.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Evaluează situația.",
+        "Caută avantaje.",
+        "Pregătește-te."
+      ],
+      "episode_progress": 0.0
+    },
+    "5b226eed62eaa1dff77f6114873c2208136567af916e2dc2f5d21d40c0b3a585042b688f3a01fc2eb399170fe98f5ae3ca5c978dab112e5975205733a27bd677": {
+      "narrative": "Evenimentele se precipită. Ești în mijlocul acțiunii. Nu e timp de ezitare. Instinctul îți spune să continui.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Continuă misiunea.",
+        "Ia o pauză.",
+        "Verifică echipamentul."
+      ],
+      "episode_progress": 0.0
+    },
+    "ffc9f664c4794bde4fb0465e9c462c3e373ccbc4c44529463f1893a6ad5a9c19b9ee06984e9de05136362db90916d0fd39b62f64c7f07d41dd757854eede8cac": {
+      "narrative": "Te apropii de căpitanul mercenarilor. \"Cât îți dă Dănești? Eu îți dau dublu să pleci acasă.\" Căpitanul rânjește. \"Trei mii de galbeni.\" E o avere.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Plătește (dacă ai).",
+        "Promite-i pământuri (Bluf).",
+        "Arată-i că Dănești nu are bani."
+      ],
+      "episode_progress": 0.7
+    },
+    "c36036a7f086605a2173e3c39c6a59f7c506f54fd59548789bc126391704a561da8ddbc801828a340e94ccf1ee4a023aaa53695eeaa45ece791e027e3ed267d0": {
+      "narrative": "Evenimentele se precipită. Ești în mijlocul acțiunii. Nu e timp de ezitare. Instinctul îți spune să continui.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Continuă misiunea.",
+        "Ia o pauză.",
+        "Verifică echipamentul."
+      ],
+      "episode_progress": 0.0
+    },
+    "af7411c327cabb00665483ff289bc89cfca3839887350a6e6bac993aea5fbe8467d267f743416f372edd38f27c7c4ce4fe9ebed5c105f36d35c7bb30e3fdf492": {
+      "narrative": "Acțiunea continuă. Ești pe drumul cel bun.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi înainte."
+      ],
+      "episode_progress": 0.1
+    },
+    "13dfdbe6a6eef623d55e7ab87c9b860f2013fac5427a11c7b396efdb67bb3550d2f70a14799bbfb086b5087e20fa1a4e9921fb4a294d5baf3ada40e097380bd1": {
+      "narrative": "Acțiunea continuă. Ești pe drumul cel bun.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi înainte."
+      ],
+      "episode_progress": 0.1
+    },
+    "bfaa256aae569449ab9aacf526d92a922c4ac25c85893b779f7bcac7723fe139e7b7647a272c446b0a4243a555492cf0bc0341064446c62ea69021dd7ba7bf2b": {
+      "narrative": "Acțiunea continuă. Ești pe drumul cel bun.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi înainte."
+      ],
+      "episode_progress": 0.1
+    },
+    "fe8e60d371195c6db5c401f4cacbd6d802d298fa6bf9f317657401e7a60c4b190119b1f2d77ef10539443f0d775525df3f1f174d59210e09d63d2b1bbb10adef": {
+      "narrative": "Te apropii de deznodământ.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": true,
+      "suggestions": [],
+      "episode_progress": 1.0
+    }
+  }
+}

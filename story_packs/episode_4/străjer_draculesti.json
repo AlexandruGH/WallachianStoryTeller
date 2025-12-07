@@ -1,0 +1,74 @@
+{
+  "character_class": "Străjer",
+  "faction": "Drăculești",
+  "episode": 4,
+  "description": "Auto-Generated Ep 4",
+  "cache_data": {
+    "aebfbba5dd63877e1d5dadff5aede3909d134d6ec79410031bd9e35ef8f7f2cf5acf59d09a05b8458efb2792d4425c98f5c6fd4937e185907a18eb23194c26c7": {
+      "narrative": "Baba spune că satul e atacat de strigoi (mercenari). \"Apără-ne și te ajut.\"",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Organizează apărarea.",
+        "Patrulează ulițele.",
+        "Atacă tabăra mercenarilor."
+      ],
+      "episode_progress": 0.3
+    },
+    "ec9a40dd402205556c315a48ae0f2e8e8ecdf5a8d44fc94af36026d3386f6fb6d195c52b9cf3a7e2a8e06672789375f8695797c26f3d86784534dcac43cd4af9": {
+      "narrative": "Respingeți atacul. Baba îți dă pergamentul.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": true,
+      "suggestions": [
+        "Ia fragmentul descifrat."
+      ],
+      "episode_progress": 1.0
+    },
+    "2bd32196ccb568fb021dbd48d0bb96eb91b57e6f2ccd20bfca1e054e9ad53159fc4406f6c587556c34405e913b5679016911f63363b09b6b143c206877292b07": {
+      "narrative": "Acțiunea continuă conform planului tău.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi mai departe."
+      ],
+      "episode_progress": 0.4
+    },
+    "439e1c226408a346a1542f457506e97ba79a2cd242644e46870d54de66ba2d4a4460d4c6fe8bafaf4d34999cc56013f5e51adfe69656bfc0e0a388ab7de1bb78": {
+      "narrative": "Acțiunea continuă conform planului tău.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi mai departe."
+      ],
+      "episode_progress": 0.4
+    }
+  }
+}

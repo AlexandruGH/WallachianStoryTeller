@@ -1,0 +1,74 @@
+{
+  "character_class": "Negustor",
+  "faction": "Drăculești",
+  "episode": 5,
+  "description": "Recompiled Pack Ep 5",
+  "cache_data": {
+    "4c0962d0215602f217b995f160b0e266f6f3e45a38022b6c63067f9354724bdb839f52b677726888a64ccef73e1a3965193fd243534d0f9a207b7eb535e1f4ad": {
+      "narrative": "Mâncarea are un miros ciudat. Migdale amare. Cianură.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Oprește banchetul.",
+        "Analizează mâncarea.",
+        "Acuză bucătarul."
+      ],
+      "episode_progress": 0.3
+    },
+    "b783885b074e183ff19b939e068736be09b0aa08227217f6cc71ee006af91c89143022b86d1a88b942abae85221df4acac3c6a388995dbb544815f1bb06a3a65": {
+      "narrative": "\"Nu mâncați!\" Strigătul tău salvează ofițerii.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": true,
+      "suggestions": [
+        "Primește mulțumirile."
+      ],
+      "episode_progress": 1.0
+    },
+    "67fd499f58384c18ffdc032d6402b3e830609b7a84216e317ee7371f522fbb663b73fb6a01d3a4d1de9968abd4ca73f49bb43c3506ec6da77fe8e3c47d117356": {
+      "narrative": "Acțiunea continuă conform planului tău.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi mai departe."
+      ],
+      "episode_progress": 0.4
+    },
+    "b7dfa3f5324bb418121ee40c8127ba6439afd0a95b65a354e949ed7f3fe878c9d2091f6f8b4b4ce7d6f2f8c5e0df89c01e17ef14d83be5ac3e2305a088f9446b": {
+      "narrative": "Acțiunea continuă conform planului tău.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi mai departe."
+      ],
+      "episode_progress": 0.4
+    }
+  }
+}

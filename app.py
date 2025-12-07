@@ -36,7 +36,7 @@ except ImportError:
 from config import Config, ModelRouter
 from character import CharacterSheet, roll_dice, update_stats
 from ui_components import inject_css, render_header, render_sidebar_header_controls, render_sidebar_stats, render_sidebar_footer, display_story, render_loading_screen, scroll_to_top
-from llm_handler import fix_romanian_grammar, generate_narrative_with_progress, generate_with_api
+from llm_handler import fix_romanian_grammar, generate_narrative_with_progress
 from models import GameState, CharacterStats, InventoryItem, ItemType, NarrativeResponse
 from database import Database
 from character_creation import render_character_creation
@@ -180,7 +180,6 @@ def create_new_game_state():
         inventory=[
             InventoryItem(name="Pumnal", type=ItemType.weapon, value=3, quantity=1),
             InventoryItem(name="Hartă ruptă", type=ItemType.misc, value=0, quantity=1),
-            InventoryItem(name="5 galbeni", type=ItemType.currency, value=5, quantity=1),
         ],
         story=[{
             "role": "ai",
@@ -854,7 +853,7 @@ def render_auth_page(cookie_manager):
 
     with col_center:
         st.markdown("""
-            <div style="text-align: center; padding: 30px 0 20px 0;">
+            <div style="text-align: center; padding: 0 0 20px 0;">
                 <h1 style="font-family: 'Cinzel', serif; font-size: 3.2rem; color: #d4af37; margin: 0;">WALLACHIA</h1>
                 <p style="color: #8b6b6b; font-size: 1rem;">Aventura în Secolul XV</p>
             </div>
@@ -1190,21 +1189,32 @@ def game_loop_logic(sidebar_stats_container):
 
 def start_image_worker():
     """Start image generation worker"""
+    print(f"[IMAGE] start_image_worker called. Queue: {len(st.session_state.image_queue) if st.session_state.image_queue else 0}, Active: {st.session_state.get('image_worker_active', False)}")
     if st.session_state.image_queue and not st.session_state.get("image_worker_active"):
+        print("[IMAGE] Starting image worker thread")
         st.session_state.image_worker_active = True
         t = threading.Thread(target=background_image_gen, daemon=True)
         add_script_run_ctx(t)
         t.start()
+    else:
+        print("[IMAGE] Image worker not started - no queue or already active")
 
 def background_image_gen():
     """Generate images in background"""
+    print(f"[IMAGE] background_image_gen started. Queue size: {len(st.session_state.image_queue) if st.session_state.image_queue else 0}")
     from image_handler import generate_scene_image
     try:
+        if not st.session_state.image_queue:
+            print("[IMAGE] No images in queue")
+            return
+
         text, turn = st.session_state.image_queue.pop(0)
+        print(f"[IMAGE] Processing image for turn {turn}: {text}...")
         location = st.session_state.character.get("location", "Târgoviște")
         img_bytes = generate_scene_image(text, is_initial=False)
 
         if img_bytes:
+            print(f"[IMAGE] Image generated successfully ({len(img_bytes)} bytes)")
             # Attach image to correct story message
             for i in range(len(st.session_state.story) - 1, -1, -1):
                 msg = st.session_state.story[i]
@@ -1212,49 +1222,15 @@ def background_image_gen():
                     st.session_state.story[i]["image"] = img_bytes
                     print(f"✅ Imagine atașată la turul {turn}")
                     break
+        else:
+            print(f"[IMAGE] Image generation returned None")
     except Exception as e:
         print(f"❌ BG image error: {e}")
+        import traceback
+        traceback.print_exc()
     finally:
         st.session_state.image_worker_active = False
-
-def prefetch_suggestions_worker(suggestions, game_state_dump, legend_scale):
-    """Background worker to pre-generate responses for suggestions."""
-    print(f"[PREFETCH] Starting prefetch for {len(suggestions)} suggestions...")
-    
-    # Reconstruct necessary data from dump
-    try:
-        character_data = game_state_dump['character']
-        story_data = game_state_dump['story']
-        game_mode = character_data.get('game_mode')
-        current_episode = character_data.get('current_episode', 1)
-        
-        for suggestion in suggestions:
-            # Simulate the user action appended to story
-            simulated_story = story_data + [{
-                "role": "user",
-                "text": suggestion,
-                "turn": game_state_dump['turn'] + 1, # hypothetical turn
-                "image": None
-            }]
-            
-            # Build prompt
-            prompt = Config.build_dnd_prompt(
-                story=simulated_story,
-                character=character_data,
-                legend_scale=legend_scale,
-                game_mode=game_mode,
-                current_episode=current_episode
-            )
-            
-            # Call API (will cache result) - Sequential to avoid rate limits
-            # We don't need the result here, just the side effect of caching
-            print(f"[PREFETCH] Generating for: {suggestion[:30]}...")
-            generate_with_api(prompt)
-            time.sleep(1) # small delay to be nice to API
-            
-        print("[PREFETCH] Completed.")
-    except Exception as e:
-        print(f"[PREFETCH] Error: {e}")
+        print("[IMAGE] background_image_gen finished")
 
 def handle_player_input(story_placeholder=None, sidebar_container=None, input_placeholder=None):
     """Handle player input and update game state"""
@@ -1453,25 +1429,13 @@ def handle_player_input(story_placeholder=None, sidebar_container=None, input_pl
 
             # Queue image generation
             if (current_turn - st.session_state.last_image_turn) >= Config.IMAGE_INTERVAL:
+                print(f"[IMAGE] Queueing image for turn {current_turn} (last_image_turn: {st.session_state.last_image_turn})")
                 st.session_state.image_queue.append((corrected_narrative, current_turn))
                 st.session_state.last_image_turn = current_turn
+                # Start image worker after queuing
+                start_image_worker()
 
-            # TRIGGER PREFETCHING
-            if corrected_suggestions:
-                try:
-                    # Create a snapshot of the CURRENT state (already updated above)
-                    # We need to dump it because we can't pass the pydantic object across threads safely if it changes
-                    current_gs_dump = st.session_state.game_state.model_dump()
 
-                    t_prefetch = threading.Thread(
-                        target=prefetch_suggestions_worker,
-                        args=(corrected_suggestions, current_gs_dump, legend_scale),
-                        daemon=True
-                    )
-                    add_script_run_ctx(t_prefetch)
-                    t_prefetch.start()
-                except Exception as e:
-                    print(f"[PREFETCH] Failed to start worker: {e}")
 
             # Update turn
             gs.turn += 1
@@ -1613,19 +1577,9 @@ def handle_player_input(story_placeholder=None, sidebar_container=None, input_pl
             if (current_turn - st.session_state.last_image_turn) >= Config.IMAGE_INTERVAL:
                 st.session_state.image_queue.append((corrected_narrative, current_turn))
                 st.session_state.last_image_turn = current_turn
+                # Start image worker after queuing
+                start_image_worker()
 
-            if corrected_suggestions:
-                try:
-                    current_gs_dump = st.session_state.game_state.model_dump()
-                    t_prefetch = threading.Thread(
-                        target=prefetch_suggestions_worker,
-                        args=(corrected_suggestions, current_gs_dump, legend_scale),
-                        daemon=True
-                    )
-                    add_script_run_ctx(t_prefetch)
-                    t_prefetch.start()
-                except Exception as e:
-                    print(f"[PREFETCH] Failed to start worker: {e}")
 
             gs.turn += 1
             if response.game_over or gs.character.health <= 0:
@@ -1645,8 +1599,7 @@ def handle_player_input(story_placeholder=None, sidebar_container=None, input_pl
         finally:
             st.session_state.is_generating = False
 
-        # For suggestions, use st.rerun() to update UI cleanly and avoid duplication
-        st.rerun()
+        # UI updates are handled manually above, no need for st.rerun()
 
     # Handle secondary actions (unchanged)
     elif dice_clicked:

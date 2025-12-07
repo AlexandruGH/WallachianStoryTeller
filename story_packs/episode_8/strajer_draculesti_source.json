@@ -1,0 +1,55 @@
+{
+  "Îi prezint Pecetea lui Vlad.": {
+    "narrative": "Vlad stă pe tron. \"Ai adus toate fragmentele?\" Le pui cap la cap. Pecetea e întreagă.",
+    "suggestions": [
+      "Cere judecata trădătorilor.",
+      "Cere un loc la dreapta lui Vlad.",
+      "Cere pace."
+    ],
+    "episode_progress": 0.5,
+    "win_condition": false,
+    "items_gained": [],
+    "gold_change": 0,
+    "health_change": 0,
+    "reputation_change": 0
+  },
+  "Cere judecata trădătorilor.": {
+    "narrative": "Vlad dă din cap. \"Țeapa îi așteaptă. Iar pe tine... mărirea.\" Ești eroul Valahiei.",
+    "suggestions": [
+      "Final Glorios."
+    ],
+    "episode_progress": 1.0,
+    "win_condition": true,
+    "items_gained": [],
+    "gold_change": 0,
+    "health_change": 0,
+    "reputation_change": 0
+  },
+  "Cere un loc la dreapta lui Vlad.": {
+    "narrative": "Continuând pe acest drum, reușești să avansezi spre obiectivul tău.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 0.6
+  },
+  "Mergi înainte.": {
+    "narrative": "Ai ajuns la capătul acestei ramuri a destinului. Misiunea continuă.",
+    "suggestions": [],
+    "episode_progress": 1.0,
+    "win_condition": true
+  },
+  "Cere pace.": {
+    "narrative": "Continuând pe acest drum, reușești să avansezi spre obiectivul tău.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 0.6
+  },
+  "Final Glorios.": {
+    "narrative": "Continuând pe acest drum, reușești să avansezi spre obiectivul tău.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 1.1
+  }
+}

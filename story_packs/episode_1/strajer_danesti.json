@@ -1,0 +1,286 @@
+{
+  "character_class": "Străjer",
+  "faction": "Dănești",
+  "episode": 1,
+  "description": "Recompiled Pack Ep 1",
+  "cache_data": {
+    "ecd7bb0fd99c95d41459a0cb81a51bf92f9a6dbe54c2fbd386c3bf995c9e704ec7d609a63e828ace1e7c0cc2e600e5f45beb3c955581883009d8e589eb91878e": {
+      "narrative": "Patrulezi prin piață. Târgoveții vorbesc despre \"străini înarmați\" la Mănăstirea Dealu. Prea mulți martori. Dacă Vlad află înainte ca armele să fie distribuite, lovitura de stat eșuează.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Răspândește zvonuri false (sunt turci).",
+        "Aresti gura-spartă pentru \"tulburarea liniștii\".",
+        "Mergi la Mănăstire să avertizezi trupa."
+      ],
+      "episode_progress": null
+    },
+    "3854a1744429b69728375e1a222f679088eb0c67960e3d47049e335b769b64f566850406cd643941df02be675872fe476d9550aff599736fbedbcdb48ef1593a": {
+      "narrative": "Te apropii în uniforma ta de străjer al Cetății. Vizitiul te privește cu frică, dar tu observi semnul discret gravat pe osie: un lup stilizat. Semnul Dăneștilor. Acesta este transportul pe care îl așteptați! Dar un alt străjer, un loialist Drăculești, se apropie din spate.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Fă-i semn vizitiului să tacă.",
+        "Simulează o inspecție dură (Bluf).",
+        "Trimite-l pe celălalt străjer după \"țigări\"."
+      ],
+      "episode_progress": null
+    },
+    "0b4b12b37997c9815641d6c3d596736d195506d7a36852e55a675ada832a2cb2b6a62605bf5582d04603c020c86e2564f59bb37feec55c2eaa10f07b3d4f6bf1": {
+      "narrative": "De pe ziduri, vezi totul. Carul Dăneștilor a intrat, dar e urmărit de un spion al lui Vlad. Dacă spionul raportează, totul s-a terminat.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Interceptează spionul pe o alee.",
+        "Trage \"accidental\" cu arbaleta în spion.",
+        "Fă semn carului să schimbe ruta."
+      ],
+      "episode_progress": null
+    },
+    "dcbaeaf3cc2d921939d85bfbd263b7b26ba1193111161f0861407d5acfc6048a46c478c460e07baa585da7cbc04927780d2838f049737277ac7727b1aa886866": {
+      "narrative": "\"Liniște, cetățeni! Nu sunt Dănești, sunt soli otomani cu tribut. Mergeți acasă!\" Mulțimea se împrăștie speriată. Ai câștigat timp.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi la Mănăstire să avertizezi trupa.",
+        "Rămâi să calmezi spiritele.",
+        "Cere întăriri pentru \"protecția solilor\"."
+      ],
+      "episode_progress": 0.2
+    },
+    "a124c4077d11d45db24b42a1a79cd88fd5a891da9bacc277b94336d480982ba6c0d07016f800d9d234943c8304c9dffac0f1a330ba3af47781a2af93699177f4": {
+      "narrative": "Îl înhați pe cel care vorbea prea mult. \"La carceră cu tine! Răspândești panică!\" Lumea tace. Nimeni nu mai îndrăznește să vorbească de trădare.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi la Mănăstire să avertizezi trupa.",
+        "Du prizonierul la interogatoriu (fals).",
+        "Eliberează-l discret pe o alee."
+      ],
+      "episode_progress": 0.2
+    },
+    "f347f01e258d8a938f01b25b5ceed048963546d1752039fc44aa8f97db017897ae325ce6afb306d8d28fd81647674261b95ba575c5d4d70bb2ee3547acf62dda": {
+      "narrative": "Ajungi gâfâind. Tabăra e ascunsă în ruine. \"Spionii lui Vlad știu! Trebuie să mutăm armele!\" Comandantul te privește cu recunoștință.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Ajută la mutarea armelor.",
+        "Stai de pază la drum.",
+        "Propune o ambuscadă pentru spioni."
+      ],
+      "episode_progress": 0.2
+    },
+    "b58c755bc6061e8e6fabdd11ec88c10304c474dfa49aa40df8f97adf21c10d1037319780bdf704ddbd75809926f0224f6dea83381fb1e0f6d25a1e3573afe324": {
+      "narrative": "Ajungi gâfâind. Tabăra e ascunsă în ruine. \"Spionii lui Vlad știu! Trebuie să mutăm armele!\" Comandantul te privește cu recunoștință.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Ajută la mutarea armelor.",
+        "Stai de pază la drum.",
+        "Propune o ambuscadă pentru spioni."
+      ],
+      "episode_progress": 0.2
+    },
+    "e2c2e840cba77f097046c47fd6babeb3576ed6a8c134af00dddb875e9fafa62f7ee46a15b39898962dcf0fe722eb95ed63af6c95a2d7782f9cf99bd8fbf14faf": {
+      "narrative": "Evenimentele se precipită. Ești în mijlocul acțiunii. Nu e timp de ezitare. Instinctul îți spune să continui.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Continuă misiunea.",
+        "Ia o pauză.",
+        "Verifică echipamentul."
+      ],
+      "episode_progress": 0.0
+    },
+    "bdb8476fd6138786427067e02db8c7cb28909d631f9d3a0bbb3c09a947f9fe6a08da9e922481b87a83658d97ffa9ef1325622d8f0da97c13a14760b787a1de6d": {
+      "narrative": "Ridici tonul și mulțimea se dă înapoi. Autoritatea ta este incontestabilă. Oamenii fac loc și răspund la întrebări.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Cere o dovadă.",
+        "Pleacă spre noua pistă.",
+        "Recrutează-l."
+      ],
+      "episode_progress": 0.0
+    },
+    "79c2f1521e075bffebca454df8ed8d44b66d2ceb6ad7b0dbeefdb3db6f35d9e5595eec6d92f9fd1a626eb235dc2b655e6ec67e137c445d7c8b992bc33dd6b362": {
+      "narrative": "Evenimentele se precipită. Ești în mijlocul acțiunii. Nu e timp de ezitare. Instinctul îți spune să continui.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Continuă misiunea.",
+        "Ia o pauză.",
+        "Verifică echipamentul."
+      ],
+      "episode_progress": 0.0
+    },
+    "7dab185127b7d75b80176acfe2ad533a629ebd685d819471ac768e0cbaaa2077119c66721781c496c04040d9ec9ab3bb86f18dbefd82924d3ac2e6295e95deb5": {
+      "narrative": "Acțiunea ta are consecințe neașteptate. Situația se schimbă, deschizând noi oportunități. Trebuie să te adaptezi rapid.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi mai departe.",
+        "Fii precaut.",
+        "Grăbește-te."
+      ],
+      "episode_progress": 0.0
+    },
+    "a52d7cdad80fce958b33e1c9937726c9e0ddcf7fdd3f769a0d92cbfb01c31f0e193fef3543d04f1ad94c79484f9d21d936a7b7c5f9311de662f5d96ce75f0426": {
+      "narrative": "Evenimentele se precipită. Ești în mijlocul acțiunii. Nu e timp de ezitare. Instinctul îți spune să continui.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Continuă misiunea.",
+        "Ia o pauză.",
+        "Verifică echipamentul."
+      ],
+      "episode_progress": 0.0
+    },
+    "ef1d162e086b04d470f91423ffb151c10b51059a0bbaf8be92f2ed3f53125f989e4e7ab74bd1e5a6edfaca5ca6e69a16c30fc0a4289a486919a145f610f8b9db": {
+      "narrative": "Acțiunea continuă. Ești pe drumul cel bun.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi înainte."
+      ],
+      "episode_progress": 0.1
+    },
+    "520a0f83667bc16a6c9fc4f4971f30bf84bae499542d4618fdc667ca99ea87a9ba739221ab4d88ea154c5dc2d59da76d6e62a8ac1d04258f0272457bd24536a9": {
+      "narrative": "Acțiunea continuă. Ești pe drumul cel bun.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi înainte."
+      ],
+      "episode_progress": 0.1
+    },
+    "d3fd8e4deb3d80ca7f90c0a2326d840b7d288cd37685d2860f559b280f45db3ff0fd69a4170a2ab3d69f6825e2c4cb079f69e83dffb8ec28cf2df277bc17f915": {
+      "narrative": "Acțiunea continuă. Ești pe drumul cel bun.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi înainte."
+      ],
+      "episode_progress": 0.1
+    },
+    "7185b537d137379920ad98ea2a1bbd96aab0cd06bc79961b57ec7bb7c61c700e74250fe72de6b57d2dda89277dcca44e6408058285a9890f43e097c6e9c7af96": {
+      "narrative": "Te apropii de deznodământ.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": true,
+      "suggestions": [],
+      "episode_progress": 1.0
+    }
+  }
+}

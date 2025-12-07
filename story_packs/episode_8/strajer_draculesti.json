@@ -1,0 +1,74 @@
+{
+  "character_class": "Străjer",
+  "faction": "Drăculești",
+  "episode": 8,
+  "description": "Recompiled Pack Ep 8",
+  "cache_data": {
+    "92f7d0ac9bf97c26bd243ba12484988b1f175907539a6f2995424c850c580d4e2f073f571e9f333cd910d7fc1828c7cfca2d6f78ff4f652d502a78153d283511": {
+      "narrative": "Vlad stă pe tron. \"Ai adus toate fragmentele?\" Le pui cap la cap. Pecetea e întreagă.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Cere judecata trădătorilor.",
+        "Cere un loc la dreapta lui Vlad.",
+        "Cere pace."
+      ],
+      "episode_progress": 0.5
+    },
+    "cca3d2a8a98f1169cc819c8c3fe5534801689ece6b55c95e3ec4f5eb9ccb0d6e6315accd9777f5d1557d13c340996fd29d4bceec3c14a05f605b2ecda29ed8f1": {
+      "narrative": "Vlad dă din cap. \"Țeapa îi așteaptă. Iar pe tine... mărirea.\" Ești eroul Valahiei.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": true,
+      "suggestions": [
+        "Final Glorios."
+      ],
+      "episode_progress": 1.0
+    },
+    "82bd73bd71c51159371f109a08072ba17a2d68a69054985da6364c34617c7d705729e82f854c7386e2d416fc3f5dae154141516942eb542ea71892db365040ed": {
+      "narrative": "Continuând pe acest drum, reușești să avansezi spre obiectivul tău.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi înainte."
+      ],
+      "episode_progress": 0.6
+    },
+    "216c4e0750893b8dd00b178339341dc977b3fc5b1c117dfd262c43186f55f955c9117f44cf751da9b74189fd4de88880e1a7cb8e67f48128d4d018015532ffe9": {
+      "narrative": "Continuând pe acest drum, reușești să avansezi spre obiectivul tău.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi înainte."
+      ],
+      "episode_progress": 0.6
+    }
+  }
+}

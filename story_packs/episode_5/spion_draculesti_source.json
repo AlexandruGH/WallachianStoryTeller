@@ -1,0 +1,55 @@
+{
+  "Patrulez prin tabără.": {
+    "narrative": "Auzi șoapte în cortul de provizii. \"Vinul e otrăvit.\"",
+    "suggestions": [
+      "Schimbă butoaiele.",
+      "Identifică trădătorul.",
+      "Așteaptă să vezi cine ia vinul."
+    ],
+    "episode_progress": 0.3,
+    "win_condition": false,
+    "items_gained": [],
+    "gold_change": 0,
+    "health_change": 0,
+    "reputation_change": 0
+  },
+  "Identifică trădătorul.": {
+    "narrative": "E un ajutor de bucătar. Îl prinzi cu otrava.",
+    "suggestions": [
+      "Predă-l lui Vlad."
+    ],
+    "episode_progress": 1.0,
+    "win_condition": true,
+    "items_gained": [],
+    "gold_change": 0,
+    "health_change": 0,
+    "reputation_change": 0
+  },
+  "Schimbă butoaiele.": {
+    "narrative": "Acțiunea continuă conform planului tău.",
+    "suggestions": [
+      "Mergi mai departe."
+    ],
+    "episode_progress": 0.4
+  },
+  "Mergi mai departe.": {
+    "narrative": "Te apropii de final.",
+    "suggestions": [],
+    "episode_progress": 1.0,
+    "win_condition": true
+  },
+  "Așteaptă să vezi cine ia vinul.": {
+    "narrative": "Acțiunea continuă conform planului tău.",
+    "suggestions": [
+      "Mergi mai departe."
+    ],
+    "episode_progress": 0.4
+  },
+  "Predă-l lui Vlad.": {
+    "narrative": "Acțiunea continuă conform planului tău.",
+    "suggestions": [
+      "Mergi mai departe."
+    ],
+    "episode_progress": 1.1
+  }
+}

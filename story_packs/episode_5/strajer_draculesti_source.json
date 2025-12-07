@@ -1,0 +1,83 @@
+{
+  "Patrulez prin tabără.": {
+    "narrative": "Tabăra e tensionată. Ostașii își ascut săbiile. Cineva lipsește de la apel.",
+    "suggestions": [
+      "Caută-l pe cel lipsă.",
+      "Verifică cortul Voievodului.",
+      "Stai de pază."
+    ],
+    "episode_progress": 0.2,
+    "win_condition": false,
+    "items_gained": [],
+    "gold_change": 0,
+    "health_change": 0,
+    "reputation_change": 0
+  },
+  "Caută-l pe cel lipsă.": {
+    "narrative": "Îl găsești lângă fântână, punând ceva în apă. Otravă!",
+    "suggestions": [
+      "Omoară-l pe loc.",
+      "Prinde-l viu.",
+      "Dă alarma."
+    ],
+    "episode_progress": 0.7,
+    "win_condition": false,
+    "items_gained": [],
+    "gold_change": 0,
+    "health_change": 0,
+    "reputation_change": 0
+  },
+  "Omoară-l pe loc.": {
+    "narrative": "O lovitură curată. Ai salvat armata de la otrăvire. Găsești un bilet de la Dănești.",
+    "suggestions": [
+      "Raportează căpitanului."
+    ],
+    "episode_progress": 1.0,
+    "win_condition": true,
+    "items_gained": [],
+    "gold_change": 0,
+    "health_change": 0,
+    "reputation_change": 0
+  },
+  "Verifică cortul Voievodului.": {
+    "narrative": "Continuând pe acest drum, reușești să avansezi spre obiectivul tău.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 0.30000000000000004
+  },
+  "Mergi înainte.": {
+    "narrative": "Ai ajuns la capătul acestei ramuri a destinului. Misiunea continuă.",
+    "suggestions": [],
+    "episode_progress": 1.0,
+    "win_condition": true
+  },
+  "Stai de pază.": {
+    "narrative": "Continuând pe acest drum, reușești să avansezi spre obiectivul tău.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 0.30000000000000004
+  },
+  "Prinde-l viu.": {
+    "narrative": "Continuând pe acest drum, reușești să avansezi spre obiectivul tău.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 0.7999999999999999
+  },
+  "Dă alarma.": {
+    "narrative": "Continuând pe acest drum, reușești să avansezi spre obiectivul tău.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 0.7999999999999999
+  },
+  "Raportează căpitanului.": {
+    "narrative": "Continuând pe acest drum, reușești să avansezi spre obiectivul tău.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 1.1
+  }
+}

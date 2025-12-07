@@ -1,0 +1,55 @@
+{
+  "Caut urme de căruță pe potecă.": {
+    "narrative": "Te arăți cu mâinile ridicate. \"Cumpăr tot ce aveți.\"",
+    "suggestions": [
+      "Negociază prețul.",
+      "Oferă un parteneriat fals.",
+      "Mituieste șeful."
+    ],
+    "episode_progress": 0.3,
+    "win_condition": false,
+    "items_gained": [],
+    "gold_change": 0,
+    "health_change": 0,
+    "reputation_change": 0
+  },
+  "Negociază prețul.": {
+    "narrative": "\"Aurul tău e bun,\" zice șeful. Îți dă Condica ca garanție.",
+    "suggestions": [
+      "Ia Condica și pleacă."
+    ],
+    "episode_progress": 1.0,
+    "win_condition": true,
+    "items_gained": [],
+    "gold_change": -50,
+    "health_change": 0,
+    "reputation_change": 0
+  },
+  "Oferă un parteneriat fals.": {
+    "narrative": "Acțiunea continuă conform planului tău.",
+    "suggestions": [
+      "Mergi mai departe."
+    ],
+    "episode_progress": 0.4
+  },
+  "Mergi mai departe.": {
+    "narrative": "Te apropii de final.",
+    "suggestions": [],
+    "episode_progress": 1.0,
+    "win_condition": true
+  },
+  "Mituieste șeful.": {
+    "narrative": "Acțiunea continuă conform planului tău.",
+    "suggestions": [
+      "Mergi mai departe."
+    ],
+    "episode_progress": 0.4
+  },
+  "Ia Condica și pleacă.": {
+    "narrative": "Acțiunea continuă conform planului tău.",
+    "suggestions": [
+      "Mergi mai departe."
+    ],
+    "episode_progress": 1.1
+  }
+}

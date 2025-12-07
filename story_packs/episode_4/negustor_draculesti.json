@@ -1,0 +1,74 @@
+{
+  "character_class": "Negustor",
+  "faction": "Drăculești",
+  "episode": 4,
+  "description": "Recompiled Pack Ep 4",
+  "cache_data": {
+    "5e6b14cbfabcb41707e0f502553e25ed36b156058b5031414591e51e143740a734c030602fcb964628c7b8df86f6a51f12683dd79b5b3e498a7b4c46c563d329": {
+      "narrative": "Oferi babei mătase fină și tămâie. Ea zâmbește. \"Un schimb cinstit.\"",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Cere traducerea.",
+        "Cere și o poțiune.",
+        "Negociază prețul."
+      ],
+      "episode_progress": 0.3
+    },
+    "32aa536368c89567e3c454c3e9ea971e150a3a2a30c89c2e00a5d8fb00b18125ef474a6072156e6db339b5d3afe0117fdb8efaa77144ed52bbb4111b3525a68e": {
+      "narrative": "Ea îți descifrează textul. \"Trădătorul e la curte.\"",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": true,
+      "suggestions": [
+        "Mulțumește."
+      ],
+      "episode_progress": 1.0
+    },
+    "c0159d12d0b69594bf7d78f6be6603deb46a83e5633ad48302e6a60f0931788a2ddca578c4a4643c9270b2d82add9d1cb633f68dd8b300f9cf639f6a76fa14dd": {
+      "narrative": "Acțiunea continuă conform planului tău.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi mai departe."
+      ],
+      "episode_progress": 0.4
+    },
+    "1a7020d904e4e86a93024a4986a8d8b95f24e841950795eb9dda7219bcabdbefae5c59c14ecc6b426e0b2771de0270aca982bf4546ed9d291e6d2972985b2da3": {
+      "narrative": "Acțiunea continuă conform planului tău.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi mai departe."
+      ],
+      "episode_progress": 0.4
+    }
+  }
+}

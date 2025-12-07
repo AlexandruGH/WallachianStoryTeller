@@ -1,0 +1,95 @@
+{
+  "Mă apropii discret de carul negru.": {
+    "narrative": "Te apropii precaut. Vizitiul ascunde ceva. Semnul Dăneștilor e pe osie.",
+    "suggestions": [
+      "Cere-i să ridice prelata.",
+      "Provoacă-l să coboare.",
+      "Înțeapă un sac cu pumnalul."
+    ],
+    "reputation_change": 0
+  },
+  "Merg în piață să ascult zvonurile.": {
+    "narrative": "Zvonurile spun că Dăneștii vor să ardă orașul.",
+    "suggestions": [
+      "Mergi la mănăstirea părăsită."
+    ],
+    "reputation_change": 1
+  },
+  "Caut un loc înalt pentru a observa.": {
+    "narrative": "Vezi un schimb de pachete între vizitiu și un boier.",
+    "suggestions": [],
+    "reputation_change": 1
+  },
+  "Cere-i să ridice prelata.": {
+    "narrative": "Sub prelată e praf de pușcă! E o capcană.",
+    "suggestions": [],
+    "episode_progress": 0.1
+  },
+  "Provoacă-l să coboare.": {
+    "narrative": "Omul scoate un cuțit. Atacă!",
+    "suggestions": [],
+    "episode_progress": 0.1,
+    "health_change": -2
+  },
+  "Înțeapă un sac cu pumnalul.": {
+    "narrative": "Curge praf negru. Vizitiul fuge cu carul.",
+    "suggestions": [
+      "Strigă alarma.",
+      "Urmărește carul în fugă.",
+      "Notează direcția și cere un cal."
+    ],
+    "episode_progress": 0.2,
+    "health_change": -5
+  },
+  "Mergi la mănăstirea părăsită.": {
+    "narrative": "Toate indiciile duc la Mănăstirea Dealu. Pleci într-acolo.",
+    "suggestions": [],
+    "location_change": "Mănăstirea Dealu",
+    "episode_progress": 0.4
+  },
+  "Strigă alarma.": {
+    "narrative": "ALARMĂ! TRĂDARE! Gărzile blochează ieșirea. Carul e prins.",
+    "suggestions": [
+      "Arestați vizitiul.",
+      "Confiscați marfa.",
+      "Raportează Căpitanului."
+    ],
+    "episode_progress": 0.25
+  },
+  "Urmărește carul în fugă.": {
+    "narrative": "Alergi după car prin mahalale.",
+    "suggestions": [],
+    "episode_progress": 0.25
+  },
+  "Notează direcția și cere un cal.": {
+    "narrative": "Iei un cal și galopezi după el.",
+    "suggestions": [],
+    "episode_progress": 0.25
+  },
+  "Arestați vizitiul.": {
+    "narrative": "Vizitiul e arestat. Mărturisește tot.",
+    "suggestions": [
+      "Du-l la interogatoriu."
+    ],
+    "episode_progress": 0.3
+  },
+  "Confiscați marfa.": {
+    "narrative": "Praf de pușcă confiscat. Orașul e salvat.",
+    "suggestions": [],
+    "episode_progress": 0.3
+  },
+  "Raportează Căpitanului.": {
+    "narrative": "Căpitanul te laudă și îți dă o pungă de bani.",
+    "suggestions": [
+      "Mergi la mănăstirea părăsită."
+    ],
+    "gold_change": 5,
+    "episode_progress": 0.3
+  },
+  "Du-l la interogatoriu.": {
+    "narrative": "Toate indiciile duc la Mănăstirea Dealu. Pleci într-acolo.",
+    "suggestions": [],
+    "location_change": "Mănăstirea Dealu",
+    "episode_progress": 0.4
+  }
+}

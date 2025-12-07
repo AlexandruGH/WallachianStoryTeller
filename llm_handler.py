@@ -212,20 +212,26 @@ def generate_with_api(prompt: str) -> NarrativeResponse:
             game_over=False
         )
     
-    api_url = "https://api.groq.com/openai/v1/chat/completions"
-    # Folosim Llama 3.3 70B Versatile pentru cea mai bună performanță în limba română
-    model = "llama-3.3-70b-versatile" #"openai/gpt-oss-120b"
-    
     global _groq_key_index
     with _groq_key_lock:
         start_index = _groq_key_index
         _groq_key_index = (_groq_key_index + 1) % len(tokens)
-    
+
     for i in range(len(tokens)):
         token_index = (start_index + i) % len(tokens)
         token = tokens[token_index]
-        print(f"[SESSION {session_id}] 🔑 ÎNCERC TOKEN {token_index + 1}")
-        
+
+        # Dynamic API selection based on token prefix
+        if token.startswith("sk-or-v1"):
+            api_url = "https://openrouter.ai/api/v1/chat/completions"
+            model = "meta-llama/llama-3.3-70b-instruct:free"
+        else:
+            # Fallback to Groq for unknown token formats
+            api_url = "https://api.groq.com/openai/v1/chat/completions"
+            model = "llama-3.3-70b-versatile"
+
+        print(f"[SESSION {session_id}] 🔑 ÎNCERC TOKEN {token_index + 1} ({model})")
+
         payload = {
             "model": model,
             "messages": [
@@ -240,7 +246,7 @@ def generate_with_api(prompt: str) -> NarrativeResponse:
 
         try:
             response = requests.post(
-                api_url,
+                url=api_url,
                 headers={
                     "Authorization": f"Bearer {token}",
                     "Content-Type": "application/json"

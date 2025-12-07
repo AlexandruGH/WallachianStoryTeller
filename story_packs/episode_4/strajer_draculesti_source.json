@@ -1,0 +1,89 @@
+{
+  "O caut pe Baba Dochia în sat.": {
+    "narrative": "Baba Dochia stă pe prispă. \"Ai venit după adevăr, maică?\" Ochii ei sunt albi.",
+    "suggestions": [
+      "Cer descifrarea fragmentului.",
+      "Îi ofer un dar.",
+      "O ameninț."
+    ],
+    "episode_progress": 0.2,
+    "win_condition": false,
+    "items_gained": [],
+    "gold_change": 0,
+    "health_change": 0,
+    "reputation_change": 0
+  },
+  "Cer descifrarea fragmentului.": {
+    "narrative": "\"Adevărul costă. Rezolvă ghicitoarea: Ce trece prin apă și nu se udă?\"",
+    "suggestions": [
+      "Umbra.",
+      "Lumina.",
+      "Sunetul."
+    ],
+    "episode_progress": 0.5,
+    "win_condition": false,
+    "items_gained": [],
+    "gold_change": 0,
+    "health_change": 0,
+    "reputation_change": 0
+  },
+  "Umbra.": {
+    "narrative": "\"Corect. Fragmentul vorbește despre o trădare la Curte.\" Îți dă traducerea.",
+    "suggestions": [
+      "Mulțumește și pleacă."
+    ],
+    "episode_progress": 1.0,
+    "win_condition": true,
+    "items_gained": [],
+    "gold_change": 0,
+    "health_change": 0,
+    "reputation_change": 0
+  },
+  "Lumina.": {
+    "narrative": "\"Și ea, dar nu. Mai încearcă.\"",
+    "suggestions": [
+      "Umbra.",
+      "Sunetul."
+    ],
+    "episode_progress": 0.5,
+    "win_condition": false,
+    "items_gained": [],
+    "gold_change": 0,
+    "health_change": 0,
+    "reputation_change": 0
+  },
+  "Îi ofer un dar.": {
+    "narrative": "Continuând pe acest drum, reușești să avansezi spre obiectivul tău.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 0.30000000000000004
+  },
+  "Mergi înainte.": {
+    "narrative": "Ai ajuns la capătul acestei ramuri a destinului. Misiunea continuă.",
+    "suggestions": [],
+    "episode_progress": 1.0,
+    "win_condition": true
+  },
+  "O ameninț.": {
+    "narrative": "Continuând pe acest drum, reușești să avansezi spre obiectivul tău.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 0.30000000000000004
+  },
+  "Sunetul.": {
+    "narrative": "Continuând pe acest drum, reușești să avansezi spre obiectivul tău.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 0.6
+  },
+  "Mulțumește și pleacă.": {
+    "narrative": "Continuând pe acest drum, reușești să avansezi spre obiectivul tău.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 1.1
+  }
+}

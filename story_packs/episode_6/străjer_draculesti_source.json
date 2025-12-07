@@ -1,0 +1,55 @@
+{
+  "Aprind o torță și intru în tunel.": {
+    "narrative": "Preiei comanda gărzilor loiale. \"Trădătorii să se predea!\"",
+    "suggestions": [
+      "Asalt frontal.",
+      "Negociere armată.",
+      "Blocadă."
+    ],
+    "episode_progress": 0.3,
+    "win_condition": false,
+    "items_gained": [],
+    "gold_change": 0,
+    "health_change": 0,
+    "reputation_change": 0
+  },
+  "Asalt frontal.": {
+    "narrative": "Gărzile te urmează. Îi copleșiți pe rebeli.",
+    "suggestions": [
+      "Recuperează Fragmentul."
+    ],
+    "episode_progress": 1.0,
+    "win_condition": true,
+    "items_gained": [],
+    "gold_change": 0,
+    "health_change": 0,
+    "reputation_change": 0
+  },
+  "Negociere armată.": {
+    "narrative": "Acțiunea continuă conform planului tău.",
+    "suggestions": [
+      "Mergi mai departe."
+    ],
+    "episode_progress": 0.4
+  },
+  "Mergi mai departe.": {
+    "narrative": "Te apropii de final.",
+    "suggestions": [],
+    "episode_progress": 1.0,
+    "win_condition": true
+  },
+  "Blocadă.": {
+    "narrative": "Acțiunea continuă conform planului tău.",
+    "suggestions": [
+      "Mergi mai departe."
+    ],
+    "episode_progress": 0.4
+  },
+  "Recuperează Fragmentul.": {
+    "narrative": "Acțiunea continuă conform planului tău.",
+    "suggestions": [
+      "Mergi mai departe."
+    ],
+    "episode_progress": 1.1
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "character_class": "Străjer",
+  "faction": "Drăculești",
+  "episode": 6,
+  "description": "Recompiled Pack Ep 6",
+  "cache_data": {
+    "c8c137f7a69027dabc0e92db73e66779c28289bcd4b7f7b9f96e6b9c7465a6265e333beccbf78890acb39cf76815f7e033cb730c7fdbb0e15d9a6c71e967d82f": {
+      "narrative": "Tunelul e umed și rece. Liliecii zboară. Ajungi la o bifurcație.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Stânga (Curent de aer).",
+        "Dreapta (Urme de pași)."
+      ],
+      "episode_progress": 0.3
+    },
+    "613dbd62ecd0c019cc703c75b3bc242ec93eee24e310998027a1df2c465c2f7041733f7668fb19c282d6b3ffc2ffac367e48569aed25b0bf9c8bc192a2d28251": {
+      "narrative": "Continuând pe acest drum, reușești să avansezi spre obiectivul tău.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi înainte."
+      ],
+      "episode_progress": 0.4
+    },
+    "44beb63495c50d7e2dc2a9a0ce601834ef3fb199192e07311b7f0623ea12268442c309099bd6c4ced63ab9dea22f8fe4f539296b2c0fdf4a15d481d2ce04e1c2": {
+      "narrative": "Dai peste Paznicul Răzvrătit. E un uriaș. \"Nimeni nu trece!\"",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Luptă cu el.",
+        "Încearcă să-l convingi (Negociere).",
+        "Folosește o capcană."
+      ],
+      "episode_progress": 0.6
+    },
+    "aa3f65b07ae9036499b299b362d3b53a8ccb48ed54ec57e26f95c7a49e494991c2ce3c236dccadd0dbbd502f5ce7b3f936498056a3abe79f4696060418eb419a": {
+      "narrative": "Ai ajuns la capătul acestei ramuri a destinului. Misiunea continuă.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": true,
+      "suggestions": [],
+      "episode_progress": 1.0
+    }
+  }
+}

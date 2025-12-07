@@ -1,0 +1,70 @@
+{
+  "character_class": "Străjer",
+  "faction": "Drăculești",
+  "episode": 1,
+  "description": "Recompiled Pack Ep 1",
+  "cache_data": {
+    "ecd7bb0fd99c95d41459a0cb81a51bf92f9a6dbe54c2fbd386c3bf995c9e704ec7d609a63e828ace1e7c0cc2e600e5f45beb3c955581883009d8e589eb91878e": {
+      "narrative": "Zvonurile spun că Dăneștii vor să ardă orașul.",
+      "health_change": 0,
+      "reputation_change": 1,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi la mănăstirea părăsită."
+      ],
+      "episode_progress": null
+    },
+    "3854a1744429b69728375e1a222f679088eb0c67960e3d47049e335b769b64f566850406cd643941df02be675872fe476d9550aff599736fbedbcdb48ef1593a": {
+      "narrative": "Te apropii precaut. Vizitiul ascunde ceva. Semnul Dăneștilor e pe osie.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Cere-i să ridice prelata.",
+        "Provoacă-l să coboare.",
+        "Înțeapă un sac cu pumnalul."
+      ],
+      "episode_progress": null
+    },
+    "0b4b12b37997c9815641d6c3d596736d195506d7a36852e55a675ada832a2cb2b6a62605bf5582d04603c020c86e2564f59bb37feec55c2eaa10f07b3d4f6bf1": {
+      "narrative": "Vezi un schimb de pachete între vizitiu și un boier.",
+      "health_change": 0,
+      "reputation_change": 1,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [],
+      "episode_progress": null
+    },
+    "42f9d54f347527bea1707e0b0846cd9b9c17856908084882871a227d93acbc95d36887cfc85e121abd6b30384b5558a47364ba13c7a4d8e392a02ba97ed97084": {
+      "narrative": "Toate indiciile duc la Mănăstirea Dealu. Pleci într-acolo.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": "Mănăstirea Dealu",
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [],
+      "episode_progress": 0.4
+    }
+  }
+}

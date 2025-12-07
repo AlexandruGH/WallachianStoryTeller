@@ -1,0 +1,75 @@
+{
+  "O caut pe Baba Dochia în sat.": {
+    "narrative": "Baba Dochia te trimite în pădurea blestemată. \"Adu-mi o floare de colț neagră.\"",
+    "suggestions": [
+      "Caută floarea.",
+      "Luptă cu lupii.",
+      "Urmărește luminițele."
+    ],
+    "episode_progress": 0.3,
+    "win_condition": false,
+    "items_gained": [],
+    "gold_change": 0,
+    "health_change": 0,
+    "reputation_change": 0
+  },
+  "Caută floarea.": {
+    "narrative": "O găsești pe o stâncă. Un lup te păzește.",
+    "suggestions": [
+      "Luptă cu lupul.",
+      "Îmblânzește-l."
+    ],
+    "episode_progress": 0.7,
+    "win_condition": false,
+    "items_gained": [],
+    "gold_change": 0,
+    "health_change": 0,
+    "reputation_change": 0
+  },
+  "Luptă cu lupul.": {
+    "narrative": "Lupul se transformă în abur. Era un spirit. Baba Dochia îți dă traducerea.",
+    "suggestions": [
+      "Ia fragmentul descifrat."
+    ],
+    "episode_progress": 1.0,
+    "win_condition": true,
+    "items_gained": [],
+    "gold_change": 0,
+    "health_change": 0,
+    "reputation_change": 0
+  },
+  "Luptă cu lupii.": {
+    "narrative": "Acțiunea continuă conform planului tău.",
+    "suggestions": [
+      "Mergi mai departe."
+    ],
+    "episode_progress": 0.4
+  },
+  "Mergi mai departe.": {
+    "narrative": "Te apropii de final.",
+    "suggestions": [],
+    "episode_progress": 1.0,
+    "win_condition": true
+  },
+  "Urmărește luminițele.": {
+    "narrative": "Acțiunea continuă conform planului tău.",
+    "suggestions": [
+      "Mergi mai departe."
+    ],
+    "episode_progress": 0.4
+  },
+  "Îmblânzește-l.": {
+    "narrative": "Acțiunea continuă conform planului tău.",
+    "suggestions": [
+      "Mergi mai departe."
+    ],
+    "episode_progress": 0.7999999999999999
+  },
+  "Ia fragmentul descifrat.": {
+    "narrative": "Acțiunea continuă conform planului tău.",
+    "suggestions": [
+      "Mergi mai departe."
+    ],
+    "episode_progress": 1.1
+  }
+}

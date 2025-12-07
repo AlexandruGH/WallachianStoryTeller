@@ -1,0 +1,88 @@
+{
+  "character_class": "Spion",
+  "faction": "Drăculești",
+  "episode": 5,
+  "description": "Recompiled Pack Ep 5",
+  "cache_data": {
+    "4c0962d0215602f217b995f160b0e266f6f3e45a38022b6c63067f9354724bdb839f52b677726888a64ccef73e1a3965193fd243534d0f9a207b7eb535e1f4ad": {
+      "narrative": "Auzi șoapte în cortul de provizii. \"Vinul e otrăvit.\"",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Schimbă butoaiele.",
+        "Identifică trădătorul.",
+        "Așteaptă să vezi cine ia vinul."
+      ],
+      "episode_progress": 0.3
+    },
+    "558f8d0f53455016a4d22260d135e30d3979254e22282ef7688628fe229ac77bd43fb55c3f69cd7faf686a0ebcf55d940f76fca52659dc376a824a48b256525e": {
+      "narrative": "Acțiunea continuă conform planului tău.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi mai departe."
+      ],
+      "episode_progress": 0.4
+    },
+    "c560b8bf02652f168db4bc08a0a62f62ccb47a753be17ecb0d2ea57ffb3bfa485419df03194733a680e5596e68b27629ad236a032b7a7ed0a89491ffe1e95929": {
+      "narrative": "E un ajutor de bucătar. Îl prinzi cu otrava.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": true,
+      "suggestions": [
+        "Predă-l lui Vlad."
+      ],
+      "episode_progress": 1.0
+    },
+    "b093c9a0c6b0e2c61cb7f1e378219007b6578951c8a4746bf1e8955b797d2b9eb29d6450dd4553b69dd65aea84baa5bdc6cb731bb44af43c7f968bac7148c26e": {
+      "narrative": "Acțiunea continuă conform planului tău.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi mai departe."
+      ],
+      "episode_progress": 0.4
+    },
+    "7050a0e96ef2309a50b0a00cb488ef29b2ec09e12e8539dfe0ed8ff9e9f381eb706dcf1d8656d9c171e3e1c19d53f0b59450c1dcaf8057351eb4ddd75e5025fc": {
+      "narrative": "Te apropii de final.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": true,
+      "suggestions": [],
+      "episode_progress": 1.0
+    }
+  }
+}

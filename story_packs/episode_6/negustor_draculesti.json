@@ -1,0 +1,74 @@
+{
+  "character_class": "Negustor",
+  "faction": "Drăculești",
+  "episode": 6,
+  "description": "Recompiled Pack Ep 6",
+  "cache_data": {
+    "c8c137f7a69027dabc0e92db73e66779c28289bcd4b7f7b9f96e6b9c7465a6265e333beccbf78890acb39cf76815f7e033cb730c7fdbb0e15d9a6c71e967d82f": {
+      "narrative": "Garnizoana e flămândă. Le oferi mâncare.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mituieste paznicii.",
+        "Cumpără cheia.",
+        "Negociază trecerea."
+      ],
+      "episode_progress": 0.3
+    },
+    "a16cf5721eed20ca3701fc8034c0e55b2a8b9cd1b425cca92197ec72b77f0bb274dae148e33583222fd61d60d345f4575a14fe621e9510383e00eba2b3374540": {
+      "narrative": "Pentru 50 de galbeni, se uită în altă parte.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": -50,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": true,
+      "suggestions": [
+        "Ia Fragmentul."
+      ],
+      "episode_progress": 1.0
+    },
+    "85ee454f4b5ba6b2670ac4afb110a904c75caab0a8fe4cdadcc1825317aec07f81b86305f568b0ec68e0823f4ad1b8c13f9ea3f1c1b255cfeb9828fa28c079c0": {
+      "narrative": "Acțiunea continuă conform planului tău.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi mai departe."
+      ],
+      "episode_progress": 0.4
+    },
+    "65d4c6a6125432214b7a789d0e0c758a631913bc3f28c077580abc0b69aef39394712e3fd84dbd87c14007d49a6ddfbeae6931319d54c256efd5117a0b0f529b": {
+      "narrative": "Acțiunea continuă conform planului tău.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi mai departe."
+      ],
+      "episode_progress": 0.4
+    }
+  }
+}

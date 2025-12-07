@@ -1,0 +1,55 @@
+{
+  "Prezint dovezile în fața tuturor.": {
+    "narrative": "Te ridici în fața Sfatului. Boierul trădător rânjește.",
+    "suggestions": [
+      "Prezintă Condica (Dovada 1).",
+      "Prezintă Scrisoarea (Dovada 2).",
+      "Provoacă-l la duel."
+    ],
+    "episode_progress": 0.3,
+    "win_condition": false,
+    "items_gained": [],
+    "gold_change": 0,
+    "health_change": 0,
+    "reputation_change": 0
+  },
+  "Provoacă-l la duel.": {
+    "narrative": "Boierul acceptă. Îl învingi în fața tuturor. \"Vinovat!\" strigă Vlad.",
+    "suggestions": [
+      "Victorie."
+    ],
+    "episode_progress": 1.0,
+    "win_condition": true,
+    "items_gained": [],
+    "gold_change": 0,
+    "health_change": 0,
+    "reputation_change": 0
+  },
+  "Prezintă Condica (Dovada 1).": {
+    "narrative": "Acțiunea continuă conform planului tău.",
+    "suggestions": [
+      "Mergi mai departe."
+    ],
+    "episode_progress": 0.4
+  },
+  "Mergi mai departe.": {
+    "narrative": "Te apropii de final.",
+    "suggestions": [],
+    "episode_progress": 1.0,
+    "win_condition": true
+  },
+  "Prezintă Scrisoarea (Dovada 2).": {
+    "narrative": "Acțiunea continuă conform planului tău.",
+    "suggestions": [
+      "Mergi mai departe."
+    ],
+    "episode_progress": 0.4
+  },
+  "Victorie.": {
+    "narrative": "Acțiunea continuă conform planului tău.",
+    "suggestions": [
+      "Mergi mai departe."
+    ],
+    "episode_progress": 1.1
+  }
+}

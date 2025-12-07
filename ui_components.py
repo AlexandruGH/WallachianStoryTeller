@@ -100,6 +100,10 @@ def inject_css():
             filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8));
         }
         
+        @media (max-width: 600px) {
+            .main-header { font-size: 1.8rem !important; }
+        }
+        
         .subtitle {
             text-align: center;
             color: #8b6b6b !important;
@@ -531,8 +535,8 @@ def render_loading_screen():
             position: fixed;
             top: 0;
             left: 0;
-            width: 100vw;
-            height: 100vh;
+            width: 100%;
+            height: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -541,6 +545,7 @@ def render_loading_screen():
             color: #d4af37;
             font-family: 'Cinzel', serif;
             z-index: 999999;
+            text-align: center;
         }
         .spinner-sword {
             font-size: 4rem;
@@ -551,7 +556,7 @@ def render_loading_screen():
         </style>
         <div class="loading-container">
             <div class="spinner-sword">⚔️</div>
-            <h2>Se pregătește tărâmul...</h2>
+            <h2 style="text-align: center; width: 100%;">Se pregătește tărâmul...</h2>
         </div>
     """, unsafe_allow_html=True)
 

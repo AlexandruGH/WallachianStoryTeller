@@ -1,0 +1,75 @@
+{
+  "Caut urme de căruță pe potecă.": {
+    "narrative": "Găsești o tabără ascunsă. Contrabandiștii beau în jurul focului.",
+    "suggestions": [
+      "Atacă-i prin surprindere.",
+      "Provoacă-i la luptă dreaptă.",
+      "Fură o armă."
+    ],
+    "episode_progress": 0.3,
+    "win_condition": false,
+    "items_gained": [],
+    "gold_change": 0,
+    "health_change": 0,
+    "reputation_change": 0
+  },
+  "Atacă-i prin surprindere.": {
+    "narrative": "Sari din tufișuri. Panică! Șeful lor fuge spre peșteră.",
+    "suggestions": [
+      "Urmărește șeful.",
+      "Luptă cu restul."
+    ],
+    "episode_progress": 0.6,
+    "win_condition": false,
+    "items_gained": [],
+    "gold_change": 0,
+    "health_change": 0,
+    "reputation_change": 0
+  },
+  "Urmărește șeful.": {
+    "narrative": "Îl prinzi. \"Ia Condica! Doar lasă-mă!\"",
+    "suggestions": [
+      "Ia Condica."
+    ],
+    "episode_progress": 1.0,
+    "win_condition": true,
+    "items_gained": [],
+    "gold_change": 0,
+    "health_change": 0,
+    "reputation_change": 0
+  },
+  "Provoacă-i la luptă dreaptă.": {
+    "narrative": "Acțiunea continuă conform planului tău.",
+    "suggestions": [
+      "Mergi mai departe."
+    ],
+    "episode_progress": 0.4
+  },
+  "Mergi mai departe.": {
+    "narrative": "Te apropii de final.",
+    "suggestions": [],
+    "episode_progress": 1.0,
+    "win_condition": true
+  },
+  "Fură o armă.": {
+    "narrative": "Acțiunea continuă conform planului tău.",
+    "suggestions": [
+      "Mergi mai departe."
+    ],
+    "episode_progress": 0.4
+  },
+  "Luptă cu restul.": {
+    "narrative": "Acțiunea continuă conform planului tău.",
+    "suggestions": [
+      "Mergi mai departe."
+    ],
+    "episode_progress": 0.7
+  },
+  "Ia Condica.": {
+    "narrative": "Acțiunea continuă conform planului tău.",
+    "suggestions": [
+      "Mergi mai departe."
+    ],
+    "episode_progress": 1.1
+  }
+}

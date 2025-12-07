@@ -1,0 +1,107 @@
+{
+  "character_class": "Străjer",
+  "faction": "Drăculești",
+  "episode": 7,
+  "description": "Recompiled Pack Ep 7",
+  "cache_data": {
+    "517da0148738ac085448ce597a85526700c485ef611aa2992a87d1f6afba0ccd116c9740a1eb885a919ced2fbe9fe585695b950cb6332a93c3392bbfda256e7e": {
+      "narrative": "Sala e plină. Solul maghiar te privește sceptic. Boierul trădător transpiră.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Prezintă Condica (Ep3).",
+        "Prezintă Scrisoarea (Ep2).",
+        "Acuză direct."
+      ],
+      "episode_progress": 0.4
+    },
+    "2b10968cf8dd0508b4ba49440a8822226791e561125713d8f9775f7ea6f07e23449649ae9b69824bc765f8001c0fe2e7e6f7fcc7881e8bbb0929129101d86d29": {
+      "narrative": "Solul citește. \"Semnătura Dăneștilor... deci ei sabotau comerțul!\" Boierul trădător încearcă să fugă.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Prinde-l!",
+        "Lasă gărzile să-l ia."
+      ],
+      "episode_progress": 0.9
+    },
+    "8d2263af693c923c207f72a7d1df0b695d7d713ce74434d8ad3589e73c31780690a5f2c14d3f138bf55618c9e15c081f3693615e85dbdf6f0bdb737113907e0e": {
+      "narrative": "Continuând pe acest drum, reușești să avansezi spre obiectivul tău.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi înainte."
+      ],
+      "episode_progress": 0.5
+    },
+    "4e6415227e11be23efd9aebe20ff8ad1cbc80e780a5df33748a9d1cc21616e9ebcbab40d8ecbf18342d040cb0996758524ee1f9c485ac4c04c312ab9942da9d2": {
+      "narrative": "Continuând pe acest drum, reușești să avansezi spre obiectivul tău.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi înainte."
+      ],
+      "episode_progress": 0.5
+    },
+    "dfa29bca8fbe556284ff7e63cdb334920d3ef0f2129e51c6813b9352336dc7a28790f609002df93e44c421b7d2cc46d67a952b356e05953f37c0b8525a01f5f5": {
+      "narrative": "Îl imobilizezi. Sala aplaudă. Ai câștigat susținerea politică.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": true,
+      "suggestions": [
+        "Sărbătorește."
+      ],
+      "episode_progress": 1.0
+    },
+    "a0741fa4080faea494c65509790a545890ca8959b8e69f0c19863c0aafb9cb041cb223d0a689b48697d141720f757cbdeb59e347628f1829d4c1f1e57974bcfb": {
+      "narrative": "Continuând pe acest drum, reușești să avansezi spre obiectivul tău.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi înainte."
+      ],
+      "episode_progress": 1.0
+    }
+  }
+}

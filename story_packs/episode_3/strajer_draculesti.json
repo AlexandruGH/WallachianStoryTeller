@@ -1,0 +1,71 @@
+{
+  "character_class": "Străjer",
+  "faction": "Drăculești",
+  "episode": 3,
+  "description": "Recompiled Pack Ep 3",
+  "cache_data": {
+    "74f44e9eed3e73f4df563cccad87add33bfa538aebaf33dd0b8a4e8c3a0e5e254caeab8eaac2c782248d8385c1280130e89424d5393e2a902f95017b7932e69d": {
+      "narrative": "Investighezi zona. Găsești contrabandiștii.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Observă.",
+        "Acționează."
+      ],
+      "episode_progress": 0.5
+    },
+    "fbac06ada9af917cbf624ded460ac4be755a3deee06354f2b2ad028c6c040b536650ef7c9e050b0bf502fa9a64e00fa1f39c97a4877b693dbbc40d748886204f": {
+      "narrative": "Continuând pe acest drum, reușești să avansezi spre obiectivul tău.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi înainte."
+      ],
+      "episode_progress": 0.6
+    },
+    "fe0fe61c033055f4c6b145b29b20f98477b4ef4f5be08b9b9b11976f3a82a1ba7a6f9a6595750ba6a8e4bb5f5e0a413d5006c689facfb56aadc7f533ba150068": {
+      "narrative": "Reușești să iei Condica.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": true,
+      "suggestions": [
+        "Finalizează."
+      ],
+      "episode_progress": 1.0
+    },
+    "fc9e2453ff061c3e69a236d1489df49a11a45979e12201bf0860ecfea777783b581446ac44aafe103ebc980bc194ad302ad4bb4ea95ebc20ee19cab9ca37f77a": {
+      "narrative": "Ai ajuns la capătul acestei ramuri a destinului. Misiunea continuă.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": true,
+      "suggestions": [],
+      "episode_progress": 1.0
+    }
+  }
+}

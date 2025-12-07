@@ -535,7 +535,7 @@ def render_character_creation(game_state, db=None, user_id=None, db_session_id=N
 {data['icon']} {fac_type.value} {coming_soon_badge}
 </h2>
 <div style="font-family: 'Cinzel', serif; font-style: italic; color: #f0e68c; font-size: 1.2rem; margin-bottom: 15px; text-align: center; border-bottom: 1px solid #333; padding-bottom: 10px;">
-"{data.get('motto', '')}"
+<strong>Motto:</strong> "{data.get('motto', '')}"
 </div>
 <div style="text-align: center; margin-bottom: 15px; color: #aaa; font-size: 1rem;">
 📍 <b>Centru Putere:</b> {data.get('location', '')}

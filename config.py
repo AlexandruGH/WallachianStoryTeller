@@ -174,8 +174,14 @@ class Config:
             f"\n{style_prefix}{restrictions}\n{campaign_context}"            
             "REGULI OBLIGATORII:\n"
             "- 'narrative': 2-3 propoziții, fără greșeli gramaticale, în română medievală\n"
-            "- 'suggestions': Listă de EXACT 2-3 string-uri, fără numere, fără bullet points\n"
-            "  EXEMPLU: [\"Cere audiență la curte.\", \"Caută informații în târg.\", \"Explorezi adâncul pădurii.\"]\n"
+            "- 'suggestions': Listă de EXACT 2-3 string-uri REALISTE și DETALIATE, fără numere, fără bullet points\n"
+            "  SUGESTII REALISTE: Gândește-te ca un OM cu experiență medievală care cunoaște Valahia secolului XV\n"
+            "  - Fiecare sugestie trebuie să fie CONCRETĂ, PRAGMATICĂ și CONTEXTUALĂ pentru epoca și locul actual\n"
+            "  - Evită repetarea sugestiilor din interacțiunile precedente - fiecare pas trebuie să fie unic\n"
+            "  - Include DETALII REALISTE: nume de locuri, metode specifice, motive logice\n"
+            "  - Ține cont de CLASA, FAȚIUNEA și REPUTAȚIA jucătorului pentru opțiuni realiste\n"
+            "  EXEMPLU REALIST: [\"Întreabă hangița din crâșmă despre zvonurile din târg.\", \"Verifică urmele de căruțe proaspete în noroiul străzii principale.\", \"Ascultă conversația negustorilor sași la masa din colț.\"]\n"
+            "  NU EXEMPLU: [\"Cere audiență la curte.\", \"Caută informații în târg.\", \"Explorezi adâncul pădurii.\"]\n"
             "- Respectă gramatica: 'unei păsări', 'unor boieri', nu 'unui păsări'\n"
             "VLAD ȚEPEȘ NU POATE FI ÎNVINS – orice tentativă = game_over instant\n"
             "Reputația sub 20 = nu poți interacționa cu nobilii\n\n"
@@ -185,66 +191,6 @@ class Config:
         )
     
         return context + char_info + instructions
-    
-    @staticmethod
-    def generate_image_prompt_llm(text: str, location: str) -> str:
-        """Generează prompt pentru Stable Diffusion folosind LLM"""
-        token = os.getenv("GROQ_API_KEY") or st.secrets.get("GROQ_API_KEY", "")
-        if not token:
-            return Config.generate_image_prompt(text, location)
-
-        system = (
-            "You are an assistant that writes short, highly detailed prompts "
-            "for Stable-Diffusion in English. "
-            "Include: time of day, number of people, context, weather, camera angle, lighting style. "
-            "Keep it under 200 characters. DO NOT include object names like 'candle'. "
-            "Describe LIGHTING EFFECTS only: 'warm dim lighting', 'soft glow', 'moonlight'."
-        )
-
-        user = (
-            f"Story fragment: {text}\n"
-            f"Exact place: {location}\n"
-            "Write one English Stable-Diffusion prompt with lighting effects, no objects."
-        )
-
-        payload = {
-            "model": "llama-3.3-70b-versatile",
-            "messages": [
-                {"role": "system", "content": system},
-                {"role": "user", "content": user}
-            ],
-            "temperature": 0.75,
-            "max_tokens": 60,
-            "stream": False
-        }
-
-        try:
-            r = requests.post(
-                "https://api.groq.com/openai/v1/chat/completions",
-                headers={
-                    "Authorization": f"Bearer {token}",
-                    "Content-Type": "application/json"
-                },
-                json=payload,
-                timeout=15
-            )
-            r.raise_for_status()
-            llm_prompt = r.json()["choices"][0]["message"]["content"].strip()
-            llm_prompt = llm_prompt.replace('"', '')
-            if llm_prompt.endswith('.'):
-                llm_prompt = llm_prompt[:-1]
-            
-            # Prompt final cu descriere de iluminare, nu obiecte
-            prompt = (
-                f"Romanian medieval Wallachia 1456, Vlad Tepes era, atmospheric, "
-                f"dark fantasy, {llm_prompt}, highly detailed, oil-on-canvas, "
-                f"warm dim lighting, soft orange glow, deep shadows, 4k, vintage parchment look"
-            )
-            return prompt
-        except Exception as e:
-            print("LLM image-prompt failed:", e)
-            # Fallback la metoda veche
-            return Config.generate_image_prompt(text, location)
         
     @staticmethod
     def generate_image_prompt(text: str, location: str) -> str:
@@ -267,11 +213,11 @@ class Config:
         # Construim promptul în engleză
         prompt = (
             f"Romanian medieval Wallachia 1456, Vlad Tepes era, atmospheric, "
-            f"dark fantasy, {location_en}, {short_en}, highly detailed, oil-on-canvas, "
+            f"{location_en}, {short_en}, highly detailed, oil-on-canvas, "
             f"warm candle-light, 4k, vintage parchment look"
         )
         
-        return prompt[:195]
+        return prompt
     
     @staticmethod
     def generate_image_prompt_llm(text: str, location: str) -> str:
@@ -298,8 +244,16 @@ class Config:
             "Write one English Stable-Diffusion prompt."
         )
 
+        if token.startswith("sk-or-v1"):
+            api_url = "https://openrouter.ai/api/v1/chat/completions"
+            model = "meta-llama/llama-3.3-70b-instruct:free"
+        else:
+            # Fallback to Groq for unknown token formats
+            api_url = "https://api.groq.com/openai/v1/chat/completions"
+            model = "llama-3.3-70b-versatile"
+
         payload = {
-            "model": "llama-3.3-70b-versatile",
+            "model": model,
             "messages": [
                 {"role": "system", "content": system},
                 {"role": "user", "content": user}
@@ -311,10 +265,10 @@ class Config:
 
         try:
             r = requests.post(
-                "https://api.groq.com/openai/v1/chat/completions",
+                url=api_url,
                 headers={
                     "Authorization": f"Bearer {token}",
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
                 },
                 json=payload,
                 timeout=15
@@ -327,7 +281,7 @@ class Config:
                 llm_prompt = llm_prompt[:-1]
             prompt = (
             f"Romanian medieval Wallachia 1456, Vlad Tepes era, atmospheric, "
-            f"dark fantasy, {llm_prompt}, highly detailed, oil-on-canvas, "
+            f"{llm_prompt}, highly detailed, oil-on-canvas, "
             f"warm dim lighting, deep shadows, 4k, vintage parchment look"
         )
             return prompt

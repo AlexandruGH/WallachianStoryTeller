@@ -1,0 +1,75 @@
+{
+  "Aprind o torță și intru în tunel.": {
+    "narrative": "Tunelul e umed și rece. Liliecii zboară. Ajungi la o bifurcație.",
+    "suggestions": [
+      "Stânga (Curent de aer).",
+      "Dreapta (Urme de pași)."
+    ],
+    "episode_progress": 0.3,
+    "win_condition": false,
+    "items_gained": [],
+    "gold_change": 0,
+    "health_change": 0,
+    "reputation_change": 0
+  },
+  "Dreapta (Urme de pași).": {
+    "narrative": "Dai peste Paznicul Răzvrătit. E un uriaș. \"Nimeni nu trece!\"",
+    "suggestions": [
+      "Luptă cu el.",
+      "Încearcă să-l convingi (Negociere).",
+      "Folosește o capcană."
+    ],
+    "episode_progress": 0.6,
+    "win_condition": false,
+    "items_gained": [],
+    "gold_change": 0,
+    "health_change": 0,
+    "reputation_change": 0
+  },
+  "Luptă cu el.": {
+    "narrative": "Este o luptă grea, dar îl învingi. În spatele lui e Fragmentul Principal.",
+    "suggestions": [
+      "Ia Fragmentul."
+    ],
+    "episode_progress": 1.0,
+    "win_condition": true,
+    "items_gained": [],
+    "gold_change": 0,
+    "health_change": 0,
+    "reputation_change": 0
+  },
+  "Stânga (Curent de aer).": {
+    "narrative": "Continuând pe acest drum, reușești să avansezi spre obiectivul tău.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 0.4
+  },
+  "Mergi înainte.": {
+    "narrative": "Ai ajuns la capătul acestei ramuri a destinului. Misiunea continuă.",
+    "suggestions": [],
+    "episode_progress": 1.0,
+    "win_condition": true
+  },
+  "Încearcă să-l convingi (Negociere).": {
+    "narrative": "Continuând pe acest drum, reușești să avansezi spre obiectivul tău.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 0.7
+  },
+  "Folosește o capcană.": {
+    "narrative": "Continuând pe acest drum, reușești să avansezi spre obiectivul tău.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 0.7
+  },
+  "Ia Fragmentul.": {
+    "narrative": "Continuând pe acest drum, reușești să avansezi spre obiectivul tău.",
+    "suggestions": [
+      "Mergi înainte."
+    ],
+    "episode_progress": 1.1
+  }
+}

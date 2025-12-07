@@ -1,0 +1,107 @@
+{
+  "character_class": "Spion",
+  "faction": "Drăculești",
+  "episode": 7,
+  "description": "Recompiled Pack Ep 7",
+  "cache_data": {
+    "517da0148738ac085448ce597a85526700c485ef611aa2992a87d1f6afba0ccd116c9740a1eb885a919ced2fbe9fe585695b950cb6332a93c3392bbfda256e7e": {
+      "narrative": "Te ridici în fața Sfatului. Boierul trădător rânjește.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Prezintă Condica (Dovada 1).",
+        "Prezintă Scrisoarea (Dovada 2).",
+        "Provoacă-l la duel."
+      ],
+      "episode_progress": 0.3
+    },
+    "0b56126ee7a2e0978a04b8da5c3491797c229ca1b190adbf2f605a298ef635c115119a8056dfbb9769b2311152fb0ffbfd034ad31602abe44db5a3091b153c23": {
+      "narrative": "Solii văd semnătura. Boierul pălește. \"Minciuni!\"",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Prezintă și Scrisoarea.",
+        "Cere arestarea lui."
+      ],
+      "episode_progress": 0.7
+    },
+    "3b3432cb7e7e5d7c09c343d31b31b1a9c342cd79e6e70e4ad0dd606d6159ffa00f446441cccb654a8c6095d7a08d0d95ec8f238ce065574ce1102d3c7c238d4b": {
+      "narrative": "Acțiunea continuă conform planului tău.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi mai departe."
+      ],
+      "episode_progress": 0.4
+    },
+    "6bbc0d5e4d0e440da26c5ef48cbc406e56559cd90eac962812898d84d6c658381f15441dca99818d2f8ced98a778afed5205d0588068e18436444bb470e08995": {
+      "narrative": "Acțiunea continuă conform planului tău.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi mai departe."
+      ],
+      "episode_progress": 0.4
+    },
+    "cbe1005554b71fdd2145333dd1520b7de6915d22f18175b68f963935dba42e1cdb9bcdaf7fe26dc8cb91a97cb13781d4d76a20e62c91d7596891506ddf728205": {
+      "narrative": "Dovada e incontestabilă. Boierul este arestat.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": true,
+      "suggestions": [
+        "Victorie Politică."
+      ],
+      "episode_progress": 1.0
+    },
+    "7ee8044faf61472505a13054690bf0a600c412950039d7c393d4abe461a1d73d70ab0a741844b414c326f57fa64aaf9c895aee6c3f1c19d3f95b79069fc037cf": {
+      "narrative": "Acțiunea continuă conform planului tău.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi mai departe."
+      ],
+      "episode_progress": 0.7999999999999999
+    }
+  }
+}

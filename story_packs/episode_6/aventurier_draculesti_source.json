@@ -1,0 +1,55 @@
+{
+  "Aprind o torță și intru în tunel.": {
+    "narrative": "Cobori în rapel pe zidurile Poenariului. Ajungi la fereastra paznicului.",
+    "suggestions": [
+      "Intră prin geam.",
+      "Coboară în temniță.",
+      "Luptă cu paznicul."
+    ],
+    "episode_progress": 0.3,
+    "win_condition": false,
+    "items_gained": [],
+    "gold_change": 0,
+    "health_change": 0,
+    "reputation_change": 0
+  },
+  "Luptă cu paznicul.": {
+    "narrative": "Paznicul e puternic, dar tu ești rapid. Îl învingi.",
+    "suggestions": [
+      "Ia Fragmentul Principal."
+    ],
+    "episode_progress": 1.0,
+    "win_condition": true,
+    "items_gained": [],
+    "gold_change": 0,
+    "health_change": 0,
+    "reputation_change": 0
+  },
+  "Intră prin geam.": {
+    "narrative": "Acțiunea continuă conform planului tău.",
+    "suggestions": [
+      "Mergi mai departe."
+    ],
+    "episode_progress": 0.4
+  },
+  "Mergi mai departe.": {
+    "narrative": "Te apropii de final.",
+    "suggestions": [],
+    "episode_progress": 1.0,
+    "win_condition": true
+  },
+  "Coboară în temniță.": {
+    "narrative": "Acțiunea continuă conform planului tău.",
+    "suggestions": [
+      "Mergi mai departe."
+    ],
+    "episode_progress": 0.4
+  },
+  "Ia Fragmentul Principal.": {
+    "narrative": "Acțiunea continuă conform planului tău.",
+    "suggestions": [
+      "Mergi mai departe."
+    ],
+    "episode_progress": 1.1
+  }
+}

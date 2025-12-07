@@ -1,0 +1,90 @@
+{
+  "character_class": "Străjer",
+  "faction": "Drăculești",
+  "episode": 2,
+  "description": "Recompiled Pack Ep 2",
+  "cache_data": {
+    "f3bf24f760ad09d51caf4005148ce9cb256ad0d3ca7fd8cbf840058726a9d2767129d7297b6f6e4e07a243e913cb79392ab6c72703ccf2cf99abfef8ca48385a": {
+      "narrative": "Intri în uniformă. Lumea se foiește incomod. \"Control de rutină.\" Verifici fețele. Unul e căutat pentru tâlhărie.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Arestează tâlharul.",
+        "Ignoră-l și caută spionul.",
+        "Interoghează sala."
+      ],
+      "episode_progress": 0.2
+    },
+    "bb92aad8efefa92643ca4f7da9cc501a88c03e503e08a0b914854961eaee5a827a619ce210e0f78352df34fe38619103f6c85c954983316746f0f65bad17ad3c": {
+      "narrative": "Continuând pe acest drum, reușești să avansezi spre obiectivul tău.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi înainte."
+      ],
+      "episode_progress": 0.30000000000000004
+    },
+    "8bcc271fdceef631444c5352e2d4757ed3792366ea1b9303065ab23d1eff5fc7bcecd8462bbafe4cbabaa15e4cd4188b028013f45d3db1cecc515fc1311bc9fb": {
+      "narrative": "Te concentrezi pe misiune. Un individ cu glugă încearcă să iasă prin spate.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Oprește-l! (Somație)",
+        "Trage cu arbaleta.",
+        "Urmărește-l afară."
+      ],
+      "episode_progress": 0.5
+    },
+    "a40c2675f34854777435f6da05f78ec13db67566c4ae7f07e26c2c77ac94f0068c62a193327a7e316525fa720f2986d105246bbe0e00e76d43119684dbdc4477": {
+      "narrative": "Continuând pe acest drum, reușești să avansezi spre obiectivul tău.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": false,
+      "suggestions": [
+        "Mergi înainte."
+      ],
+      "episode_progress": 0.30000000000000004
+    },
+    "a65f71e9423352579623810ba6395a58161a645b5dfc16a5ba2c03880cc0666cb1d3f9f0fad26a3037e8a39e90f05430f1026f4d0a04830b556ffe2dc5734811": {
+      "narrative": "Ai ajuns la capătul acestei ramuri a destinului. Misiunea continuă.",
+      "health_change": 0,
+      "reputation_change": 0,
+      "gold_change": 0,
+      "items_gained": [],
+      "items_lost": [],
+      "location_change": null,
+      "status_effects": [],
+      "game_over": false,
+      "win_condition": true,
+      "suggestions": [],
+      "episode_progress": 1.0
+    }
+  }
+}

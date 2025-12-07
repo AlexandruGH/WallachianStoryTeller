@@ -1,0 +1,55 @@
+{
+  "Patrulez prin tabără.": {
+    "narrative": "Mâncarea are un miros ciudat. Migdale amare. Cianură.",
+    "suggestions": [
+      "Oprește banchetul.",
+      "Analizează mâncarea.",
+      "Acuză bucătarul."
+    ],
+    "episode_progress": 0.3,
+    "win_condition": false,
+    "items_gained": [],
+    "gold_change": 0,
+    "health_change": 0,
+    "reputation_change": 0
+  },
+  "Oprește banchetul.": {
+    "narrative": "\"Nu mâncați!\" Strigătul tău salvează ofițerii.",
+    "suggestions": [
+      "Primește mulțumirile."
+    ],
+    "episode_progress": 1.0,
+    "win_condition": true,
+    "items_gained": [],
+    "gold_change": 0,
+    "health_change": 0,
+    "reputation_change": 0
+  },
+  "Analizează mâncarea.": {
+    "narrative": "Acțiunea continuă conform planului tău.",
+    "suggestions": [
+      "Mergi mai departe."
+    ],
+    "episode_progress": 0.4
+  },
+  "Mergi mai departe.": {
+    "narrative": "Te apropii de final.",
+    "suggestions": [],
+    "episode_progress": 1.0,
+    "win_condition": true
+  },
+  "Acuză bucătarul.": {
+    "narrative": "Acțiunea continuă conform planului tău.",
+    "suggestions": [
+      "Mergi mai departe."
+    ],
+    "episode_progress": 0.4
+  },
+  "Primește mulțumirile.": {
+    "narrative": "Acțiunea continuă conform planului tău.",
+    "suggestions": [
+      "Mergi mai departe."
+    ],
+    "episode_progress": 1.1
+  }
+}

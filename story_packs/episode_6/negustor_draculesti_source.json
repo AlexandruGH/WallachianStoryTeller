@@ -1,0 +1,55 @@
+{
+  "Aprind o torță și intru în tunel.": {
+    "narrative": "Garnizoana e flămândă. Le oferi mâncare.",
+    "suggestions": [
+      "Mituieste paznicii.",
+      "Cumpără cheia.",
+      "Negociază trecerea."
+    ],
+    "episode_progress": 0.3,
+    "win_condition": false,
+    "items_gained": [],
+    "gold_change": 0,
+    "health_change": 0,
+    "reputation_change": 0
+  },
+  "Mituieste paznicii.": {
+    "narrative": "Pentru 50 de galbeni, se uită în altă parte.",
+    "suggestions": [
+      "Ia Fragmentul."
+    ],
+    "episode_progress": 1.0,
+    "win_condition": true,
+    "items_gained": [],
+    "gold_change": -50,
+    "health_change": 0,
+    "reputation_change": 0
+  },
+  "Cumpără cheia.": {
+    "narrative": "Acțiunea continuă conform planului tău.",
+    "suggestions": [
+      "Mergi mai departe."
+    ],
+    "episode_progress": 0.4
+  },
+  "Mergi mai departe.": {
+    "narrative": "Te apropii de final.",
+    "suggestions": [],
+    "episode_progress": 1.0,
+    "win_condition": true
+  },
+  "Negociază trecerea.": {
+    "narrative": "Acțiunea continuă conform planului tău.",
+    "suggestions": [
+      "Mergi mai departe."
+    ],
+    "episode_progress": 0.4
+  },
+  "Ia Fragmentul.": {
+    "narrative": "Acțiunea continuă conform planului tău.",
+    "suggestions": [
+      "Mergi mai departe."
+    ],
+    "episode_progress": 1.1
+  }
+}

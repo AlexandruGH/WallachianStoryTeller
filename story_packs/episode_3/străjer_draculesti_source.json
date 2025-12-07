@@ -1,0 +1,55 @@
+{
+  "Caut urme de căruță pe potecă.": {
+    "narrative": "Găsești urmele. Organizezi o ambuscadă cu câțiva săteni loiali.",
+    "suggestions": [
+      "Dă semnalul de atac.",
+      "Cere-le să se predea.",
+      "Trage un foc de avertisment."
+    ],
+    "episode_progress": 0.3,
+    "win_condition": false,
+    "items_gained": [],
+    "gold_change": 0,
+    "health_change": 0,
+    "reputation_change": 0
+  },
+  "Cere-le să se predea.": {
+    "narrative": "\"În numele lui Vlad!\" Ei aruncă armele, speriați de reputația ta.",
+    "suggestions": [
+      "Confiscă Condica."
+    ],
+    "episode_progress": 1.0,
+    "win_condition": true,
+    "items_gained": [],
+    "gold_change": 0,
+    "health_change": 0,
+    "reputation_change": 0
+  },
+  "Dă semnalul de atac.": {
+    "narrative": "Acțiunea continuă conform planului tău.",
+    "suggestions": [
+      "Mergi mai departe."
+    ],
+    "episode_progress": 0.4
+  },
+  "Mergi mai departe.": {
+    "narrative": "Te apropii de final.",
+    "suggestions": [],
+    "episode_progress": 1.0,
+    "win_condition": true
+  },
+  "Trage un foc de avertisment.": {
+    "narrative": "Acțiunea continuă conform planului tău.",
+    "suggestions": [
+      "Mergi mai departe."
+    ],
+    "episode_progress": 0.4
+  },
+  "Confiscă Condica.": {
+    "narrative": "Acțiunea continuă conform planului tău.",
+    "suggestions": [
+      "Mergi mai departe."
+    ],
+    "episode_progress": 1.1
+  }
+}
