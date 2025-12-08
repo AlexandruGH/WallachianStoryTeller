@@ -40,6 +40,7 @@ from llm_handler import fix_romanian_grammar, generate_narrative_with_progress
 from models import GameState, CharacterStats, InventoryItem, ItemType, NarrativeResponse
 from database import Database
 from character_creation import render_character_creation
+# team_manager will be imported lazily when team mode is selected
 
 # =========================
 # — Helper Classes
@@ -164,6 +165,10 @@ def init_session():
         st.session_state.legend_scale = 5
     if "is_game_over" not in st.session_state:
         st.session_state.is_game_over = False
+    if "game_mode_selected" not in st.session_state:
+        st.session_state.game_mode_selected = None
+    if "team_id" not in st.session_state:
+        st.session_state.team_id = None
 
 def create_new_game_state():
     """Create a fresh game state"""
@@ -1026,6 +1031,21 @@ def main():
     # User is authenticated - start game
     # inject_css() was already called above
 
+    # Set up Firebase authentication for team features
+    if hasattr(st.session_state.user, 'access_token'):
+        try:
+            from team_manager import TeamManager
+            team_manager = TeamManager.get_instance()
+            # Use Supabase JWT token for Firebase authentication
+            team_manager.set_auth_token(st.session_state.user.access_token)
+            print(f"[FIREBASE] Set Supabase JWT token for Firebase authentication")
+        except Exception as e:
+            print(f"[FIREBASE] Failed to set auth token: {e}")
+
+    # Alternative: If Firebase requires separate authentication
+    # You can set Firebase security rules to allow unauthenticated access for teams
+    # OR create Firebase accounts programmatically when users register with Supabase
+
     # Initialize session AFTER authentication is confirmed
     init_session()
 
@@ -1038,11 +1058,58 @@ def main():
         st.warning("⚠️ API a eșuat de 3+ ori. Se trece în modul local automat.")
         st.session_state.settings["use_api_fallback"] = False
 
-    # Character Creation Flow
+    # Game Mode Selection
+    if st.session_state.game_mode_selected is None:
+        if loading_placeholder:
+            loading_placeholder.empty()
+
+        st.markdown("<h1 style='text-align: center; color: #D4AF37;'>🎮 Alege Modul de Joc</h1>", unsafe_allow_html=True)
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+            st.markdown("""
+            <div style="background: rgba(20, 15, 8, 0.95); border: 2px solid #5a3921; border-radius: 16px; padding: 32px; text-align: center; min-height: 300px;">
+                <h1 style="font-size: 4rem;">⚔️</h1>
+                <h2 style="color: #D4AF37;">Joc Solo</h2>
+                <p>O experiență personală în lumea Valahiei. Tu controlezi povestea complet.</p>
+                <p><i>Perfect pentru aventuri individuale.</i></p>
+            </div>
+            """, unsafe_allow_html=True)
+
+            if st.button("🎯 Joacă Solo", key="solo_mode", use_container_width=True, type="primary"):
+                st.session_state.game_mode_selected = "solo"
+                st.rerun()
+
+        with col2:
+            st.markdown("""
+            <div style="background: rgba(20, 15, 8, 0.95); border: 2px solid #5a3921; border-radius: 16px; padding: 32px; text-align: center; min-height: 300px;">
+                <h1 style="font-size: 4rem;">🏰</h1>
+                <h2 style="color: #D4AF37;">Joc în Echipă</h2>
+                <p>Colaborează cu 2-4 prieteni. Votați împreună alegerile și împărtășiți povestea.</p>
+                <p><i>Împărtășește aventura cu alții!</i></p>
+            </div>
+            """, unsafe_allow_html=True)
+
+            if st.button("🤝 Joacă în Echipă", key="team_mode", use_container_width=True, type="primary"):
+                st.session_state.game_mode_selected = "team"
+                st.rerun()
+
+        return
+
+    # Team Mode: Show team lobby or creation
+    if st.session_state.game_mode_selected == "team":
+        if loading_placeholder:
+            loading_placeholder.empty()
+
+        render_team_lobby()
+        return
+
+    # Character Creation Flow (Solo Mode)
     # If character class or faction is missing, show the creation wizard and STOP
     user_id = st.session_state.user.user.id
     db_session_id = getattr(st.session_state, 'db_session_id', None)
-    
+
     # Pass db and user_id so wizard can save state immediately to avoid reset on rerun
     # Pass loading_placeholder so wizard can clear it ONLY when it's ready to render its own UI
     if not render_character_creation(st.session_state.game_state, db, user_id, db_session_id, loading_placeholder):
@@ -1721,6 +1788,609 @@ def handle_name_change(new_name):
         st.error(f"❌ Eroare la schimbarea numelui: {str(e)}")
         if "pending_name_change" in st.session_state:
             del st.session_state.pending_name_change
+
+def render_team_lobby():
+    """Render team creation/joining lobby with professional UI and live team list"""
+    # Lazy import team_manager only when team mode is selected
+    from team_manager import TeamManager
+    team_manager = TeamManager.get_instance()
+
+    username = st.session_state.character_name or "Jucător"
+
+    # Enhanced CSS for team UI
+    st.markdown("""
+    <style>
+    .team-header {
+        text-align: center;
+        background: linear-gradient(135deg, #1a0f0b 0%, #2a1a15 100%);
+        padding: 30px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        border: 2px solid #D4AF37;
+        box-shadow: 0 8px 32px rgba(212, 175, 55, 0.2);
+    }
+    .team-card {
+        background: linear-gradient(145deg, #1E1E1E 0%, #252525 100%);
+        border: 2px solid #5a3921;
+        border-radius: 16px;
+        padding: 25px;
+        margin-bottom: 20px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+    }
+    .team-card:hover {
+        border-color: #D4AF37;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 32px rgba(212, 175, 55, 0.2);
+    }
+    .team-card h3 {
+        color: #D4AF37 !important;
+        margin-bottom: 15px;
+        text-align: center;
+    }
+    .team-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    .team-players {
+        background: rgba(212, 175, 55, 0.1);
+        border: 1px solid #D4AF37;
+        border-radius: 8px;
+        padding: 10px;
+        text-align: center;
+        margin-bottom: 15px;
+    }
+    .team-status {
+        padding: 8px 16px;
+        border-radius: 20px;
+        text-align: center;
+        font-weight: bold;
+        font-size: 0.9rem;
+        margin-bottom: 15px;
+    }
+    .status-lobby {
+        background: linear-gradient(135deg, #8b4513 0%, #a0522d 100%);
+        color: #ffa500;
+    }
+    .status-full {
+        background: linear-gradient(135deg, #2d5016 0%, #4a7c2a 100%);
+        color: #90EE90;
+    }
+    .create-team-section {
+        background: rgba(26, 15, 11, 0.9);
+        border: 2px solid #5a3921;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+    .no-teams {
+        text-align: center;
+        color: #8b6b6b;
+        font-style: italic;
+        padding: 40px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        margin: 20px 0;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+    st.markdown("""
+    <div class="team-header">
+        <h1 style="color: #D4AF37; margin: 0; font-size: 2.5rem;">🏰 Sala de Așteptare a Echipei</h1>
+        <p style="color: #8b6b6b; font-size: 1.2rem; margin: 10px 0 0 0;">Pregătește-te pentru aventura colectivă în lumea Valahiei</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # Check if user is already in a team
+    if st.session_state.team_id:
+        team_data = team_manager.get_team_data(st.session_state.team_id)
+        if team_data:
+            render_team_game_interface(team_data, team_manager)
+            return
+        else:
+            st.session_state.team_id = None
+
+    # Create New Team Section
+    st.markdown('<div class="create-team-section">', unsafe_allow_html=True)
+    st.markdown("### 🆕 Creează Echipă Nouă")
+
+    with st.form("create_team_form"):
+        col1, col2 = st.columns([2, 1])
+        with col1:
+            team_name = st.text_input(
+                "Nume Echipă",
+                placeholder="Ex: Dragonii Valahiei",
+                help="Alege un nume unic pentru echipa ta"
+            )
+            max_players = st.selectbox(
+                "Număr Maxim Jucători",
+                [2, 3, 4],
+                index=1,
+                help="Numărul maxim de jucători în echipă"
+            )
+        with col2:
+            st.markdown("<br>", unsafe_allow_html=True)  # Spacing
+            create_submitted = st.form_submit_button("🚀 Creează Echipă", type="primary", use_container_width=True)
+
+    if create_submitted:
+        if not team_name.strip():
+            st.error("❌ Te rog introdu un nume pentru echipă!")
+        else:
+            try:
+                team_id = team_manager.create_team(username, max_players, team_name.strip())
+                st.session_state.team_id = team_id
+                st.success(f"✅ Echipă '{team_name.strip()}' creată! ID: {team_id}")
+                st.rerun()
+            except Exception as e:
+                st.error(f"❌ Eroare la crearea echipei: {str(e)}")
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    # Get all available teams
+    all_teams = team_manager.get_all_teams()
+
+    if not all_teams:
+        st.markdown("""
+        <div class="no-teams">
+            <h3 style="color: #D4AF37; margin-bottom: 15px;">🏰 Nicio Echipă Disponibilă</h3>
+            <p>Fii primul care creează o echipă pentru a începe aventura colectivă!</p>
+        </div>
+        """, unsafe_allow_html=True)
+    else:
+        st.markdown("### 🎯 Echipe Disponibile")
+        st.markdown(f"<p style='text-align: center; color: #8b6b6b; margin-bottom: 20px;'>S-au găsit {len(all_teams)} echipă(e) activă(e)</p>", unsafe_allow_html=True)
+
+        # Display teams in a responsive grid
+        teams_list = list(all_teams.items())
+        for i in range(0, len(teams_list), 2):
+            cols = st.columns(2)
+            for j in range(2):
+                if i + j < len(teams_list):
+                    team_id, team_data = teams_list[i + j]
+                    with cols[j]:
+                        render_team_card(team_id, team_data, team_manager, username)
+
+def render_team_card(team_id: str, team_data: Dict, team_manager, username: str):
+    """Render individual team card"""
+    players = team_data.get('players', {})
+    max_players = team_data.get('maxPlayers', 4)
+    current_players = len(players)
+    team_name = team_data.get('teamName', f"Echipa {team_id}")
+
+    # Determine status
+    if current_players >= max_players:
+        status_class = "status-full"
+        status_text = "📦 Plină"
+        can_join = False
+    else:
+        status_class = "status-lobby"
+        status_text = "⏳ În așteptare"
+        can_join = True
+
+    # Check if user is already in this team
+    user_in_team = any(player.get('username') == username for player in players.values())
+
+    st.markdown(f"""
+    <div class="team-card">
+        <div class="team-info">
+            <h3>🏰 {team_name}</h3>
+            <div class="team-status {status_class}">{status_text}</div>
+        </div>
+        <div class="team-players">
+            <strong>👥 Jucători: {current_players}/{max_players}</strong>
+        </div>
+    """, unsafe_allow_html=True)
+
+    # Show team ID for reference
+    st.markdown(f"<small style='color: #666;'>ID: {team_id}</small>", unsafe_allow_html=True)
+
+    # Show player list
+    if players:
+        player_names = [player.get('username', 'Necunoscut') for player in players.values()]
+        st.markdown(f"<small style='color: #888;'>Membri: {', '.join(player_names)}</small>", unsafe_allow_html=True)
+
+    # Join button
+    if user_in_team:
+        st.success("✅ Ești deja în această echipă!")
+    elif can_join:
+        if st.button(f"🤝 Alătură-te", key=f"join_{team_id}", use_container_width=True):
+            try:
+                success = team_manager.join_team(team_id, username)
+                if success:
+                    st.session_state.team_id = team_id
+                    st.success("✅ Te-ai alăturat echipei!")
+                    st.rerun()
+                else:
+                    st.error("❌ Nu s-a putut alătura echipei.")
+            except Exception as e:
+                st.error(f"❌ Eroare: {str(e)}")
+    else:
+        st.info("⚠️ Echipa este plină")
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
+def render_team_game_interface(team_data, team_manager):
+    """Render team game interface"""
+    team_name = team_data.get('teamName', f"Echipa {team_data['teamId']}")
+    st.markdown(f"<h2 style='text-align: center;'>🎮 Joc în Echipă: {team_name}</h2>", unsafe_allow_html=True)
+
+    phase = team_data.get('metadata', {}).get('phase', 'lobby')
+
+    if phase == 'lobby':
+        render_team_lobby_interface(team_data, team_manager)
+    elif phase in ['in_progress', 'waiting_vote']:
+        render_team_gameplay_interface(team_data, team_manager)
+    elif phase == 'ai_generating':
+        st.info("🤖 AI-ul generează povestea... Așteptați.")
+        st.button("🔄 Reîmprospătează", on_click=st.rerun)
+
+def render_team_lobby_interface(team_data, team_manager):
+    """Render team lobby where players select characters with professional UI"""
+    players = team_data.get('players', {})
+
+    # Enhanced player display
+    st.markdown("### 👥 Membrii Echipei")
+    cols = st.columns(min(len(players), 4))
+
+    all_ready = True
+    for i, (player_id, player) in enumerate(players.items()):
+        with cols[i % len(cols)]:
+            # Player card with enhanced styling
+            status_class = "status-ready" if player.get('ready') else "status-waiting"
+            status_text = "✅ Gata" if player.get('ready') else "⏳ Se pregătește"
+            status_emoji = "🛡️" if player.get('ready') else "⚔️"
+
+            st.markdown(f"""
+            <div class="team-card">
+                <div class="player-avatar">
+                    <div class="avatar">{status_emoji}</div>
+                    <h4 style="color: #D4AF37; margin: 10px 0;">{player['username']}</h4>
+                </div>
+                <div class="player-status {status_class}">
+                    {status_text}
+                </div>
+                {"<p style='color: #888; margin-top: 10px;'>Clasă: " + player.get('characterType', 'Neselectat') + "</p>" if player.get('characterType') else ""}
+                {"<p style='color: #888;'>Facțiune: " + player.get('faction', 'Neselectat') + "</p>" if player.get('faction') else ""}
+            </div>
+            """, unsafe_allow_html=True)
+
+            if not player.get('ready'):
+                all_ready = False
+
+    # Character selection for current user
+    username = st.session_state.character_name
+    user_player = None
+    for player_id, player in players.items():
+        if player['username'] == username:
+            user_player = player
+            break
+
+    if user_player:
+        st.markdown("### ⚔️ Pregătește-ți Eroul")
+
+        # Character preview
+        char_type = user_player.get('characterType', '')
+        faction = user_player.get('faction', '')
+
+        if char_type and faction:
+            st.markdown(f"""
+            <div style="background: rgba(212, 175, 55, 0.1); border: 1px solid #D4AF37; border-radius: 10px; padding: 15px; margin-bottom: 20px;">
+                <h4 style="color: #D4AF37; text-align: center;">🎭 Caracterul Tău</h4>
+                <p style="text-align: center; margin: 5px 0;">
+                    <strong>{char_type}</strong> din facțiunea <strong>{faction}</strong>
+                </p>
+            </div>
+            """, unsafe_allow_html=True)
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+            st.markdown("**Clasă de Caracter**")
+            character_options = ["", "Aventurier", "Străjer", "Spion", "Negustor"]
+            character_type = st.selectbox(
+                "Alege clasa:",
+                character_options,
+                index=character_options.index(user_player.get('characterType', "")),
+                help="Clasa definește abilitățile și stilul tău de joc"
+            )
+
+            if character_type:
+                descriptions = {
+                    "Aventurier": "⚔️ Războinic adaptabil, supraviețuitor în orice situație",
+                    "Străjer": "🛡️ Gardian disciplinat, expert în apărare și tir",
+                    "Spion": "🕵️ Maestru al umbrelor și intrigilor",
+                    "Negustor": "💰 Diplomat și manipulator economic"
+                }
+                st.info(descriptions.get(character_type, ""))
+
+        with col2:
+            st.markdown("**Facțiune Politică**")
+            faction_options = ["", "Drăculești", "Dănești"]
+            faction = st.selectbox(
+                "Alege facțiunea:",
+                faction_options,
+                index=faction_options.index(user_player.get('faction', "")),
+                help="Facțiunea îți oferă aliați și dușmani unici în poveste"
+            )
+
+            if faction:
+                descriptions = {
+                    "Drăculești": "🐉 Casa lui Vlad Țepeș - disciplină, război și ordine",
+                    "Dănești": "🦊 Ramura rivală - intrigă, manipulare și alianțe"
+                }
+                st.info(descriptions.get(faction, ""))
+
+        # Action buttons
+        col1, col2, col3 = st.columns([1, 1, 1])
+
+        with col1:
+            if st.button("💾 Salvează Selecția", use_container_width=True):
+                if character_type and faction:
+                    team_manager.update_player_info(st.session_state.team_id, username, character_type, faction)
+                    st.success("✅ Selecție salvată!")
+                    st.rerun()
+                else:
+                    st.error("❌ Selectează atât clasa cât și facțiunea!")
+
+        with col2:
+            if st.button("🎯 Sunt Gata!", use_container_width=True, type="primary"):
+                if user_player.get('characterType') and user_player.get('faction'):
+                    team_manager.set_player_ready(st.session_state.team_id, username, True)
+                    st.success("✅ Ești gata pentru aventură!")
+                    st.rerun()
+                else:
+                    st.error("❌ Completează selecția caracterului mai întâi!")
+
+        with col3:
+            if st.button("🔙 Părăsește Echipa", use_container_width=True):
+                if st.session_state.team_id:
+                    st.session_state.team_id = None
+                    st.info("Ai părăsit echipa.")
+                    st.rerun()
+
+    # Ready check message
+    if all_ready and len(players) >= 2:
+        st.markdown("""
+        <div style="background: linear-gradient(135deg, #2d5016 0%, #4a7c2a 100%);
+                    border: 2px solid #6bb343; border-radius: 15px; padding: 20px;
+                    text-align: center; margin-top: 30px; box-shadow: 0 8px 32px rgba(75, 181, 67, 0.3);">
+            <h3 style="color: #90EE90; margin: 0;">🚀 Toți jucătorii sunt gata!</h3>
+            <p style="color: #e0ffe0; margin: 10px 0 0 0;">Jocul va începe automat în curând...</p>
+        </div>
+        """, unsafe_allow_html=True)
+    elif len(players) < 2:
+        st.warning("👥 Mai ai nevoie de cel puțin încă un jucător pentru a începe aventura!")
+    else:
+        ready_count = sum(1 for p in players.values() if p.get('ready'))
+        st.info(f"⏳ Așteptăm ca toți jucătorii să fie gata... ({ready_count}/{len(players)})")
+
+def render_team_gameplay_interface(team_data, team_manager):
+    """Render team gameplay with shared story and voting with professional UI"""
+    game_state = team_data.get('gameState', {})
+
+    # Enhanced CSS for gameplay UI
+    st.markdown("""
+    <style>
+    .story-container {
+        background: linear-gradient(145deg, #1a0f0b 0%, #2a1a15 100%);
+        border: 2px solid #D4AF37;
+        border-radius: 16px;
+        padding: 25px;
+        margin-bottom: 30px;
+        box-shadow: 0 8px 32px rgba(212, 175, 55, 0.2);
+    }
+    .story-header {
+        color: #D4AF37;
+        font-size: 1.8rem;
+        margin-bottom: 20px;
+        text-align: center;
+        border-bottom: 1px solid #5a3921;
+        padding-bottom: 10px;
+    }
+    .story-text {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+        line-height: 1.6;
+        color: #e0e0e0;
+        border: 1px solid #5a3921;
+    }
+    .voting-container {
+        background: linear-gradient(145deg, #1E1E1E 0%, #252525 100%);
+        border: 2px solid #8b4513;
+        border-radius: 16px;
+        padding: 25px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 16px rgba(139, 69, 19, 0.3);
+    }
+    .voting-header {
+        color: #ff6b35;
+        font-size: 1.6rem;
+        margin-bottom: 20px;
+        text-align: center;
+        border-bottom: 1px solid #8b4513;
+        padding-bottom: 10px;
+    }
+    .vote-button {
+        background: linear-gradient(135deg, #2d5016 0%, #4a7c2a 100%);
+        color: white;
+        border: 2px solid #4a7c2a;
+        border-radius: 12px;
+        padding: 15px 25px;
+        margin: 10px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        min-height: 60px;
+        display: inline-block;
+        text-align: center;
+        box-shadow: 0 4px 12px rgba(74, 124, 42, 0.3);
+    }
+    .vote-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(74, 124, 42, 0.4);
+        background: linear-gradient(135deg, #4a7c2a 0%, #6bb343 100%);
+    }
+    .vote-result {
+        background: linear-gradient(135deg, #8b4513 0%, #a0522d 100%);
+        border-radius: 12px;
+        padding: 15px;
+        margin: 10px 0;
+        text-align: center;
+        font-weight: bold;
+        color: #ffe4b5;
+        border: 1px solid #daa520;
+    }
+    .vote-count {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        padding: 8px 16px;
+        margin: 5px;
+        display: inline-block;
+        border: 1px solid #5a3921;
+    }
+    .refresh-button {
+        background: linear-gradient(135deg, #4169e1 0%, #6495ed 100%);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 12px 24px;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(65, 105, 225, 0.3);
+    }
+    .refresh-button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(65, 105, 225, 0.4);
+    }
+    .team-info {
+        background: rgba(212, 175, 55, 0.1);
+        border: 1px solid #D4AF37;
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+    # Team info header
+    players = team_data.get('players', {})
+    total_players = len(players)
+    ready_count = sum(1 for p in players.values() if p.get('ready'))
+    team_name = team_data.get('teamName', f"Echipa {team_data['teamId']}")
+    st.markdown(f"""
+    <div class="team-info">
+        <h3 style="color: #D4AF37; margin: 0;">🎮 Joc în Echipă: {team_name}</h3>
+        <p style="margin: 5px 0 0 0; color: #b8860b;">{total_players} jucători • {ready_count} gata</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # Display shared story
+    if game_state.get('aiResponse'):
+        st.markdown('<div class="story-container">', unsafe_allow_html=True)
+        st.markdown('<h3 class="story-header">📖 Povestea Comună</h3>', unsafe_allow_html=True)
+
+        col1, col2 = st.columns([3, 1])
+
+        with col1:
+            st.markdown(f'<div class="story-text">{game_state["aiResponse"]}</div>', unsafe_allow_html=True)
+
+        with col2:
+            if game_state.get('aiImageUrl'):
+                st.image(game_state['aiImageUrl'], caption="Imaginea scenei", use_column_width=True)
+            else:
+                st.markdown("""
+                <div style="text-align: center; padding: 20px; color: #888;">
+                    <div style="font-size: 3rem;">🎨</div>
+                    <p>Imaginea se încarcă...</p>
+                </div>
+                """, unsafe_allow_html=True)
+
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    # Voting interface
+    choices = game_state.get('choices', {})
+    if choices:
+        st.markdown('<div class="voting-container">', unsafe_allow_html=True)
+        st.markdown('<h3 class="voting-header">🗳️ Votare Colectivă</h3>', unsafe_allow_html=True)
+
+        username = st.session_state.character_name
+        votes = game_state.get('votes', {})
+
+        if username not in votes:
+            st.markdown('<p style="text-align: center; color: #ffe4b5; margin-bottom: 20px;">**Alege o opțiune pentru echipă:**</p>', unsafe_allow_html=True)
+
+            # Create voting buttons in a grid
+            cols = st.columns(min(len(choices), 2))
+            choice_items = list(choices.items())
+
+            for i, (choice_id, choice_data) in enumerate(choice_items):
+                col_idx = i % len(cols)
+                with cols[col_idx]:
+                    if st.button(
+                        f"🗳️ {choice_data['label']}",
+                        key=f"vote_{choice_id}",
+                        help=f"Votează pentru: {choice_data['label']}",
+                        use_container_width=True
+                    ):
+                        team_manager.vote_choice(st.session_state.team_id, username, choice_id)
+                        st.rerun()
+        else:
+            voted_choice = votes[username]
+            choice_label = choices.get(voted_choice, {}).get('label', 'Necunoscut')
+            st.markdown(f'<div class="vote-result">✅ Ai votat pentru: <strong>{choice_label}</strong></div>', unsafe_allow_html=True)
+
+        # Show vote counts with progress bars
+        st.markdown('<h4 style="text-align: center; color: #daa520; margin: 25px 0 15px 0;">📊 Rezultate Votare</h4>', unsafe_allow_html=True)
+
+        vote_counts = {}
+        for vote in votes.values():
+            vote_counts[vote] = vote_counts.get(vote, 0) + 1
+
+        total_votes = len(votes)
+
+        for choice_id, choice_data in choices.items():
+            count = vote_counts.get(choice_id, 0)
+            percentage = (count / max(total_votes, 1)) * 100
+
+            st.markdown(f"""
+            <div style="margin-bottom: 15px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                    <span style="color: #e0e0e0; font-weight: bold;">{choice_data['label']}</span>
+                    <span style="color: #daa520; font-weight: bold;">{count}/{total_votes} voturi</span>
+                </div>
+                <div style="background: rgba(255,255,255,0.1); border-radius: 10px; height: 20px; overflow: hidden;">
+                    <div style="background: linear-gradient(90deg, #4a7c2a 0%, #6bb343 100%);
+                               width: {percentage}%; height: 100%; border-radius: 10px; transition: width 0.5s ease;">
+                    </div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+        # Waiting message
+        if total_votes < total_players:
+            st.markdown(f"""
+            <div style="text-align: center; color: #ffa500; margin-top: 20px; padding: 15px; background: rgba(255,165,0,0.1); border-radius: 10px; border: 1px solid #ffa500;">
+                ⏳ Așteptăm voturile tuturor jucătorilor... ({total_votes}/{total_players})
+            </div>
+            """, unsafe_allow_html=True)
+
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    # Refresh button with better styling
+    col1, col2, col3 = st.columns([1, 1, 1])
+    with col2:
+        if st.button("🔄 Reîmprospătează", key="refresh_team", use_container_width=True):
+            st.rerun()
 
 if __name__ == "__main__":
     main()

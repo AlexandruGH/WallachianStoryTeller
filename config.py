@@ -2,7 +2,6 @@
 import re
 import streamlit as st
 from typing import List, Dict, Any
-from deep_translator import GoogleTranslator
 import os
 import random
 import requests
@@ -201,7 +200,9 @@ class Config:
 
         def translate_to_english(text: str) -> str:
             """Traduce textul românesc în engleză pentru Stable Diffusion"""
-            try:        
+            try:
+                # Lazy import of heavy translation library only when needed
+                from deep_translator import GoogleTranslator
                 return GoogleTranslator(source='ro', target='en').translate(text)
             except Exception as e:
                 print(f"⚠️ Eroare traducere: {e}")

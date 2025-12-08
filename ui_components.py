@@ -11,7 +11,6 @@ import time
 from datetime import datetime
 import os
 import re
-import pdfkit
 import requests
 from models import GameState, CharacterStats, InventoryItem, GameMode
 from campaign import get_current_episode
@@ -719,7 +718,14 @@ def render_sidebar_footer(game_state: "GameState", db=None, cookie_manager=None)
     if st.button("⚔️ Începe Poveste Nouă", use_container_width=True, type="primary"):
         new_id = str(uuid.uuid4())[:8]
         st.session_state.session_id = new_id
-        
+
+        # Reset game mode to show selection page
+        st.session_state.game_mode_selected = None
+
+        # Clear team mode state if any
+        if "team_id" in st.session_state:
+            del st.session_state.team_id
+
         # Set flag to force new game creation in app.py logic
         st.session_state.force_new_game = True
 
@@ -728,7 +734,7 @@ def render_sidebar_footer(game_state: "GameState", db=None, cookie_manager=None)
             del st.session_state.game_state
         if "story" in st.session_state:
             del st.session_state.story
-            
+
         st.success("O nouă filă de cronică începe...")
         time.sleep(1)
         st.rerun()
@@ -989,43 +995,49 @@ def render_sidebar(game_state: "GameState", cookie_manager=None, on_name_change=
 
 def generate_pdf_html(story: List[Dict]) -> str:
     """Generate styled HTML for PDF export (includes images as base64)"""
+    # Lazy import of PDF library only when exporting
+    try:
+        import pdfkit
+    except ImportError:
+        pdfkit = None
+
     html = f"""
     <html>
     <head>
         <meta charset="UTF-8">
         <style>
             @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
-            body {{ 
-                font-family: 'Crimson Text', serif; 
-                background: #fdf6e3; 
+            body {{
+                font-family: 'Crimson Text', serif;
+                background: #fdf6e3;
                 padding: 40px;
                 color: #4b3f2f;
             }}
-            h1 {{ 
-                font-family: 'Cinzel', serif; 
-                color: #6b4f4f; 
+            h1 {{
+                font-family: 'Cinzel', serif;
+                color: #6b4f4f;
                 text-align: center;
                 margin-bottom: 30px;
             }}
-            .message {{ 
-                margin-bottom: 20px; 
-                padding: 15px; 
+            .message {{
+                margin-bottom: 20px;
+                padding: 15px;
                 border-left: 4px solid #5a3921;
                 background: rgba(90, 57, 33, 0.05);
                 page-break-inside: avoid;
             }}
             .ai {{ border-left-color: #ff6b6b; }}
             .user {{ border-left-color: #4e9af1; }}
-            img {{ 
-                max-width: 500px; 
-                margin: 20px auto; 
+            img {{
+                max-width: 500px;
+                margin: 20px auto;
                 display: block;
                 border-radius: 8px;
                 border: 2px solid #5a3921;
             }}
-            .footer {{ 
-                text-align: center; 
-                margin-top: 40px; 
+            .footer {{
+                text-align: center;
+                margin-top: 40px;
                 font-style: italic;
                 color: #8b6b6b;
             }}
@@ -1035,7 +1047,7 @@ def generate_pdf_html(story: List[Dict]) -> str:
         <h1>Aventura în Wallachia</h1>
         <p class="footer">Generat pe {time.strftime('%Y-%m-%d %H:%M')}</p>
     """
-    
+
     for m in story:
         role_class = "ai" if m["role"] == "ai" else "user"
         html += f"""
@@ -1047,6 +1059,6 @@ def generate_pdf_html(story: List[Dict]) -> str:
         if "image" in m and m["image"]:
             b64 = base64.b64encode(m["image"]).decode()
             html += f'<img src="data:image/png;base64,{b64}" />'
-    
+
     html += "</body></html>"
     return html
