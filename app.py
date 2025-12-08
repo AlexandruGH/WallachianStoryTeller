@@ -40,7 +40,13 @@ from llm_handler import fix_romanian_grammar, generate_narrative_with_progress
 from models import GameState, CharacterStats, InventoryItem, ItemType, NarrativeResponse
 from database import Database
 from character_creation import render_character_creation
-# team_manager will be imported lazily when team mode is selected
+# Import team_manager at startup
+try:
+    from team_manager import TeamManager
+    TEAM_MANAGER_AVAILABLE = True
+except ImportError:
+    TEAM_MANAGER_AVAILABLE = False
+    print("Warning: team_manager module not available")
 
 # =========================
 # — Helper Classes
@@ -1791,7 +1797,12 @@ def handle_name_change(new_name):
 
 def render_team_lobby():
     """Render team creation/joining lobby with professional UI and live team list"""
-    # Lazy import team_manager only when team mode is selected
+    # Check if team manager is available
+    if not TEAM_MANAGER_AVAILABLE:
+        st.error("❌ Sistemul de echipe nu este disponibil momentan.")
+        return
+
+    # Get team manager instance (already imported at startup)
     from team_manager import TeamManager
     team_manager = TeamManager.get_instance()
 
