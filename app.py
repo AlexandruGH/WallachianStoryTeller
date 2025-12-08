@@ -2156,28 +2156,37 @@ def render_team_lobby_interface(team_data, team_manager):
                 }
                 st.info(descriptions.get(faction, ""))
 
-        # Action buttons
-        col1, col2, col3 = st.columns([1, 1, 1])
+        # Action buttons - simplified to two buttons
+        col1, col2 = st.columns(2)
 
         with col1:
-            if st.button("💾 Salvează Selecția", use_container_width=True):
-                if character_type and faction:
-                    team_manager.update_player_info(st.session_state.team_id, current_user_id, character_type, faction)
-                    st.success("✅ Selecție salvată!")
+            if st.button("🎯 Sunt Gata!", use_container_width=True, type="primary"):
+                # Validate selection first
+                if not character_type or not faction:
+                    st.error("❌ Selectează atât clasa cât și facțiunea!")
+                    return
+
+                # Save selection and mark as ready in one action
+                print(f"[TEAM] Saving and readying - Type: {character_type}, Faction: {faction}")
+
+                # Update Firebase with character selection
+                success = team_manager.update_player_info(st.session_state.team_id, current_user_id, character_type, faction)
+                if success:
+                    # Mark player as ready
+                    team_manager.set_player_ready(st.session_state.team_id, current_user_id, True)
+
+                    # Store in session state as backup
+                    st.session_state.temp_character_selection = {
+                        'characterType': character_type,
+                        'faction': faction
+                    }
+
+                    st.success("✅ Selecție salvată și ești gata pentru aventură!")
                     st.rerun()
                 else:
-                    st.error("❌ Selectează atât clasa cât și facțiunea!")
+                    st.error("❌ Eroare la salvarea selecției caracterului!")
 
         with col2:
-            if st.button("🎯 Sunt Gata!", use_container_width=True, type="primary"):
-                if user_player.get('characterType') and user_player.get('faction'):
-                    team_manager.set_player_ready(st.session_state.team_id, current_user_id, True)
-                    st.success("✅ Ești gata pentru aventură!")
-                    st.rerun()
-                else:
-                    st.error("❌ Completează selecția caracterului mai întâi!")
-
-        with col3:
             if st.button("🔙 Părăsește Echipa", use_container_width=True):
                 if st.session_state.team_id:
                     st.session_state.team_id = None
