@@ -1,6 +1,5 @@
 import streamlit as st
 from PIL import Image, ImageDraw, ImageFont, ImageOps
-from huggingface_hub import InferenceClient
 from io import BytesIO
 import requests
 from typing import Optional, List
@@ -11,17 +10,9 @@ import hashlib
 import base64
 from config import Config
 
-# Redis caching
-try:
-    from upstash_redis import Redis
-    redis_client = Redis(
-        url=os.getenv("UPSTASH_REDIS_REST_URL"),
-        token=os.getenv("UPSTASH_REDIS_REST_TOKEN")
-    )
-    REDIS_AVAILABLE = True
-except ImportError:
-    redis_client = None
-    REDIS_AVAILABLE = False
+# Redis caching - lazy initialization
+redis_client = None
+REDIS_AVAILABLE = False
 
 # Lista modelelor (prioritate descrescătoare)
 IMAGE_MODELS: List[str] = [
@@ -31,13 +22,6 @@ IMAGE_MODELS: List[str] = [
 # Thread-safe rotation pentru token-uri HF
 _hf_token_index = 0
 _hf_token_lock = threading.Lock()
-
-# Client unic
-client = InferenceClient(
-    provider="nscale",
-    api_key=os.getenv("HF_TOKEN"),
-    timeout=120
-)
 
 def get_session_id():
     return st.session_state.get('session_id', 'UNKNOWN_SESSION')
@@ -77,6 +61,13 @@ def generate_scene_image(text: str, is_initial: bool = False) -> Optional[bytes]
     Generează imagine folosind Hugging Face API cu caching Redis.
     Dacă toate token-urile și modelele eșuează, returnează None (fără fallback).
     """
+    # Lazy import of heavy ML library only when actually generating images
+    try:
+        from huggingface_hub import InferenceClient
+    except ImportError:
+        print("[IMAGE] ❌ HuggingFace library not available")
+        return None
+
     session_id = get_session_id()
     location = st.session_state.character.get("location", "Târgoviște")
 
@@ -89,6 +80,20 @@ def generate_scene_image(text: str, is_initial: bool = False) -> Optional[bytes]
     # Create hash for cache key
     cache_key_string = str(cache_key_data.items())
     cache_key = f"image:{hashlib.sha256(cache_key_string.encode()).hexdigest()}"
+
+    # Lazy Redis initialization
+    global REDIS_AVAILABLE, redis_client
+    if redis_client is None:
+        try:
+            from upstash_redis import Redis
+            redis_client = Redis(
+                url=os.getenv("UPSTASH_REDIS_REST_URL"),
+                token=os.getenv("UPSTASH_REDIS_REST_TOKEN")
+            )
+            REDIS_AVAILABLE = True
+        except ImportError:
+            redis_client = None
+            REDIS_AVAILABLE = False
 
     # Check Redis cache first (before expensive LLM call)
     if REDIS_AVAILABLE and redis_client:
