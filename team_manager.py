@@ -39,7 +39,7 @@ class TeamManager:
             cls._instance = cls()
         return cls._instance
 
-    def create_team(self, creator_username: str, max_players: int = 4, team_name: str = None) -> str:
+    def create_team(self, creator_user_id: str, creator_username: str, max_players: int = 4, team_name: str = None) -> str:
         """Create a new team"""
         team_id = str(uuid.uuid4())[:8]
         team_data = {
@@ -48,7 +48,8 @@ class TeamManager:
             'createdAt': datetime.now().isoformat(),
             'maxPlayers': max_players,
             'players': {
-                str(uuid.uuid4()): {
+                creator_user_id: {
+                    'userId': creator_user_id,
                     'username': creator_username,
                     'characterType': '',
                     'faction': '',
@@ -76,41 +77,59 @@ class TeamManager:
         response.raise_for_status()
         return team_id
 
-    def join_team(self, team_id: str, username: str) -> bool:
+    def join_team(self, team_id: str, user_id: str, username: str) -> bool:
         """Join an existing team"""
-        url = self._get_url(f"teams/{team_id}")
-        response = requests.get(url)
-        if response.status_code != 200:
+        try:
+            url = self._get_url(f"teams/{team_id}")
+            response = requests.get(url)
+
+            if response.status_code != 200:
+                print(f"[TEAM] Failed to get team {team_id}: {response.status_code} - {response.text}")
+                return False
+
+            team_data = response.json()
+
+            if not team_data or not team_data.get('metadata', {}).get('isActive', True):
+                print(f"[TEAM] Team {team_id} not active or doesn't exist")
+                return False
+
+            players = team_data.get('players', {})
+            max_players = team_data.get('maxPlayers', 4)
+
+            if len(players) >= max_players:
+                print(f"[TEAM] Team {team_id} is full ({len(players)}/{max_players})")
+                return False
+
+            # Check if user already in team by user_id
+            for player_id, player in players.items():
+                if player.get('userId') == user_id:
+                    print(f"[TEAM] User {user_id} ({username}) already in team {team_id}")
+                    return True  # Already joined
+
+            # Add new player using user_id as key
+            players[user_id] = {
+                'userId': user_id,
+                'username': username,
+                'characterType': '',
+                'faction': '',
+                'ready': False
+            }
+
+            url = self._get_url(f"teams/{team_id}/players")
+            response = requests.put(url, json=players)
+
+            if response.status_code not in [200, 201]:
+                print(f"[TEAM] Failed to join team {team_id}: {response.status_code} - {response.text}")
+                return False
+
+            print(f"[TEAM] Successfully joined team {team_id} as {username} (user_id: {user_id})")
+            return True
+
+        except Exception as e:
+            print(f"[TEAM] Error joining team {team_id}: {e}")
             return False
-        team_data = response.json()
 
-        if not team_data or not team_data.get('isActive'):
-            return False
-
-        players = team_data.get('players', {})
-        if len(players) >= team_data.get('maxPlayers', 4):
-            return False
-
-        # Check if username already in team
-        for player_id, player in players.items():
-            if player.get('username') == username:
-                return True  # Already joined
-
-        # Add new player
-        player_id = str(uuid.uuid4())
-        players[player_id] = {
-            'username': username,
-            'characterType': '',
-            'faction': '',
-            'ready': False
-        }
-
-        url = self._get_url(f"teams/{team_id}/players")
-        response = requests.put(url, json=players)
-        response.raise_for_status()
-        return True
-
-    def update_player_info(self, team_id: str, username: str, character_type: str, faction: str):
+    def update_player_info(self, team_id: str, user_id: str, character_type: str, faction: str):
         """Update player character info"""
         url = self._get_url(f"teams/{team_id}/players")
         response = requests.get(url)
@@ -118,15 +137,13 @@ class TeamManager:
             return
         players = response.json() or {}
 
-        for player_id, player in players.items():
-            if player.get('username') == username:
-                players[player_id]['characterType'] = character_type
-                players[player_id]['faction'] = faction
-                response = requests.put(url, json=players)
-                response.raise_for_status()
-                break
+        if user_id in players:
+            players[user_id]['characterType'] = character_type
+            players[user_id]['faction'] = faction
+            response = requests.put(url, json=players)
+            response.raise_for_status()
 
-    def set_player_ready(self, team_id: str, username: str, ready: bool):
+    def set_player_ready(self, team_id: str, user_id: str, ready: bool):
         """Set player ready status"""
         url = self._get_url(f"teams/{team_id}/players")
         response = requests.get(url)
@@ -134,16 +151,14 @@ class TeamManager:
             return
         players = response.json() or {}
 
-        for player_id, player in players.items():
-            if player.get('username') == username:
-                players[player_id]['ready'] = ready
-                response = requests.put(url, json=players)
-                response.raise_for_status()
+        if user_id in players:
+            players[user_id]['ready'] = ready
+            response = requests.put(url, json=players)
+            response.raise_for_status()
 
-                # Check if all ready to start game
-                if ready and all(p.get('ready', False) for p in players.values()):
-                    self.start_game(team_id)
-                break
+            # Check if all ready to start game
+            if ready and all(p.get('ready', False) for p in players.values()):
+                self.start_game(team_id)
 
     def start_game(self, team_id: str):
         """Start the game for the team"""
@@ -180,12 +195,12 @@ class TeamManager:
         response = requests.put(url, json=game_state)
         response.raise_for_status()
 
-    def vote_choice(self, team_id: str, username: str, choice_id: str):
+    def vote_choice(self, team_id: str, user_id: str, choice_id: str):
         """Record player vote"""
         url = self._get_url(f"teams/{team_id}/gameState/votes")
         response = requests.get(url)
         votes = response.json() if response.status_code == 200 else {}
-        votes[username] = choice_id
+        votes[user_id] = choice_id
         response = requests.put(url, json=votes)
         response.raise_for_status()
 

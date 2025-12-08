@@ -230,7 +230,10 @@ class Database:
         """Ensure user profile exists, create if not"""
         profile = self.get_user_profile(user_id)
         if not profile:
-            return self.create_user_profile(user_id, character_name)
+            success = self.create_user_profile(user_id, character_name)
+            if not success:
+                print(f"⚠️ Could not create user profile for {user_id}, continuing without profile")
+                return False  # Don't fail the entire flow
         return True
 
     def save_game_state(self, user_id: str, game_state: GameState, session_id: Optional[str] = None) -> Optional[str]:

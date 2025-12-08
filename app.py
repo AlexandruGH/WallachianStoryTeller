@@ -1806,7 +1806,10 @@ def render_team_lobby():
     from team_manager import TeamManager
     team_manager = TeamManager.get_instance()
 
-    username = st.session_state.character_name or "Jucător"
+    # Get user ID for team operations (unique identifier)
+    user_id = st.session_state.user.user.id if st.session_state.user else None
+    # Get character name for display purposes
+    character_name = db.get_user_character_name(user_id) if user_id else "Jucător"
 
     # Enhanced CSS for team UI
     st.markdown("""
@@ -1932,7 +1935,7 @@ def render_team_lobby():
             st.error("❌ Te rog introdu un nume pentru echipă!")
         else:
             try:
-                team_id = team_manager.create_team(username, max_players, team_name.strip())
+                team_id = team_manager.create_team(user_id, character_name, max_players, team_name.strip())
                 st.session_state.team_id = team_id
                 st.success(f"✅ Echipă '{team_name.strip()}' creată! ID: {team_id}")
                 st.rerun()
@@ -1963,14 +1966,17 @@ def render_team_lobby():
                 if i + j < len(teams_list):
                     team_id, team_data = teams_list[i + j]
                     with cols[j]:
-                        render_team_card(team_id, team_data, team_manager, username)
+                        render_team_card(team_id, team_data, team_manager, character_name)
 
-def render_team_card(team_id: str, team_data: Dict, team_manager, username: str):
+def render_team_card(team_id: str, team_data: Dict, team_manager, character_name: str):
     """Render individual team card"""
     players = team_data.get('players', {})
     max_players = team_data.get('maxPlayers', 4)
     current_players = len(players)
     team_name = team_data.get('teamName', f"Echipa {team_id}")
+
+    # Get current user info
+    user_id = st.session_state.user.user.id if st.session_state.user else None
 
     # Determine status
     if current_players >= max_players:
@@ -1982,8 +1988,8 @@ def render_team_card(team_id: str, team_data: Dict, team_manager, username: str)
         status_text = "⏳ În așteptare"
         can_join = True
 
-    # Check if user is already in this team
-    user_in_team = any(player.get('username') == username for player in players.values())
+    # Check if user is already in this team by user ID
+    user_in_team = any(player.get('userId') == user_id for player in players.values())
 
     st.markdown(f"""
     <div class="team-card">
@@ -1999,9 +2005,16 @@ def render_team_card(team_id: str, team_data: Dict, team_manager, username: str)
     # Show team ID for reference
     st.markdown(f"<small style='color: #666;'>ID: {team_id}</small>", unsafe_allow_html=True)
 
-    # Show player list
+    # Show player list with character names
     if players:
-        player_names = [player.get('username', 'Necunoscut') for player in players.values()]
+        player_names = []
+        for player in players.values():
+            display_name = player.get('username', 'Necunoscut')
+            # If it's the current user, show "(Tu)" indicator
+            if player.get('userId') == user_id:
+                player_names.append(f"{display_name} (Tu)")
+            else:
+                player_names.append(display_name)
         st.markdown(f"<small style='color: #888;'>Membri: {', '.join(player_names)}</small>", unsafe_allow_html=True)
 
     # Join button
@@ -2010,7 +2023,7 @@ def render_team_card(team_id: str, team_data: Dict, team_manager, username: str)
     elif can_join:
         if st.button(f"🤝 Alătură-te", key=f"join_{team_id}", use_container_width=True):
             try:
-                success = team_manager.join_team(team_id, username)
+                success = team_manager.join_team(team_id, user_id, character_name)
                 if success:
                     st.session_state.team_id = team_id
                     st.success("✅ Te-ai alăturat echipei!")
@@ -2043,6 +2056,10 @@ def render_team_lobby_interface(team_data, team_manager):
     """Render team lobby where players select characters with professional UI"""
     players = team_data.get('players', {})
 
+    # Get current user ID for identification
+    current_user_id = st.session_state.user.user.id if st.session_state.user else None
+    current_username = db.get_user_character_name(current_user_id) if current_user_id else "Jucător"
+
     # Enhanced player display
     st.markdown("### 👥 Membrii Echipei")
     cols = st.columns(min(len(players), 4))
@@ -2055,11 +2072,16 @@ def render_team_lobby_interface(team_data, team_manager):
             status_text = "✅ Gata" if player.get('ready') else "⏳ Se pregătește"
             status_emoji = "🛡️" if player.get('ready') else "⚔️"
 
+            # Show character name and "(Tu)" indicator for current user
+            display_name = player['username']
+            if player.get('userId') == current_user_id:
+                display_name += " (Tu)"
+
             st.markdown(f"""
             <div class="team-card">
                 <div class="player-avatar">
                     <div class="avatar">{status_emoji}</div>
-                    <h4 style="color: #D4AF37; margin: 10px 0;">{player['username']}</h4>
+                    <h4 style="color: #D4AF37; margin: 10px 0;">{display_name}</h4>
                 </div>
                 <div class="player-status {status_class}">
                     {status_text}
@@ -2072,11 +2094,10 @@ def render_team_lobby_interface(team_data, team_manager):
             if not player.get('ready'):
                 all_ready = False
 
-    # Character selection for current user
-    username = st.session_state.character_name
+    # Character selection for current user - find by user ID
     user_player = None
     for player_id, player in players.items():
-        if player['username'] == username:
+        if player.get('userId') == current_user_id:
             user_player = player
             break
 
@@ -2141,7 +2162,7 @@ def render_team_lobby_interface(team_data, team_manager):
         with col1:
             if st.button("💾 Salvează Selecția", use_container_width=True):
                 if character_type and faction:
-                    team_manager.update_player_info(st.session_state.team_id, username, character_type, faction)
+                    team_manager.update_player_info(st.session_state.team_id, current_user_id, character_type, faction)
                     st.success("✅ Selecție salvată!")
                     st.rerun()
                 else:
@@ -2150,7 +2171,7 @@ def render_team_lobby_interface(team_data, team_manager):
         with col2:
             if st.button("🎯 Sunt Gata!", use_container_width=True, type="primary"):
                 if user_player.get('characterType') and user_player.get('faction'):
-                    team_manager.set_player_ready(st.session_state.team_id, username, True)
+                    team_manager.set_player_ready(st.session_state.team_id, current_user_id, True)
                     st.success("✅ Ești gata pentru aventură!")
                     st.rerun()
                 else:
