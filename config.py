@@ -213,7 +213,7 @@ class Config:
         # Construim promptul în engleză
         prompt = (
             f"Romanian medieval Wallachia 1456, Vlad Tepes era, atmospheric, "
-            f"{location_en}, {short_en}, highly detailed, oil-on-canvas, "
+            f"dark fantasy, {location_en}, {short_en}, highly detailed, oil-on-canvas, "
             f"warm candle-light, 4k, vintage parchment look"
         )
         
@@ -281,7 +281,7 @@ class Config:
                 llm_prompt = llm_prompt[:-1]
             prompt = (
             f"Romanian medieval Wallachia 1456, Vlad Tepes era, atmospheric, "
-            f"{llm_prompt}, highly detailed, oil-on-canvas, "
+            f"dark fantasy, {llm_prompt}, highly detailed, oil-on-canvas, "
             f"warm dim lighting, deep shadows, 4k, vintage parchment look"
         )
             return prompt
