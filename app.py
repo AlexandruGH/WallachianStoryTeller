@@ -2121,9 +2121,12 @@ def render_team_lobby_interface(team_data, team_manager):
 
     # Character selection for current user - find by user ID
     user_player = None
+    print(f"[TEAM] Looking for user {current_user_id} in team players: {list(players.keys())}")
     for player_id, player in players.items():
+        print(f"[TEAM] Checking player {player_id}: userId={player.get('userId')}")
         if player.get('userId') == current_user_id:
             user_player = player
+            print(f"[TEAM] Found user player: {user_player}")
             break
 
     if user_player:

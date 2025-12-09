@@ -208,17 +208,25 @@ class TeamManager:
         return None
 
     def get_all_teams(self) -> Dict[str, Dict]:
-        """Get all active teams"""
+        """Get all active teams that are open for joining (have at least 1 player waiting)"""
         url = self._get_url("teams")
         response = requests.get(url)
         if response.status_code == 200:
             teams = response.json() or {}
-            # Filter only active teams
-            active_teams = {}
+            # Filter only active teams that have at least 1 player and space for more
+            open_teams = {}
             for team_id, team_data in teams.items():
                 if team_data and team_data.get('metadata', {}).get('isActive', True):
-                    active_teams[team_id] = team_data
-            return active_teams
+                    players = team_data.get('players', {})
+                    max_players = team_data.get('maxPlayers', 4)
+                    current_players = len(players)
+
+                    # Only include teams that:
+                    # 1. Have at least 1 player already waiting
+                    # 2. Are not full (have space for more players)
+                    if current_players >= 1 and current_players < max_players:
+                        open_teams[team_id] = team_data
+            return open_teams
         return {}
 
     def update_game_state(self, team_id: str, game_state: Dict):
