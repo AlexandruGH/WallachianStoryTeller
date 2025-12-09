@@ -131,17 +131,49 @@ class TeamManager:
 
     def update_player_info(self, team_id: str, user_id: str, character_type: str, faction: str):
         """Update player character info"""
-        url = self._get_url(f"teams/{team_id}/players")
-        response = requests.get(url)
-        if response.status_code != 200:
-            return
-        players = response.json() or {}
+        try:
+            url = self._get_url(f"teams/{team_id}/players")
+            response = requests.get(url)
+            if response.status_code != 200:
+                print(f"[TEAM] Failed to get players for team {team_id}: {response.status_code}")
+                return False
+            players = response.json() or {}
 
-        if user_id in players:
-            players[user_id]['characterType'] = character_type
-            players[user_id]['faction'] = faction
-            response = requests.put(url, json=players)
-            response.raise_for_status()
+            if user_id in players:
+                players[user_id]['characterType'] = character_type
+                players[user_id]['faction'] = faction
+                response = requests.put(url, json=players)
+                if response.status_code not in [200, 201]:
+                    print(f"[TEAM] Failed to update player info: {response.status_code} - {response.text}")
+                    return False
+                print(f"[TEAM] Successfully updated player {user_id} info")
+                return True
+            else:
+                print(f"[TEAM] Player {user_id} not found in team {team_id}")
+                return False
+        except Exception as e:
+            print(f"[TEAM] Error updating player info: {e}")
+            return False
+
+    def update_player_name(self, team_id: str, user_id: str, new_name: str):
+        """Update player display name"""
+        try:
+            url = self._get_url(f"teams/{team_id}/players")
+            response = requests.get(url)
+            if response.status_code != 200:
+                return False
+            players = response.json() or {}
+
+            if user_id in players:
+                players[user_id]['username'] = new_name
+                response = requests.put(url, json=players)
+                if response.status_code not in [200, 201]:
+                    return False
+                return True
+            return False
+        except Exception as e:
+            print(f"[TEAM] Error updating player name: {e}")
+            return False
 
     def set_player_ready(self, team_id: str, user_id: str, ready: bool):
         """Set player ready status"""

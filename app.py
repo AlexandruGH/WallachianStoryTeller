@@ -2005,13 +2005,38 @@ def render_team_card(team_id: str, team_data: Dict, team_manager, character_name
     # Show team ID for reference
     st.markdown(f"<small style='color: #666;'>ID: {team_id}</small>", unsafe_allow_html=True)
 
-    # Show player list with character names
+    # Show player list with character names - prioritize database lookup
     if players:
         player_names = []
         for player in players.values():
-            display_name = player.get('username', 'Necunoscut')
-            # If it's the current user, show "(Tu)" indicator
-            if player.get('userId') == user_id:
+            player_user_id = player.get('userId')
+            display_name = 'Necunoscut'
+
+            # Always try database lookup first for fresh names
+            if player_user_id:
+                try:
+                    db_name = db.get_user_character_name(player_user_id)
+                    if db_name and db_name not in [None, 'Aventurier']:
+                        display_name = db_name
+                        # Update Firebase with correct name for future use
+                        current_firebase_name = player.get('username', '')
+                        if current_firebase_name != display_name:
+                            try:
+                                team_manager.update_player_name(team_id, player_user_id, display_name)
+                            except Exception as e:
+                                print(f"[TEAM] Failed to update Firebase name: {e}")
+                    else:
+                        # Database failed, use Firebase as fallback
+                        display_name = player.get('username', 'Necunoscut')
+                except Exception as e:
+                    print(f"[TEAM] Database lookup failed for {player_user_id}: {e}")
+                    display_name = player.get('username', 'Necunoscut')
+
+            # If it's the current user, ensure we show the correct name
+            if player_user_id == user_id:
+                # For current user, prioritize session state
+                if hasattr(st, 'session_state') and st.session_state.get('character_name'):
+                    display_name = st.session_state.character_name
                 player_names.append(f"{display_name} (Tu)")
             else:
                 player_names.append(display_name)
