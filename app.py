@@ -77,6 +77,22 @@ SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_ANON_KEY = os.getenv("SUPABASE_ANON_KEY")
 db = Database(SUPABASE_URL, SUPABASE_ANON_KEY)
 
+# =========================
+# — Game Configuration
+# =========================
+# Available factions for team mode (can be easily modified)
+AVAILABLE_FACTIONS = {
+    "Drăculești": "🐉 Casa lui Vlad Țepeș - disciplină, război și ordine"
+}
+
+# Available character classes for team mode
+AVAILABLE_CHARACTER_CLASSES = [
+    "Aventurier",
+    "Străjer",
+    "Spion",
+    "Negustor"
+]
+
 def get_cookie_manager():
     # Do NOT cache the manager instance. It needs to be re-instantiated on every run
     # to pick up the latest cookie values from the frontend widget state.
@@ -2169,18 +2185,33 @@ def render_team_lobby_interface(team_data, team_manager):
 
         with col2:
             st.markdown("**Facțiune Politică**")
-            faction_options = ["", "Drăculești", "Dănești"]
+            # Only Drăculești faction is active - Dănești temporarily disabled
+            faction_options = ["", "Drăculești"]
+
+            # Get stored faction and validate it's in allowed options
+            stored_faction = user_player.get('faction', "")
+            if stored_faction not in faction_options:
+                # Force reset to empty if stored faction is not allowed
+                stored_faction = ""
+                # Optionally update Firebase to remove invalid faction
+                if stored_faction != user_player.get('faction', ""):
+                    try:
+                        team_manager.update_player_info(st.session_state.team_id, current_user_id,
+                                                      user_player.get('characterType', ""),
+                                                      "")  # Reset faction to empty
+                    except:
+                        pass
+
             faction = st.selectbox(
                 "Alege facțiunea:",
                 faction_options,
-                index=faction_options.index(user_player.get('faction', "")),
+                index=faction_options.index(stored_faction),
                 help="Facțiunea îți oferă aliați și dușmani unici în poveste"
             )
 
             if faction:
                 descriptions = {
-                    "Drăculești": "🐉 Casa lui Vlad Țepeș - disciplină, război și ordine",
-                    "Dănești": "🦊 Ramura rivală - intrigă, manipulare și alianțe"
+                    "Drăculești": "🐉 Casa lui Vlad Țepeș - disciplină, război și ordine"
                 }
                 st.info(descriptions.get(faction, ""))
 
