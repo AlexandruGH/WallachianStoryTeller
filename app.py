@@ -2135,17 +2135,43 @@ def render_team_lobby_interface(team_data, team_manager):
             if not player.get('ready'):
                 all_ready = False
 
-    # Character selection for current user - find by user ID
+    # Character selection for current user - show if user has team_id set (robust check)
     user_player = None
+    user_in_team = False
+
     print(f"[TEAM] Looking for user {current_user_id} in team players: {list(players.keys())}")
     for player_id, player in players.items():
         print(f"[TEAM] Checking player {player_id}: userId={player.get('userId')}")
         if player.get('userId') == current_user_id:
             user_player = player
+            user_in_team = True
             print(f"[TEAM] Found user player: {user_player}")
             break
 
-    if user_player:
+    # If user is in team but player data not found, create default player data
+    if not user_player and current_user_id in players:
+        user_player = players[current_user_id]
+        user_in_team = True
+        print(f"[TEAM] Found user by key: {user_player}")
+    elif current_user_id and any(player.get('userId') == current_user_id for player in players.values()):
+        user_in_team = True
+        print(f"[TEAM] User confirmed in team but player data incomplete")
+
+    # Fallback: If user has team_id set but player data not found, still show interface
+    # This handles cases where Firebase operations are slow or failed
+    if not user_in_team and st.session_state.get('team_id') and current_user_id:
+        print(f"[TEAM] User has team_id but not found in players - showing interface anyway")
+        user_in_team = True
+        # Create a default user_player object for interface
+        user_player = {
+            'userId': current_user_id,
+            'username': current_username,
+            'characterType': '',
+            'faction': '',
+            'ready': False
+        }
+
+    if user_in_team:
         st.markdown("### ⚔️ Pregătește-ți Eroul")
 
         # Character preview
