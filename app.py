@@ -1827,6 +1827,71 @@ def render_team_lobby():
     # Get character name for display purposes
     character_name = db.get_user_character_name(user_id) if user_id else "Jucător"
 
+    # Use JavaScript for smooth polling without flickering
+    teams_placeholder = st.empty()
+
+    # Add JavaScript for smooth team list updates
+    st.markdown("""
+    <script>
+    let teamsUpdateInterval;
+
+    function updateTeamsList() {
+        // Make a request to get updated teams data
+        fetch(window.location.href, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                'update_teams': 'true'
+            })
+        })
+        .then(response => response.text())
+        .then(html => {
+            // Extract and update only the teams section
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const newTeamsSection = doc.querySelector('[data-testid="stVerticalBlock"] [data-testid="stVerticalBlock"]');
+
+            if (newTeamsSection) {
+                // Find current teams section and replace it
+                const currentTeamsSection = document.querySelector('[data-testid="stVerticalBlock"] [data-testid="stVerticalBlock"]');
+                if (currentTeamsSection) {
+                    // Smooth fade transition
+                    currentTeamsSection.style.transition = 'opacity 0.3s ease';
+                    currentTeamsSection.style.opacity = '0';
+
+                    setTimeout(() => {
+                        currentTeamsSection.innerHTML = newTeamsSection.innerHTML;
+                        currentTeamsSection.style.opacity = '1';
+                    }, 300);
+                }
+            }
+        })
+        .catch(error => {
+            console.log('Teams update failed:', error);
+        });
+    }
+
+    function startTeamsPolling() {
+        // Update every 10 seconds
+        teamsUpdateInterval = setInterval(updateTeamsList, 10000);
+    }
+
+    function stopTeamsPolling() {
+        if (teamsUpdateInterval) {
+            clearInterval(teamsUpdateInterval);
+        }
+    }
+
+    // Start polling when page loads
+    window.addEventListener('load', startTeamsPolling);
+
+    // Clean up on page unload
+    window.addEventListener('beforeunload', stopTeamsPolling);
+    </script>
+    """, unsafe_allow_html=True)
+
     # Enhanced CSS for team UI
     st.markdown("""
     <style>
@@ -1960,29 +2025,33 @@ def render_team_lobby():
 
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # Get all available teams
-    all_teams = team_manager.get_all_teams()
+    # Render teams with smooth updates using placeholder
+    with teams_placeholder.container():
+        # Get all available teams
+        all_teams = team_manager.get_all_teams()
 
-    if not all_teams:
-        st.markdown("""
-        <div class="no-teams">
-            <h3 style="color: #D4AF37; margin-bottom: 15px;">🏰 Nicio Echipă Disponibilă</h3>
-            <p>Fii primul care creează o echipă pentru a începe aventura colectivă!</p>
-        </div>
-        """, unsafe_allow_html=True)
-    else:
-        st.markdown("### 🎯 Echipe Disponibile")
-        st.markdown(f"<p style='text-align: center; color: #8b6b6b; margin-bottom: 20px;'>S-au găsit {len(all_teams)} echipă(e) activă(e)</p>", unsafe_allow_html=True)
+        if not all_teams:
+            st.markdown("""
+            <div class="no-teams">
+                <h3 style="color: #D4AF37; margin-bottom: 15px;">🏰 Nicio Echipă Disponibilă</h3>
+                <p>Fii primul care creează o echipă pentru a începe aventura colectivă!</p>
+            </div>
+            """, unsafe_allow_html=True)
+        else:
+            st.markdown("### 🎯 Echipe Disponibile")
+            st.markdown(f"<p style='text-align: center; color: #8b6b6b; margin-bottom: 20px;'>S-au găsit {len(all_teams)} echipă(e) activă(e)</p>", unsafe_allow_html=True)
 
-        # Display teams in a responsive grid
-        teams_list = list(all_teams.items())
-        for i in range(0, len(teams_list), 2):
-            cols = st.columns(2)
-            for j in range(2):
-                if i + j < len(teams_list):
-                    team_id, team_data = teams_list[i + j]
-                    with cols[j]:
-                        render_team_card(team_id, team_data, team_manager, character_name)
+            # Display teams in a responsive grid
+            teams_list = list(all_teams.items())
+            for i in range(0, len(teams_list), 2):
+                cols = st.columns(2)
+                for j in range(2):
+                    if i + j < len(teams_list):
+                        team_id, team_data = teams_list[i + j]
+                        with cols[j]:
+                            render_team_card(team_id, team_data, team_manager, character_name)
+
+    # JavaScript handles polling now - no Python polling needed
 
 def render_team_card(team_id: str, team_data: Dict, team_manager, character_name: str):
     """Render individual team card"""
@@ -2273,10 +2342,18 @@ def render_team_lobby_interface(team_data, team_manager):
 
         with col2:
             if st.button("🔙 Părăsește Echipa", use_container_width=True):
-                if st.session_state.team_id:
+                if st.session_state.team_id and current_user_id:
+                    # Remove player from team in Firebase
+                    success = team_manager.leave_team(st.session_state.team_id, current_user_id)
+                    if success:
+                        st.session_state.team_id = None
+                        st.success("✅ Ai părăsit echipa cu succes!")
+                        st.rerun()
+                    else:
+                        st.error("❌ Eroare la părăsirea echipei.")
+                else:
                     st.session_state.team_id = None
                     st.info("Ai părăsit echipa.")
-                    st.rerun()
 
     # Ready check message
     if all_ready and len(players) >= 2:

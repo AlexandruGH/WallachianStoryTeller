@@ -192,6 +192,43 @@ class TeamManager:
             if ready and all(p.get('ready', False) for p in players.values()):
                 self.start_game(team_id)
 
+    def leave_team(self, team_id: str, user_id: str) -> bool:
+        """Remove a player from the team"""
+        try:
+            url = self._get_url(f"teams/{team_id}/players")
+            response = requests.get(url)
+            if response.status_code != 200:
+                print(f"[TEAM] Failed to get players for team {team_id}: {response.status_code}")
+                return False
+            players = response.json() or {}
+
+            # Remove the player if they exist
+            if user_id in players:
+                del players[user_id]
+                response = requests.put(url, json=players)
+                if response.status_code not in [200, 201]:
+                    print(f"[TEAM] Failed to remove player {user_id} from team {team_id}: {response.status_code}")
+                    return False
+                print(f"[TEAM] Successfully removed player {user_id} from team {team_id}")
+
+                # If team becomes empty, mark it as inactive
+                if not players:
+                    metadata_url = self._get_url(f"teams/{team_id}/metadata")
+                    metadata = {"isActive": False, "phase": "lobby"}
+                    metadata_response = requests.put(metadata_url, json=metadata)
+                    if metadata_response.status_code not in [200, 201]:
+                        print(f"[TEAM] Failed to deactivate empty team {team_id}")
+                    else:
+                        print(f"[TEAM] Deactivated empty team {team_id}")
+
+                return True
+            else:
+                print(f"[TEAM] Player {user_id} not found in team {team_id}")
+                return False
+        except Exception as e:
+            print(f"[TEAM] Error removing player from team: {e}")
+            return False
+
     def start_game(self, team_id: str):
         """Start the game for the team"""
         url = self._get_url(f"teams/{team_id}/metadata/phase")
