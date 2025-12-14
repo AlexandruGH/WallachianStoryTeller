@@ -259,6 +259,69 @@ def render_character_creation(game_state, db=None, user_id=None, db_session_id=N
     Returns True if character creation is complete, False if still in progress.
     Handles loading screen clearing intelligently to avoid flickers.
     """
+    # Add JavaScript for smooth polling to reduce flickering on button clicks
+    st.markdown("""
+    <script>
+    let charUpdateInterval;
+
+    function updateCharacterCreation() {
+        // Make a request to get updated character creation data
+        fetch(window.location.href, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                'update_char_creation': 'true'
+            })
+        })
+        .then(response => response.text())
+        .then(html => {
+            // Extract and update only the character creation section
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            // Look for the main content area (adjust selector as needed)
+            const newCharSection = doc.querySelector('div[data-testid="stVerticalBlock"]');
+
+            if (newCharSection) {
+                // Find current character creation section
+                const currentCharSection = document.querySelector('div[data-testid="stVerticalBlock"]');
+                if (currentCharSection) {
+                    // Smooth fade transition
+                    currentCharSection.style.transition = 'opacity 0.3s ease';
+                    currentCharSection.style.opacity = '0';
+
+                    setTimeout(() => {
+                        currentCharSection.innerHTML = newCharSection.innerHTML;
+                        currentCharSection.style.opacity = '1';
+                    }, 300);
+                }
+            }
+        })
+        .catch(error => {
+            console.log('Character creation update failed:', error);
+        });
+    }
+
+    function startCharPolling() {
+        // Update every 2 seconds for responsive UI
+        charUpdateInterval = setInterval(updateCharacterCreation, 2000);
+    }
+
+    function stopCharPolling() {
+        if (charUpdateInterval) {
+            clearInterval(charUpdateInterval);
+        }
+    }
+
+    // Start polling when page loads
+    window.addEventListener('load', startCharPolling);
+
+    // Clean up on page unload
+    window.addEventListener('beforeunload', stopCharPolling);
+    </script>
+    """, unsafe_allow_html=True)
+
     st.markdown("""
         <style>
         .char-card {
@@ -495,18 +558,14 @@ def render_character_creation(game_state, db=None, user_id=None, db_session_id=N
                     st.caption(f"📊 {stats_str}")
                     
                     if st.button(f"Alege {cls_type.value}", key=f"btn_cls_{idx}", use_container_width=True, disabled=not is_available):
-                        from ui_components import render_loading_screen
-                        with st.empty():
-                            render_loading_screen()
-                            
                         apply_character_class_stats(game_state, cls_type)
-                        
+
                         # If Free World, maybe update intro text partially? No wait until Faction.
-                        
+
                         new_sid = None
                         if db and user_id:
                             new_sid = db.save_game_state(user_id, game_state, db_session_id)
-                        
+
                         if new_sid:
                             st.session_state.db_session_id = new_sid
                         st.rerun()
@@ -535,7 +594,7 @@ def render_character_creation(game_state, db=None, user_id=None, db_session_id=N
 {data['icon']} {fac_type.value} {coming_soon_badge}
 </h2>
 <div style="font-family: 'Cinzel', serif; font-style: italic; color: #f0e68c; font-size: 1.2rem; margin-bottom: 15px; text-align: center; border-bottom: 1px solid #333; padding-bottom: 10px;">
-<strong>Motto:</strong> "{data.get('motto', '')}"
+<strong>DEVIZĂ:</strong> "{data.get('motto', '')}"
 </div>
 <div style="text-align: center; margin-bottom: 15px; color: #aaa; font-size: 1rem;">
 📍 <b>Centru Putere:</b> {data.get('location', '')}

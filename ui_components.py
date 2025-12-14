@@ -37,7 +37,7 @@ def get_api_token() -> Optional[str]:
     return None
 
 # =========================
-# — CSS Îmbunătățit - Adaugă în ui_components.py
+# — CSS Îmbunătățit
 # =========================
 def scroll_to_top():
     """Injects JS to scroll to the top of the page"""
@@ -47,16 +47,144 @@ def scroll_to_top():
         width=0
     )
 
-def inject_css():
-    """CSS medieval - VERSIUNE FINALĂ PENTRU UI/UX PROFESIONAL"""
+def inject_smooth_transitions():
+    """Inject Global Loader to mask page refreshes"""
+    
+    # 1. Inject HTML and CSS via Markdown (renders in main DOM)
+    # NOTE: We set opacity: 0 initially via inline style to prevent infinite blocking 
+    # if JS fails. The JS will control the class to show/hide it.
+    # Actually, user wants "no flickering". So it MUST start visible.
+    # To be safe against infinite loading: we add a CSS animation that auto-hides it 
+    # after 5 seconds as a fallback if JS dies.
     st.markdown("""
+        <div id="global-loader" style="display: flex;">
+            <div class="loader-content">
+                <div class="spinner-sword">⚔️</div>
+                <p>Se încarcă...</p>
+            </div>
+        </div>
+        
+        <style>
+        /* Loader Overlay - Fixed and High Z-Index */
+        #global-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #0d0704; /* Match app theme background */
+            z-index: 9999999; /* On top of everything */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.4s ease-out, visibility 0.4s ease-out;
+            opacity: 1;
+            visibility: visible;
+            
+            /* Fallback animation: Auto-hide after 5s if JS crashes */
+            animation: safetyHide 0s linear 8s forwards;
+        }
+        
+        @keyframes safetyHide {
+            to { opacity: 0; visibility: hidden; pointer-events: none; }
+        }
+        
+        .loader-hidden {
+            opacity: 0 !important;
+            visibility: hidden !important;
+            pointer-events: none !important;
+            animation: none !important; /* Cancel safety hide if JS works */
+        }
+        
+        .loader-content {
+            text-align: center;
+            font-family: 'Cinzel', serif;
+            color: #d4af37;
+            font-size: 1.5rem;
+        }
+        
+        .spinner-sword {
+            font-size: 4rem;
+            animation: spin 2s infinite linear;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+        
+        @keyframes spin { 
+            0% { transform: rotate(0deg); } 
+            100% { transform: rotate(360deg); } 
+        }
+        </style>
+    """, unsafe_allow_html=True)
+    
+    # 2. Inject JS via Components (ensures execution in iframe)
+    # Use window.parent.document to access the loader we just injected
+    st.components.v1.html("""
+        <script>
+        (function() {
+            const LOADER_ID = 'global-loader';
+            
+            function hideLoader() {
+                try {
+                    const loader = window.parent.document.getElementById(LOADER_ID);
+                    if (loader) {
+                        // Reset safety animation
+                        loader.style.animation = 'none';
+                        setTimeout(() => {
+                            loader.classList.add('loader-hidden');
+                        }, 500); 
+                    }
+                } catch(e) { console.error(e); }
+            }
+            
+            function showLoader() {
+                try {
+                    const loader = window.parent.document.getElementById(LOADER_ID);
+                    if (loader) {
+                        loader.style.animation = 'none';
+                        loader.classList.remove('loader-hidden');
+                    }
+                } catch(e) { console.error(e); }
+            }
+            
+            function initLoader() {
+                try {
+                    // Attach listeners to ALL buttons
+                    const buttons = window.parent.document.querySelectorAll('button');
+                    buttons.forEach(btn => {
+                        if (!btn.dataset.hasLoaderListener) {
+                            btn.addEventListener('click', showLoader);
+                            btn.dataset.hasLoaderListener = 'true';
+                        }
+                    });
+                    
+                    // Hide loader immediately on script run (page ready)
+                    hideLoader();
+                    
+                } catch (e) {
+                    console.log("Loader init error:", e);
+                }
+            }
+            
+            // Run initialization
+            setTimeout(initLoader, 100);
+            
+        })();
+        </script>
+    """, height=0, width=0)
+
+@st.cache_data
+def get_css_string():
+    """Cached CSS string to avoid re-computing on every run"""
+    return """
         <style>
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
-        
+
         /* ================== GLOBAL & SCROLLBAR ================== */
         .stApp {
             background-color: #0d0704;
-            background-image: 
+            background-image:
                 radial-gradient(circle at 50% 0%, #1a0f0b 0%, transparent 70%),
                 linear-gradient(135deg, #0a0805 0%, #140b08 100%);
             color: #e8d8c3;
@@ -424,7 +552,13 @@ def inject_css():
         }
 
         </style>
-    """, unsafe_allow_html=True)
+    """
+
+
+def inject_css():
+    """Inject cached CSS to improve startup performance"""
+    css_string = get_css_string()
+    st.markdown(css_string, unsafe_allow_html=True)
 
 
 def display_story(story: List[Dict]):
@@ -522,7 +656,7 @@ def render_header():
                 Susține Cronicarul
             </a>
             </div>
-            """, 
+            """,
             unsafe_allow_html=True
         )
 
@@ -559,7 +693,7 @@ def render_loading_screen():
         </div>
     """, unsafe_allow_html=True)
 
-def render_sidebar_header_controls(on_name_change=None) -> int:
+def render_sidebar_header_controls(on_name_change=None, show_audio_controls=True) -> int:
     """
     Render top sidebar section with User Info and Controls.
     Contains WIDGETS (Inputs, Sliders). Must be called from main logic (not fragment).
@@ -594,6 +728,30 @@ def render_sidebar_header_controls(on_name_change=None) -> int:
 
         st.markdown("---")
         st.markdown('</div>', unsafe_allow_html=True)
+
+    # AUDIO CONTROLS (Simplified)
+    if show_audio_controls:
+        try:
+            from audio_manager import get_audio_manager
+            audio_manager = get_audio_manager()
+
+            # Simplified Audio Control - Just On/Off
+            # Using a floating-style or prominent button in sidebar
+            icon = "🔇" if audio_manager.is_muted else "🔊"
+            label = "Sunet: Oprit" if audio_manager.is_muted else "Sunet: Pornit"
+            
+            st.markdown('<div class="sidebar-section">', unsafe_allow_html=True)
+            if st.button(f"{icon} {label}", key="audio_toggle_simple", use_container_width=True):
+                audio_manager.toggle_mute()
+                st.rerun()
+            st.markdown('</div>', unsafe_allow_html=True)
+            
+        except Exception as e:
+            # Audio system not available, skip controls
+            pass
+        except Exception as e:
+            # Audio system not available, skip controls
+            pass
 
     # CONTROLS
     st.markdown('<div class="sidebar-section">', unsafe_allow_html=True)

@@ -135,19 +135,64 @@ class CacheManager:
     def load_source_pack(cls, source_path: str):
         """Load a source pack (UserText -> Response) into SOURCE_CACHE."""
         if not os.path.exists(source_path):
-            # print(f"[CACHE] Source pack not found: {source_path}") 
+            # print(f"[CACHE] Source pack not found: {source_path}")
             # Silent fail as it is optional
             return
-            
+
         try:
             with open(source_path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
-            
+
             count = 0
             for user_text, response_dict in data.items():
                 cls.SOURCE_CACHE[user_text] = response_dict
                 count += 1
-            
+
             print(f"[CACHE] Loaded {count} entries from source pack: {os.path.basename(source_path)}")
         except Exception as e:
             print(f"[CACHE] Error loading source pack: {e}")
+
+    @classmethod
+    def ensure_story_pack_loaded(cls, character_class: str, faction: str, episode: int):
+        """
+        Lazy load story pack for specific character configuration.
+        Called when generating responses to ensure relevant cache is available.
+        """
+        def normalize_name(name):
+            if not name: return ""
+            # Handle Enums by getting value if possible, otherwise string conversion
+            val = name.value if hasattr(name, "value") else str(name)
+            return val.lower().replace("ă", "a").replace("â", "a").replace("î", "i").replace("ș", "s").replace("ț", "t").replace(" ", "_").replace("/", "_")
+
+        char_class = normalize_name(character_class)
+        faction_name = normalize_name(faction)
+
+        pack_folder = f"episode_{episode}"
+        pack_filename = f"{char_class}_{faction_name}.json"
+        pack_path = os.path.join("story_packs", pack_folder, pack_filename)
+
+        # Check if we need to switch packs
+        current_loaded = getattr(cls, '_current_pack_path', None)
+
+        if current_loaded != pack_path:
+            if os.path.exists(pack_path):
+                print(f"[CACHE] Lazy loading story pack: {pack_path}")
+                # Clear previous memory cache to save RAM
+                cls.clear_memory()
+                cls.load_pack(pack_path, clear_previous=False)
+                cls._current_pack_path = pack_path
+
+                # Load Source Pack
+                source_filename_specific = f"{char_class}_{faction_name}_source.json"
+                source_filename_generic = f"{char_class}_source.json"
+
+                source_path_specific = os.path.join("story_packs", pack_folder, source_filename_specific)
+                source_path_generic = os.path.join("story_packs", pack_folder, source_filename_generic)
+
+                if os.path.exists(source_path_specific):
+                    cls.load_source_pack(source_path_specific)
+                elif os.path.exists(source_path_generic):
+                    cls.load_source_pack(source_path_generic)
+            else:
+                # If no pack exists, ensure we don't keep trying to load it
+                cls._current_pack_path = pack_path

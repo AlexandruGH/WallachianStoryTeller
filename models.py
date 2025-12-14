@@ -108,6 +108,10 @@ class NarrativeResponse(BaseModel):
     suggestions: List[str] = Field(default_factory=list)
     episode_progress: Optional[float] = Field(default=None, ge=0.0, le=1.0, description="Progresul curent în episod (0.0 - 1.0)")
 
+    # Audio context for dynamic sound system
+    audio_context: List[str] = Field(default_factory=list, description="List of SFX events to play")
+    music_context: Optional[str] = Field(default=None, description="Background music type to play")
+
 class GameState(BaseModel):
     character: CharacterStats
     inventory: List[InventoryItem]

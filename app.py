@@ -40,6 +40,7 @@ from llm_handler import fix_romanian_grammar, generate_narrative_with_progress
 from models import GameState, CharacterStats, InventoryItem, ItemType, NarrativeResponse
 from database import Database
 from character_creation import render_character_creation
+from audio_manager import get_audio_manager
 # Import team_manager at startup
 try:
     from team_manager import TeamManager
@@ -983,6 +984,13 @@ def main():
     # Inject CSS globally first so it persists even when we clear the loading placeholder
     inject_css()
     
+    # Inject smooth transitions to reduce flickering
+    try:
+        from ui_components import inject_smooth_transitions
+        inject_smooth_transitions()
+    except ImportError:
+        pass
+
     # Render loading screen immediately to mask any processing/latency
     # We use a placeholder so we can remove it once the UI is ready
     loading_placeholder = st.empty()
@@ -1000,6 +1008,16 @@ def main():
              # Handle OAuth - pass None for cookie_manager to delay its init
              if handle_oauth_callback(None):
                  return # Rerun happened inside
+
+    # Handle character creation polling updates (similar to team polling)
+    if st.query_params.get('update_char_creation') == 'true':
+        # Clear query param to avoid loops
+        st.query_params.clear()
+        # Render only character creation for smooth polling updates
+        if st.session_state.game_mode_selected == "solo":
+            if not render_character_creation(st.session_state.game_state, db, st.session_state.user.user.id if st.session_state.user else None, getattr(st.session_state, 'db_session_id', None)):
+                pass  # Character creation in progress
+        return
 
     # Initialize cookie manager ONCE per run at the top level (Normal flow)
     cookie_manager = get_cookie_manager()
@@ -1080,6 +1098,13 @@ def main():
         st.warning("⚠️ API a eșuat de 3+ ori. Se trece în modul local automat.")
         st.session_state.settings["use_api_fallback"] = False
 
+    # Callback functions for mode selection
+    def select_solo_mode():
+        st.session_state.game_mode_selected = "solo"
+
+    def select_team_mode():
+        st.session_state.game_mode_selected = "team"
+
     # Game Mode Selection
     if st.session_state.game_mode_selected is None:
         if loading_placeholder:
@@ -1099,9 +1124,7 @@ def main():
             </div>
             """, unsafe_allow_html=True)
 
-            if st.button("🎯 Joacă Solo", key="solo_mode", use_container_width=True, type="primary"):
-                st.session_state.game_mode_selected = "solo"
-                st.rerun()
+            st.button("🎯 Joacă Solo", key="solo_mode", use_container_width=True, type="primary", on_click=select_solo_mode)
 
         with col2:
             st.markdown("""
@@ -1113,9 +1136,7 @@ def main():
             </div>
             """, unsafe_allow_html=True)
 
-            if st.button("🤝 Joacă în Echipă", key="team_mode", use_container_width=True, type="primary"):
-                st.session_state.game_mode_selected = "team"
-                st.rerun()
+            st.button("🤝 Joacă în Echipă", key="team_mode", use_container_width=True, type="primary", on_click=select_team_mode)
 
         return
 
@@ -1140,62 +1161,10 @@ def main():
     # If wizard returns True, it means character creation is complete.
     # We defer clearing the loading screen to the game interface to prevent black screen flashes.
     
-    # Check for Story Packs (Cache Pre-loading)
-    try:
-        from caching import CacheManager
-        gs = st.session_state.game_state
-        
-        def normalize_name(name):
-            if not name: return ""
-            # Handle Enums by getting value if possible, otherwise string conversion
-            val = name.value if hasattr(name, "value") else str(name)
-            return val.lower().replace("ă", "a").replace("â", "a").replace("î", "i").replace("ș", "s").replace("ț", "t").replace(" ", "_").replace("/", "_")
-
-        char_class = normalize_name(gs.character.character_class)
-        faction = normalize_name(gs.character.faction)
-        episode = gs.character.current_episode
-        
-        # Ensure we always attempt to load the correct pack for the current configuration
-        # NEW STRUCTURE: story_packs/episode_X/class_faction.json
-        pack_folder = f"episode_{episode}"
-        pack_filename = f"{char_class}_{faction}.json"
-        pack_path = os.path.join("story_packs", pack_folder, pack_filename)
-        
-        # Also attempt to load SOURCE pack for offline fallback (UserText -> Response)
-        # Try specific faction source first, then generic class source
-        source_filename_specific = f"{char_class}_{faction}_source.json"
-        source_filename_generic = f"{char_class}_source.json"
-        
-        source_path_specific = os.path.join("story_packs", pack_folder, source_filename_specific)
-        source_path_generic = os.path.join("story_packs", pack_folder, source_filename_generic)
-        
-        # Check if we need to switch packs (Episode changed or Class/Faction changed or First load)
-        # We use the full path as identifier now
-        current_loaded = st.session_state.get("loaded_pack_name")
-        
-        if current_loaded != pack_path:
-            if os.path.exists(pack_path):
-                print(f"[PACK] Loading story pack: {pack_path}")
-                # Clear previous memory cache to save RAM
-                CacheManager.load_pack(pack_path, clear_previous=True)
-                st.session_state.loaded_pack_name = pack_path
-                
-                # Load Source Pack
-                if os.path.exists(source_path_specific):
-                    CacheManager.load_source_pack(source_path_specific)
-                elif os.path.exists(source_path_generic):
-                    CacheManager.load_source_pack(source_path_generic)
-                    
-            else:
-                # If no pack exists for this new state, we should probably clear the old pack to avoid confusion?
-                # Or keep it? User said "save memory". If we are in Ep 2 and no pack exists, keeping Ep 1 pack is waste.
-                if current_loaded:
-                    print(f"[PACK] Unloading previous pack (New context has no pack): {current_loaded}")
-                    CacheManager.clear_memory()
-                    st.session_state.loaded_pack_name = None
-
-    except Exception as e:
-        print(f"[PACK] Error checking packs: {e}")
+    # Story pack loading moved to lazy loading in llm_handler when needed
+    # to improve startup performance
+    # CSS is now cached to avoid recomputation
+    # Team manager imported at startup but instantiated lazily
 
     render_header()
 
@@ -1218,6 +1187,11 @@ def main():
     # Render game interface (sidebar stats + main game loop) in a single fragment
     # This ensures no flickering while updating game content and stats
     render_game_interface(cookie_manager, db, sidebar_stats_container, loading_placeholder)
+
+    # Start ambient music automatically when game interface loads
+    audio_manager = get_audio_manager()
+    if not audio_manager.current_music:
+        audio_manager.play_music("calm_ambient")
 
     # Auto-save game state to database after each interaction
     user_id = st.session_state.user.user.id
@@ -1444,8 +1418,13 @@ def handle_player_input(story_placeholder=None, sidebar_container=None, input_pl
                 current_episode=current_episode
             )
 
-            # Generate narrative
-            response = generate_narrative_with_progress(full_prompt_text)
+            # Generate narrative with lazy story pack loading
+            response = generate_narrative_with_progress(
+                full_prompt_text,
+                character_class=gs_data.character.character_class,
+                faction=gs_data.character.faction,
+                episode=gs_data.character.current_episode
+            )
 
             # Process response
             corrected_narrative = fix_romanian_grammar(response.narrative)
@@ -1503,6 +1482,15 @@ def handle_player_input(story_placeholder=None, sidebar_container=None, input_pl
                 "image": None,
                 "suggestions": corrected_suggestions
             })
+
+            # Process audio context from LLM response
+            audio_manager = get_audio_manager()
+            audio_context = response.audio_context or []
+            music_context = response.music_context
+
+            if audio_context or music_context:
+                audio_manager.process_audio_context(audio_context, music_context)
+                print(f"[AUDIO] Processed audio context: SFX={audio_context}, Music={music_context}")
 
             # Append Episode Intro if triggered
             if next_episode_data:
@@ -1601,7 +1589,12 @@ def handle_player_input(story_placeholder=None, sidebar_container=None, input_pl
             )
 
             # Generate narrative
-            response = generate_narrative_with_progress(full_prompt_text)
+            response = generate_narrative_with_progress(
+                full_prompt_text,
+                character_class=gs_data.character.character_class,
+                faction=gs_data.character.faction,
+                episode=gs_data.character.current_episode
+            )
 
             # Process response (same as above)
             corrected_narrative = fix_romanian_grammar(response.narrative)
@@ -1984,6 +1977,7 @@ def render_team_lobby():
     if st.session_state.team_id:
         team_data = team_manager.get_team_data(st.session_state.team_id)
         if team_data:
+            # Render team interface (lobby or game)
             render_team_game_interface(team_data, team_manager)
             return
         else:
@@ -1993,42 +1987,59 @@ def render_team_lobby():
     st.markdown('<div class="create-team-section">', unsafe_allow_html=True)
     st.markdown("### 🆕 Creează Echipă Nouă")
 
-    with st.form("create_team_form"):
-        col1, col2 = st.columns([2, 1])
+    # Disconnect button if already in a team
+    if st.session_state.get('team_id'):
+        col1, col2 = st.columns([1, 3])
         with col1:
-            team_name = st.text_input(
-                "Nume Echipă",
-                placeholder="Ex: Dragonii Valahiei",
-                help="Alege un nume unic pentru echipa ta"
-            )
-            max_players = st.selectbox(
-                "Număr Maxim Jucători",
-                [2, 3, 4],
-                index=1,
-                help="Numărul maxim de jucători în echipă"
-            )
+            if st.button("🚪 Deconectare", key="disconnect_create_team", use_container_width=True, type="secondary"):
+                try:
+                    team_manager.leave_team(st.session_state.team_id, user_id)
+                    del st.session_state.team_id
+                    st.success("Ai părăsit echipa!")
+                    st.rerun()
+                except Exception as e:
+                    st.error(f"Eroare la deconectare: {e}")
         with col2:
-            st.markdown("<br>", unsafe_allow_html=True)  # Spacing
-            create_submitted = st.form_submit_button("🚀 Creează Echipă", type="primary", use_container_width=True)
+            st.info("Ești deja într-o echipă. Poți crea una nouă după deconectare.")
+    else:
+        with st.form("create_team_form"):
+            col1, col2 = st.columns([2, 1])
+            with col1:
+                team_name = st.text_input(
+                    "Nume Echipă",
+                    placeholder="Ex: Dragonii Valahiei",
+                    help="Alege un nume unic pentru echipa ta"
+                )
+                max_players = st.selectbox(
+                    "Număr Maxim Jucători",
+                    [2, 3, 4],
+                    index=1,
+                    help="Numărul maxim de jucători în echipă"
+                )
+            with col2:
+                st.markdown("<br>", unsafe_allow_html=True)  # Spacing
+                create_submitted = st.form_submit_button("🚀 Creează Echipă", type="primary", use_container_width=True)
 
-    if create_submitted:
-        if not team_name.strip():
-            st.error("❌ Te rog introdu un nume pentru echipă!")
-        else:
-            try:
-                team_id = team_manager.create_team(user_id, character_name, max_players, team_name.strip())
-                st.session_state.team_id = team_id
-                st.success(f"✅ Echipă '{team_name.strip()}' creată! ID: {team_id}")
-                st.rerun()
-            except Exception as e:
-                st.error(f"❌ Eroare la crearea echipei: {str(e)}")
+        if create_submitted:
+            if not team_name.strip():
+                st.error("❌ Te rog introdu un nume pentru echipă!")
+            else:
+                try:
+                    team_id = team_manager.create_team(user_id, character_name, max_players, team_name.strip())
+                    st.session_state.team_id = team_id
+                    st.success(f"✅ Echipă '{team_name.strip()}' creată! ID: {team_id}")
+
+                    # Force a rerun to immediately show the created team
+                    st.rerun()
+                except Exception as e:
+                    st.error(f"❌ Eroare la crearea echipei: {str(e)}")
 
     st.markdown('</div>', unsafe_allow_html=True)
 
     # Render teams with smooth updates using placeholder
     with teams_placeholder.container():
-        # Get all available teams
-        all_teams = team_manager.get_all_teams()
+        # Get all available teams (excluding teams the user is already in)
+        all_teams = team_manager.get_all_teams(exclude_user_id=user_id)
 
         if not all_teams:
             st.markdown("""
@@ -2073,8 +2084,20 @@ def render_team_card(team_id: str, team_data: Dict, team_manager, character_name
         status_text = "⏳ În așteptare"
         can_join = True
 
-    # Check if user is already in this team by user ID
-    user_in_team = any(player.get('userId') == user_id for player in players.values())
+    # Check if user is already in this team by user ID - more robust check
+    user_in_team = False
+    if user_id:
+        # Check if user_id exists as a key in players dict (primary check)
+        if user_id in players:
+            user_in_team = True
+        else:
+            # Fallback: check if any player has matching userId (secondary check)
+            user_in_team = any(player.get('userId') == user_id for player in players.values())
+
+    # Also check if user is currently in a team (session state)
+    user_current_team_id = st.session_state.get('team_id')
+    if user_current_team_id == team_id:
+        user_in_team = True
 
     st.markdown(f"""
     <div class="team-card">
@@ -2137,7 +2160,7 @@ def render_team_card(team_id: str, team_data: Dict, team_manager, character_name
                 if success:
                     st.session_state.team_id = team_id
                     st.success("✅ Te-ai alăturat echipei!")
-                    st.rerun()
+                    # No rerun needed - UI will update automatically
                 else:
                     st.error("❌ Nu s-a putut alătura echipei.")
             except Exception as e:
@@ -2166,7 +2189,7 @@ def render_team_lobby_interface(team_data, team_manager):
     """Render team lobby where players select characters with professional UI"""
     players = team_data.get('players', {})
 
-    # Get current user ID for identification
+    # Get current user info
     current_user_id = st.session_state.user.user.id if st.session_state.user else None
     current_username = db.get_user_character_name(current_user_id) if current_user_id else "Jucător"
 
@@ -2204,156 +2227,122 @@ def render_team_lobby_interface(team_data, team_manager):
             if not player.get('ready'):
                 all_ready = False
 
-    # Character selection for current user - show if user has team_id set (robust check)
-    user_player = None
-    user_in_team = False
+    # Character Selection Section for Current User
+    if current_user_id:
+        current_player = players.get(current_user_id)
+        if current_player:
+            has_character = bool(current_player.get('characterType'))
+            has_faction = bool(current_player.get('faction'))
+            is_ready = current_player.get('ready', False)
 
-    print(f"[TEAM] Looking for user {current_user_id} in team players: {list(players.keys())}")
-    for player_id, player in players.items():
-        print(f"[TEAM] Checking player {player_id}: userId={player.get('userId')}")
-        if player.get('userId') == current_user_id:
-            user_player = player
-            user_in_team = True
-            print(f"[TEAM] Found user player: {user_player}")
-            break
+            if not has_character or not has_faction:
+                st.markdown("---")
+                st.markdown("### ⚔️ Alege-ți Personajul")
 
-    # If user is in team but player data not found, create default player data
-    if not user_player and current_user_id in players:
-        user_player = players[current_user_id]
-        user_in_team = True
-        print(f"[TEAM] Found user by key: {user_player}")
-    elif current_user_id and any(player.get('userId') == current_user_id for player in players.values()):
-        user_in_team = True
-        print(f"[TEAM] User confirmed in team but player data incomplete")
+                if not has_character:
+                    st.markdown("**Pasul 1: Alege Clasa Caracterului**")
+                    from character_creation import CHARACTER_CLASSES, AVAILABLE_CLASSES
 
-    # Fallback: If user has team_id set but player data not found, still show interface
-    # This handles cases where Firebase operations are slow or failed
-    if not user_in_team and st.session_state.get('team_id') and current_user_id:
-        print(f"[TEAM] User has team_id but not found in players - showing interface anyway")
-        user_in_team = True
-        # Create a default user_player object for interface
-        user_player = {
-            'userId': current_user_id,
-            'username': current_username,
-            'characterType': '',
-            'faction': '',
-            'ready': False
-        }
+                    char_cols = st.columns(2)
+                    for idx, cls_type in enumerate(AVAILABLE_CLASSES):
+                        data = CHARACTER_CLASSES[cls_type]
+                        with char_cols[idx % 2]:
+                            with st.container():
+                                st.markdown(f"""
+                                <div style="background-color: #1E1E1E; padding: 15px; border-radius: 8px; border: 1px solid #333; margin-bottom: 10px;">
+                                    <h4 style="color: #D4AF37; margin: 0;">{data['icon']} {cls_type.value}</h4>
+                                    <p style="font-size: 0.9em; color: #ccc; margin: 5px 0;"><i>{data['description']}</i></p>
+                                    <p style="font-size: 0.8em; color: #888;">{data['special_ability']}</p>
+                                </div>
+                                """, unsafe_allow_html=True)
+                                
+                                # Use callback to avoid double reload
+                                def on_select_class(tid, uid, ctype, fact):
+                                    team_manager.update_player_info(tid, uid, ctype, fact)
 
-    if user_in_team:
-        st.markdown("### ⚔️ Pregătește-ți Eroul")
+                                st.button(
+                                    f"Alege {cls_type.value}", 
+                                    key=f"team_cls_{cls_type.value}", 
+                                    use_container_width=True,
+                                    on_click=on_select_class,
+                                    args=(team_data['teamId'], current_user_id, cls_type.value, current_player.get('faction', ''))
+                                )
 
-        # Character preview
-        char_type = user_player.get('characterType', '')
-        faction = user_player.get('faction', '')
+                elif not has_faction:
+                    st.markdown("**Pasul 2: Alege Facțiunea**")
+                    from character_creation import FACTIONS, AVAILABLE_FACTIONS
 
-        if char_type and faction:
-            st.markdown(f"""
-            <div style="background: rgba(212, 175, 55, 0.1); border: 1px solid #D4AF37; border-radius: 10px; padding: 15px; margin-bottom: 20px;">
-                <h4 style="color: #D4AF37; text-align: center;">🎭 Caracterul Tău</h4>
-                <p style="text-align: center; margin: 5px 0;">
-                    <strong>{char_type}</strong> din facțiunea <strong>{faction}</strong>
-                </p>
-            </div>
-            """, unsafe_allow_html=True)
+                    for fac_type in AVAILABLE_FACTIONS:
+                        data = FACTIONS[fac_type]
+                        st.markdown(f"""
+                        <div style="background-color: #1E1E1E; padding: 20px; border-radius: 10px; border: 1px solid #333; margin-bottom: 15px;">
+                            <h4 style="color: #D4AF37; margin: 0;">{data['icon']} {fac_type.value}</h4>
+                            <p style="font-style: italic; color: #f0e68c; margin: 5px 0;"><strong>"{data.get('motto', '')}"</strong></p>
+                            <p style="color: #ccc; margin: 5px 0;">📍 {data.get('location', '')}</p>
+                            <p style="color: #aaa; margin: 10px 0;">{data['description'][:200]}...</p>
+                            <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 5px; margin-top: 10px;">
+                                <p style="color: #90ee90; margin: 2px 0;">✅ {data['bonuses']}</p>
+                                <p style="color: #ffd700; margin: 2px 0;">✨ {data['passive']}</p>
+                                <p style="color: #ff6b6b; margin: 2px 0;">⚠️ {data['disadvantage']}</p>
+                            </div>
+                        </div>
+                        """, unsafe_allow_html=True)
+                        
+                        def on_select_faction(tid, uid, ctype, fact):
+                            team_manager.update_player_info(tid, uid, ctype, fact)
 
-        col1, col2 = st.columns(2)
+                        st.button(
+                            f"🛡️ Alătură-te: {fac_type.value}", 
+                            key=f"team_fac_{fac_type.value}", 
+                            use_container_width=True, 
+                            type="primary",
+                            on_click=on_select_faction,
+                            args=(team_data['teamId'], current_user_id, current_player.get('characterType', ''), fac_type.value)
+                        )
 
-        with col1:
-            st.markdown("**Clasă de Caracter**")
-            character_options = ["", "Aventurier", "Străjer", "Spion", "Negustor"]
-            character_type = st.selectbox(
-                "Alege clasa:",
-                character_options,
-                index=character_options.index(user_player.get('characterType', "")),
-                help="Clasa definește abilitățile și stilul tău de joc"
-            )
+                # Ready button when both selected
+                if has_character and has_faction and not is_ready:
+                    st.markdown("---")
+                    
+                    def on_ready(tid, uid):
+                        team_manager.set_player_ready(tid, uid, True)
 
-            if character_type:
-                descriptions = {
-                    "Aventurier": "⚔️ Războinic adaptabil, supraviețuitor în orice situație",
-                    "Străjer": "🛡️ Gardian disciplinat, expert în apărare și tir",
-                    "Spion": "🕵️ Maestru al umbrelor și intrigilor",
-                    "Negustor": "💰 Diplomat și manipulator economic"
-                }
-                st.info(descriptions.get(character_type, ""))
+                    st.button(
+                        "🚀 Sunt Gata!", 
+                        key="team_ready", 
+                        use_container_width=True, 
+                        type="primary",
+                        on_click=on_ready,
+                        args=(team_data['teamId'], current_user_id)
+                    )
 
-        with col2:
-            st.markdown("**Facțiune Politică**")
-            # Only Drăculești faction is active - Dănești temporarily disabled
-            faction_options = ["", "Drăculești"]
+                elif is_ready:
+                    st.success("✅ Ești gata! Poți să te răzgândești apăsând butonul de mai jos.")
+                    
+                    def on_unready(tid, uid):
+                        team_manager.set_player_ready(tid, uid, False)
 
-            # Get stored faction and validate it's in allowed options
-            stored_faction = user_player.get('faction', "")
-            if stored_faction not in faction_options:
-                # Force reset to empty if stored faction is not allowed
-                stored_faction = ""
-                # Optionally update Firebase to remove invalid faction
-                if stored_faction != user_player.get('faction', ""):
-                    try:
-                        team_manager.update_player_info(st.session_state.team_id, current_user_id,
-                                                      user_player.get('characterType', ""),
-                                                      "")  # Reset faction to empty
-                    except:
-                        pass
+                    st.button(
+                        "🔄 Nu sunt gata încă", 
+                        key="team_unready", 
+                        use_container_width=True,
+                        on_click=on_unready,
+                        args=(team_data['teamId'], current_user_id)
+                    )
 
-            faction = st.selectbox(
-                "Alege facțiunea:",
-                faction_options,
-                index=faction_options.index(stored_faction),
-                help="Facțiunea îți oferă aliați și dușmani unici în poveste"
-            )
 
-            if faction:
-                descriptions = {
-                    "Drăculești": "🐉 Casa lui Vlad Țepeș - disciplină, război și ordine"
-                }
-                st.info(descriptions.get(faction, ""))
 
-        # Action buttons - simplified to two buttons
-        col1, col2 = st.columns(2)
-
-        with col1:
-            if st.button("🎯 Sunt Gata!", use_container_width=True, type="primary"):
-                # Validate selection first
-                if not character_type or not faction:
-                    st.error("❌ Selectează atât clasa cât și facțiunea!")
-                    return
-
-                # Save selection and mark as ready in one action
-                print(f"[TEAM] Saving and readying - Type: {character_type}, Faction: {faction}")
-
-                # Update Firebase with character selection
-                success = team_manager.update_player_info(st.session_state.team_id, current_user_id, character_type, faction)
-                if success:
-                    # Mark player as ready
-                    team_manager.set_player_ready(st.session_state.team_id, current_user_id, True)
-
-                    # Store in session state as backup
-                    st.session_state.temp_character_selection = {
-                        'characterType': character_type,
-                        'faction': faction
-                    }
-
-                    st.success("✅ Selecție salvată și ești gata pentru aventură!")
-                    st.rerun()
-                else:
-                    st.error("❌ Eroare la salvarea selecției caracterului!")
-
-        with col2:
-            if st.button("🔙 Părăsește Echipa", use_container_width=True):
-                if st.session_state.team_id and current_user_id:
-                    # Remove player from team in Firebase
-                    success = team_manager.leave_team(st.session_state.team_id, current_user_id)
-                    if success:
-                        st.session_state.team_id = None
-                        st.success("✅ Ai părăsit echipa cu succes!")
-                        st.rerun()
-                    else:
-                        st.error("❌ Eroare la părăsirea echipei.")
-                else:
-                    st.session_state.team_id = None
-                    st.info("Ai părăsit echipa.")
+    # Disconnect button for team lobby
+    col1, col2, col3 = st.columns([1, 1, 1])
+    with col1:
+        if st.button("🚪 Deconectare", key="disconnect_team_lobby", use_container_width=True, type="secondary"):
+            try:
+                team_manager.leave_team(team_data['teamId'], current_user_id)
+                del st.session_state.team_id
+                st.success("Ai părăsit echipa!")
+                st.rerun()
+            except Exception as e:
+                st.error(f"Eroare la deconectare: {e}")
 
     # Ready check message
     if all_ready and len(players) >= 2:
@@ -2589,8 +2578,17 @@ def render_team_gameplay_interface(team_data, team_manager):
 
         st.markdown('</div>', unsafe_allow_html=True)
 
-    # Refresh button with better styling
+    # Disconnect and Refresh buttons
     col1, col2, col3 = st.columns([1, 1, 1])
+    with col1:
+        if st.button("🚪 Deconectare", key="disconnect_team", use_container_width=True, type="secondary"):
+            try:
+                team_manager.leave_team(st.session_state.team_id, st.session_state.user.user.id)
+                del st.session_state.team_id
+                st.success("Ai părăsit echipa!")
+                st.rerun()
+            except Exception as e:
+                st.error(f"Eroare la deconectare: {e}")
     with col2:
         if st.button("🔄 Reîmprospătează", key="refresh_team", use_container_width=True):
             st.rerun()

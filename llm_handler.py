@@ -88,6 +88,31 @@ SYSTEM_PROMPT = (
     "• Dacă facțiunea sa este urâtă într-o zonă, fă interacțiunile sociale mai dificile.\n"
     "• Inventarul contează: nu poate folosi obiecte pe care nu le are."
 
+    "\n\n========== CONTEXT AUDIO DINAMIC ==========\n"
+    "Include ÎNTOTDEAUNA în răspuns un bloc JSON cu context audio:\n"
+    "• \"audio_context\": listă de evenimente SFX (ex: [\"gold_received\", \"combat_start\"])\n"
+    "• \"music_context\": tip muzică fundal (ex: \"calm_ambient\", \"battle_low\")\n"
+    "\nEvenimente SFX disponibile:\n"
+    "• gold_received - când primește galbeni\n"
+    "• mysterious_location - zone misterioase/umbră\n"
+    "• combat_start - începe luptă\n"
+    "• hit - lovitură în luptă\n"
+    "• victory - victorie în luptă\n"
+    "• defeat - înfrângere în luptă\n"
+    "• quest_new - misiune nouă/pergament\n"
+    "• decision_important - decizie majoră\n"
+    "• door_open - ușă/casă nouă\n"
+    "• horse - călărie\n"
+    "• forest_ambient - pădure\n"
+    "• castle_ambient - castel/curte\n"
+    "\nTipuri muzică disponibile:\n"
+    "• calm_ambient - sate, drumuri, dialog normal\n"
+    "• court_intrigue - curtea domnească, boieri\n"
+    "• dark_forest - păduri, mister, primejdii\n"
+    "• battle_low - tensiune luptă, confruntare\n"
+    "• battle_high - luptă activă\n"
+    "\nNu descrie sunetele în narațiune - doar generează tag-urile JSON!"
+
     "\n\n========== SARCINA TA PRINCIPALĂ ==========\n"
     "Transformă fiecare input al jucătorului într-o evoluție coerentă, variată, realistă "
     "și impecabil scrisă, într-o Valahie medievală dură și autentică, condusă de Vlad Țepeș."
@@ -169,11 +194,15 @@ def fix_romanian_grammar(text: str) -> str:
     
     return text
 
-def generate_with_api(prompt: str) -> NarrativeResponse:
+def generate_with_api(prompt: str, character_class=None, faction=None, episode=None) -> NarrativeResponse:
     """
     Generează RĂSPUNS DOAR prin Groq API. Dacă toate cheile eșuează,
     returnează un mesaj de eroare clar pentru utilizator.
     """
+    # Lazy load appropriate story pack if character info provided
+    if character_class and faction and episode is not None:
+        CacheManager.ensure_story_pack_loaded(character_class, faction, episode)
+
     # 1. Check Cache First (Hash Match)
     cached_response = CacheManager.get(prompt)
     if cached_response:
@@ -191,7 +220,7 @@ def generate_with_api(prompt: str) -> NarrativeResponse:
             if line.strip().upper().startswith("USER:"):
                 last_user_line = line.strip()[5:].strip() # Remove "USER:"
                 break
-        
+
         if last_user_line:
             # print(f"[CACHE] Checking text fallback for: '{last_user_line[:30]}...'")
             text_hit = CacheManager.get_by_text(last_user_line)
@@ -323,15 +352,15 @@ def generate_with_api(prompt: str) -> NarrativeResponse:
         game_over=False
     )
 
-def generate_narrative_with_progress(prompt: str) -> NarrativeResponse:
+def generate_narrative_with_progress(prompt: str, character_class=None, faction=None, episode=None) -> NarrativeResponse:
     """
     Generează narativ cu bară de progres (animație 'Scribii lui Vlad').
     """
     result_container = {"response": None, "error": None}
-    
+
     def run_gen():
         try:
-            result_container["response"] = generate_with_api(prompt)
+            result_container["response"] = generate_with_api(prompt, character_class, faction, episode)
         except Exception as e:
             result_container["error"] = str(e)
             print(f"❌ Eroare în thread-ul de generare: {e}")
