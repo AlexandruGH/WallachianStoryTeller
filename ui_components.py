@@ -49,130 +49,15 @@ def scroll_to_top():
 
 def inject_smooth_transitions():
     """Inject Global Loader to mask page refreshes"""
+    pass
+    # DISABLED TEMPORARILY FOR DEBUGGING
+    # The global loader was causing visual freezes during rapid reload loops
     
     # 1. Inject HTML and CSS via Markdown (renders in main DOM)
-    # NOTE: We set opacity: 0 initially via inline style to prevent infinite blocking 
-    # if JS fails. The JS will control the class to show/hide it.
-    # Actually, user wants "no flickering". So it MUST start visible.
-    # To be safe against infinite loading: we add a CSS animation that auto-hides it 
-    # after 5 seconds as a fallback if JS dies.
-    st.markdown("""
-        <div id="global-loader" style="display: flex;">
-            <div class="loader-content">
-                <div class="spinner-sword">⚔️</div>
-                <p>Se încarcă...</p>
-            </div>
-        </div>
-        
-        <style>
-        /* Loader Overlay - Fixed and High Z-Index */
-        #global-loader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background-color: #0d0704; /* Match app theme background */
-            z-index: 9999999; /* On top of everything */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            transition: opacity 0.4s ease-out, visibility 0.4s ease-out;
-            opacity: 1;
-            visibility: visible;
-            
-            /* Fallback animation: Auto-hide after 5s if JS crashes */
-            animation: safetyHide 0s linear 8s forwards;
-        }
-        
-        @keyframes safetyHide {
-            to { opacity: 0; visibility: hidden; pointer-events: none; }
-        }
-        
-        .loader-hidden {
-            opacity: 0 !important;
-            visibility: hidden !important;
-            pointer-events: none !important;
-            animation: none !important; /* Cancel safety hide if JS works */
-        }
-        
-        .loader-content {
-            text-align: center;
-            font-family: 'Cinzel', serif;
-            color: #d4af37;
-            font-size: 1.5rem;
-        }
-        
-        .spinner-sword {
-            font-size: 4rem;
-            animation: spin 2s infinite linear;
-            margin-bottom: 20px;
-            display: inline-block;
-        }
-        
-        @keyframes spin { 
-            0% { transform: rotate(0deg); } 
-            100% { transform: rotate(360deg); } 
-        }
-        </style>
-    """, unsafe_allow_html=True)
+    # ... code removed for debug ...
     
     # 2. Inject JS via Components (ensures execution in iframe)
-    # Use window.parent.document to access the loader we just injected
-    st.components.v1.html("""
-        <script>
-        (function() {
-            const LOADER_ID = 'global-loader';
-            
-            function hideLoader() {
-                try {
-                    const loader = window.parent.document.getElementById(LOADER_ID);
-                    if (loader) {
-                        // Reset safety animation
-                        loader.style.animation = 'none';
-                        setTimeout(() => {
-                            loader.classList.add('loader-hidden');
-                        }, 500); 
-                    }
-                } catch(e) { console.error(e); }
-            }
-            
-            function showLoader() {
-                try {
-                    const loader = window.parent.document.getElementById(LOADER_ID);
-                    if (loader) {
-                        loader.style.animation = 'none';
-                        loader.classList.remove('loader-hidden');
-                    }
-                } catch(e) { console.error(e); }
-            }
-            
-            function initLoader() {
-                try {
-                    // Attach listeners to ALL buttons
-                    const buttons = window.parent.document.querySelectorAll('button');
-                    buttons.forEach(btn => {
-                        if (!btn.dataset.hasLoaderListener) {
-                            btn.addEventListener('click', showLoader);
-                            btn.dataset.hasLoaderListener = 'true';
-                        }
-                    });
-                    
-                    // Hide loader immediately on script run (page ready)
-                    hideLoader();
-                    
-                } catch (e) {
-                    console.log("Loader init error:", e);
-                }
-            }
-            
-            // Run initialization
-            setTimeout(initLoader, 100);
-            
-        })();
-        </script>
-    """, height=0, width=0)
+    # ... code removed for debug ...
 
 @st.cache_data
 def get_css_string():
@@ -679,6 +564,8 @@ def render_loading_screen():
             font-family: 'Cinzel', serif;
             z-index: 999999;
             text-align: center;
+            /* Safety: Auto-hide after 15s in case of backend hang */
+            animation: fadeOutLoader 0.5s ease-in-out 15s forwards;
         }
         .spinner-sword {
             font-size: 4rem;
@@ -686,6 +573,7 @@ def render_loading_screen():
             margin-bottom: 20px;
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes fadeOutLoader { to { opacity: 0; visibility: hidden; pointer-events: none; } }
         </style>
         <div class="loading-container">
             <div class="spinner-sword">⚔️</div>
@@ -743,7 +631,7 @@ def render_sidebar_header_controls(on_name_change=None, show_audio_controls=True
             st.markdown('<div class="sidebar-section">', unsafe_allow_html=True)
             if st.button(f"{icon} {label}", key="audio_toggle_simple", use_container_width=True):
                 audio_manager.toggle_mute()
-                st.rerun()
+                # No st.rerun() here - let the fragment auto-update
             st.markdown('</div>', unsafe_allow_html=True)
             
         except Exception as e:

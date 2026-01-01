@@ -151,6 +151,16 @@ def init_session():
                 # Create new game state
                 create_new_game_state()
                 print(f"[INIT] Created new game state for user: {user_id}")
+                
+                # CRITICAL: Save immediately to ensure persistence if session state is unstable
+                try:
+                    saved_sid = db.save_game_state(user_id, st.session_state.game_state, None)
+                    if saved_sid:
+                        st.session_state.db_session_id = saved_sid
+                        print(f"[INIT] Saved initial game state to DB: {saved_sid}")
+                except Exception as e:
+                    print(f"[INIT] Failed to save initial state: {e}")
+
     else:
         print(f"[INIT] ❌ No authenticated user - creating default state")
         # No user logged in, create default game state
@@ -816,6 +826,17 @@ def render_auth_page(cookie_manager):
                                         'last_active': 'now()'
                                     }).eq('user_id', user_id).execute()
 
+                                    # CRITICAL: Set cookies to prevent loop on next run
+                                    if cookie_manager:
+                                        try:
+                                            expires = datetime.now() + timedelta(days=30)
+                                            cookie_manager.set('sb_access_token', access_token, expires_at=expires, key="db_restore_set_access")
+                                            if refresh_token:
+                                                cookie_manager.set('sb_refresh_token', refresh_token, expires_at=expires, key="db_restore_set_refresh")
+                                            print(f"[AUTH] 🍪 Cookies synchronized from database session")
+                                        except Exception as cookie_err:
+                                            print(f"[AUTH] Warning: Failed to sync cookies: {cookie_err}")
+
                                     print(f"[AUTH] ✅ Session restored from database for: {character_name}")
                                     return
 
@@ -968,6 +989,7 @@ def render_auth_page(cookie_manager):
 # =========================
 def main():
     """Main app logic"""
+    print(f"[DEBUG] Main started. User in session: {'user' in st.session_state}. Game mode: {st.session_state.get('game_mode_selected')}")
 
     # Set consistent page config FIRST - before any other logic to prevent reruns
     st.set_page_config(
@@ -1009,27 +1031,10 @@ def main():
              if handle_oauth_callback(None):
                  return # Rerun happened inside
 
-    # Handle character creation polling updates (similar to team polling)
-    if st.query_params.get('update_char_creation') == 'true':
-        # Clear query param to avoid loops
-        st.query_params.clear()
-        # Render only character creation for smooth polling updates
-        if st.session_state.game_mode_selected == "solo":
-            if not render_character_creation(st.session_state.game_state, db, st.session_state.user.user.id if st.session_state.user else None, getattr(st.session_state, 'db_session_id', None)):
-                pass  # Character creation in progress
-        return
+    # Handle character creation polling updates (Removed)
 
     # Initialize cookie manager ONCE per run at the top level (Normal flow)
     cookie_manager = get_cookie_manager()
-
-    # UI Stability: Prevent login form flash on first load
-    # Note: We already showed a loading screen above, so we can reduce the explicit sleep here or remove the dedicated block
-    # But we keep the auth_check logic to ensure cookies sync properly on first load
-    if "auth_check_complete" not in st.session_state:
-        st.session_state.auth_check_complete = True
-        # Allow a brief moment for cookies to be read by the component
-        time.sleep(0.5) 
-        st.rerun()
 
     # Check authentication
     if not db.client:
@@ -1040,6 +1045,11 @@ def main():
 
     # Handle authentication FIRST - before any other logic
     user_authenticated = "user" in st.session_state and st.session_state.user is not None
+
+    if user_authenticated:
+        # Clear loading screen immediately if authenticated to prevent "frozen" look during background ops
+        if loading_placeholder:
+            loading_placeholder.empty()
 
     # CRITICAL FIX: Ensure db.client has the session if we are authenticated in state
     # This is necessary because db is re-initialized on every rerun
@@ -1155,7 +1165,14 @@ def main():
 
     # Pass db and user_id so wizard can save state immediately to avoid reset on rerun
     # Pass loading_placeholder so wizard can clear it ONLY when it's ready to render its own UI
-    if not render_character_creation(st.session_state.game_state, db, user_id, db_session_id, loading_placeholder):
+    try:
+        if not render_character_creation(st.session_state.game_state, db, user_id, db_session_id, loading_placeholder):
+            return
+    except Exception as e:
+        print(f"❌ Error in character creation: {e}")
+        st.error(f"Eroare la inițializarea caracterului: {e}")
+        if loading_placeholder:
+            loading_placeholder.empty()
         return
 
     # If wizard returns True, it means character creation is complete.
@@ -1415,7 +1432,8 @@ def handle_player_input(story_placeholder=None, sidebar_container=None, input_pl
                 character=gs_data.character.model_dump(mode='json'),
                 legend_scale=legend_scale,
                 game_mode=game_mode,
-                current_episode=current_episode
+                current_episode=current_episode,
+                story_summary=gs_data.story_summary
             )
 
             # Generate narrative with lazy story pack loading
@@ -1438,6 +1456,17 @@ def handle_player_input(story_placeholder=None, sidebar_container=None, input_pl
 
             # Update game state
             gs = st.session_state.game_state
+            
+            # Update summary if provided
+            if response.new_summary:
+                gs.story_summary = response.new_summary
+            elif getattr(response, 'event_summary', None):
+                # Append partial summary from cache
+                if gs.story_summary:
+                     gs.story_summary += f"\n\n{response.event_summary}"
+                else:
+                     gs.story_summary = response.event_summary
+
             gs.character.health = max(0, min(100, gs.character.health + (response.health_change or 0)))
             gs.character.reputation = max(0, min(100, gs.character.reputation + (response.reputation_change or 0)))
             gs.character.gold = max(0, gs.character.gold + (response.gold_change or 0))
@@ -1585,7 +1614,8 @@ def handle_player_input(story_placeholder=None, sidebar_container=None, input_pl
                 character=gs_data.character.model_dump(mode='json'),
                 legend_scale=legend_scale,
                 game_mode=game_mode,
-                current_episode=current_episode
+                current_episode=current_episode,
+                story_summary=gs_data.story_summary
             )
 
             # Generate narrative
@@ -1607,6 +1637,17 @@ def handle_player_input(story_placeholder=None, sidebar_container=None, input_pl
 
             # Update game state
             gs = st.session_state.game_state
+            
+            # Update summary if provided
+            if response.new_summary:
+                gs.story_summary = response.new_summary
+            elif getattr(response, 'event_summary', None):
+                # Append partial summary from cache
+                if gs.story_summary:
+                     gs.story_summary += f"\n\n{response.event_summary}"
+                else:
+                     gs.story_summary = response.event_summary
+
             gs.character.health = max(0, min(100, gs.character.health + (response.health_change or 0)))
             gs.character.reputation = max(0, min(100, gs.character.reputation + (response.reputation_change or 0)))
             gs.character.gold = max(0, gs.character.gold + (response.gold_change or 0))
@@ -1820,71 +1861,9 @@ def render_team_lobby():
     # Get character name for display purposes
     character_name = db.get_user_character_name(user_id) if user_id else "Jucător"
 
-    # Use JavaScript for smooth polling without flickering
+    # Use placeholder for team list
     teams_placeholder = st.empty()
-
-    # Add JavaScript for smooth team list updates
-    st.markdown("""
-    <script>
-    let teamsUpdateInterval;
-
-    function updateTeamsList() {
-        // Make a request to get updated teams data
-        fetch(window.location.href, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: new URLSearchParams({
-                'update_teams': 'true'
-            })
-        })
-        .then(response => response.text())
-        .then(html => {
-            // Extract and update only the teams section
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(html, 'text/html');
-            const newTeamsSection = doc.querySelector('[data-testid="stVerticalBlock"] [data-testid="stVerticalBlock"]');
-
-            if (newTeamsSection) {
-                // Find current teams section and replace it
-                const currentTeamsSection = document.querySelector('[data-testid="stVerticalBlock"] [data-testid="stVerticalBlock"]');
-                if (currentTeamsSection) {
-                    // Smooth fade transition
-                    currentTeamsSection.style.transition = 'opacity 0.3s ease';
-                    currentTeamsSection.style.opacity = '0';
-
-                    setTimeout(() => {
-                        currentTeamsSection.innerHTML = newTeamsSection.innerHTML;
-                        currentTeamsSection.style.opacity = '1';
-                    }, 300);
-                }
-            }
-        })
-        .catch(error => {
-            console.log('Teams update failed:', error);
-        });
-    }
-
-    function startTeamsPolling() {
-        // Update every 10 seconds
-        teamsUpdateInterval = setInterval(updateTeamsList, 10000);
-    }
-
-    function stopTeamsPolling() {
-        if (teamsUpdateInterval) {
-            clearInterval(teamsUpdateInterval);
-        }
-    }
-
-    // Start polling when page loads
-    window.addEventListener('load', startTeamsPolling);
-
-    // Clean up on page unload
-    window.addEventListener('beforeunload', stopTeamsPolling);
-    </script>
-    """, unsafe_allow_html=True)
-
+    
     # Enhanced CSS for team UI
     st.markdown("""
     <style>
@@ -1966,12 +1945,21 @@ def render_team_lobby():
     </style>
     """, unsafe_allow_html=True)
 
-    st.markdown("""
-    <div class="team-header">
-        <h1 style="color: #D4AF37; margin: 0; font-size: 2.5rem;">🏰 Sala de Așteptare a Echipei</h1>
-        <p style="color: #8b6b6b; font-size: 1.2rem; margin: 10px 0 0 0;">Pregătește-te pentru aventura colectivă în lumea Valahiei</p>
-    </div>
-    """, unsafe_allow_html=True)
+    # Header Layout with Refresh
+    col_header, col_refresh = st.columns([3, 1])
+    
+    with col_header:
+        st.markdown("""
+        <div class="team-header" style="margin-bottom: 0; padding: 20px;">
+            <h1 style="color: #D4AF37; margin: 0; font-size: 2.2rem;">🏰 Sala de Așteptare</h1>
+            <p style="color: #8b6b6b; font-size: 1rem; margin: 5px 0 0 0;">Aventura colectivă în Valahia</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+    with col_refresh:
+        st.markdown('<div style="height: 25px;"></div>', unsafe_allow_html=True) # Vertical alignment
+        if st.button("🔄 Actualizează", help="Reîncarcă lista echipelor disponibile", use_container_width=True):
+            st.rerun()
 
     # Check if user is already in a team
     if st.session_state.team_id:
@@ -2036,7 +2024,7 @@ def render_team_lobby():
 
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # Render teams with smooth updates using placeholder
+    # Render teams
     with teams_placeholder.container():
         # Get all available teams (excluding teams the user is already in)
         all_teams = team_manager.get_all_teams(exclude_user_id=user_id)
@@ -2062,7 +2050,7 @@ def render_team_lobby():
                         with cols[j]:
                             render_team_card(team_id, team_data, team_manager, character_name)
 
-    # JavaScript handles polling now - no Python polling needed
+    # End render
 
 def render_team_card(team_id: str, team_data: Dict, team_manager, character_name: str):
     """Render individual team card"""
@@ -2185,8 +2173,14 @@ def render_team_game_interface(team_data, team_manager):
         st.info("🤖 AI-ul generează povestea... Așteptați.")
         st.button("🔄 Reîmprospătează", on_click=st.rerun)
 
+@st.fragment(run_every=5)
 def render_team_lobby_interface(team_data, team_manager):
     """Render team lobby where players select characters with professional UI"""
+    # Fetch fresh data for auto-refresh
+    fresh_data = team_manager.get_team_data(team_data['teamId'])
+    if fresh_data:
+        team_data = fresh_data
+        
     players = team_data.get('players', {})
 
     # Get current user info
@@ -2360,8 +2354,14 @@ def render_team_lobby_interface(team_data, team_manager):
         ready_count = sum(1 for p in players.values() if p.get('ready'))
         st.info(f"⏳ Așteptăm ca toți jucătorii să fie gata... ({ready_count}/{len(players)})")
 
+@st.fragment(run_every=5)
 def render_team_gameplay_interface(team_data, team_manager):
     """Render team gameplay with shared story and voting with professional UI"""
+    # Fetch fresh data
+    fresh_data = team_manager.get_team_data(team_data['teamId'])
+    if fresh_data:
+        team_data = fresh_data
+        
     game_state = team_data.get('gameState', {})
 
     # Enhanced CSS for gameplay UI

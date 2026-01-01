@@ -259,68 +259,8 @@ def render_character_creation(game_state, db=None, user_id=None, db_session_id=N
     Returns True if character creation is complete, False if still in progress.
     Handles loading screen clearing intelligently to avoid flickers.
     """
-    # Add JavaScript for smooth polling to reduce flickering on button clicks
-    st.markdown("""
-    <script>
-    let charUpdateInterval;
-
-    function updateCharacterCreation() {
-        // Make a request to get updated character creation data
-        fetch(window.location.href, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: new URLSearchParams({
-                'update_char_creation': 'true'
-            })
-        })
-        .then(response => response.text())
-        .then(html => {
-            // Extract and update only the character creation section
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(html, 'text/html');
-            // Look for the main content area (adjust selector as needed)
-            const newCharSection = doc.querySelector('div[data-testid="stVerticalBlock"]');
-
-            if (newCharSection) {
-                // Find current character creation section
-                const currentCharSection = document.querySelector('div[data-testid="stVerticalBlock"]');
-                if (currentCharSection) {
-                    // Smooth fade transition
-                    currentCharSection.style.transition = 'opacity 0.3s ease';
-                    currentCharSection.style.opacity = '0';
-
-                    setTimeout(() => {
-                        currentCharSection.innerHTML = newCharSection.innerHTML;
-                        currentCharSection.style.opacity = '1';
-                    }, 300);
-                }
-            }
-        })
-        .catch(error => {
-            console.log('Character creation update failed:', error);
-        });
-    }
-
-    function startCharPolling() {
-        // Update every 2 seconds for responsive UI
-        charUpdateInterval = setInterval(updateCharacterCreation, 2000);
-    }
-
-    function stopCharPolling() {
-        if (charUpdateInterval) {
-            clearInterval(charUpdateInterval);
-        }
-    }
-
-    // Start polling when page loads
-    window.addEventListener('load', startCharPolling);
-
-    // Clean up on page unload
-    window.addEventListener('beforeunload', stopCharPolling);
-    </script>
-    """, unsafe_allow_html=True)
+    # JavaScript polling removed as it caused infinite session creation loops
+    # and is not necessary for solo character creation.
 
     st.markdown("""
         <style>
@@ -394,34 +334,35 @@ def render_character_creation(game_state, db=None, user_id=None, db_session_id=N
         # Or just let them click Start.
         
         if st.button("🔥 Începe Campania (Recomandat)", key="btn_mode_campaign", use_container_width=True, type="primary"):
-            set_game_mode(game_state, GameMode.CAMPAIGN)
-            
-            # Setup Campaign Intro (Episode 1)
-            from campaign import CAMPAIGN_EPISODES
-            ep1 = CAMPAIGN_EPISODES[1]
-            
-            if len(game_state.story) > 0:
-                # Remove flavor text entirely for Campaign start, replace with Episode 1 Card
-                # We keep the first message structure but clear text and set type
-                game_state.story[0] = {
-                    "role": "ai",
-                    "text": "", # Content handled by type
-                    "turn": 0,
-                    "image": None,
-                    "type": "episode_intro",
-                    "content_data": ep1,
-                    "suggestions": ep1.get("initial_suggestions", [])
-                }
+            with st.spinner("Se pregătește campania..."):
+                set_game_mode(game_state, GameMode.CAMPAIGN)
+                
+                # Setup Campaign Intro (Episode 1)
+                from campaign import CAMPAIGN_EPISODES
+                ep1 = CAMPAIGN_EPISODES[1]
+                
+                if len(game_state.story) > 0:
+                    # Remove flavor text entirely for Campaign start, replace with Episode 1 Card
+                    # We keep the first message structure but clear text and set type
+                    game_state.story[0] = {
+                        "role": "ai",
+                        "text": "", # Content handled by type
+                        "turn": 0,
+                        "image": None,
+                        "type": "episode_intro",
+                        "content_data": ep1,
+                        "suggestions": ep1.get("initial_suggestions", [])
+                    }
 
-            # Mark to show structure screen next
-            st.session_state.show_campaign_structure = True
+                # Mark to show structure screen next
+                st.session_state.show_campaign_structure = True
 
-            new_sid = None
-            if db and user_id:
-                new_sid = db.save_game_state(user_id, game_state, db_session_id)
-            if new_sid:
-                st.session_state.db_session_id = new_sid
-            st.rerun()
+                new_sid = None
+                if db and user_id:
+                    new_sid = db.save_game_state(user_id, game_state, db_session_id)
+                if new_sid:
+                    st.session_state.db_session_id = new_sid
+                st.rerun()
 
         st.markdown("---")
 
@@ -436,29 +377,30 @@ def render_character_creation(game_state, db=None, user_id=None, db_session_id=N
         """, unsafe_allow_html=True)
         
         if st.button("Începe Lume Liberă", key="btn_mode_free", use_container_width=True):
-            set_game_mode(game_state, GameMode.FREE_WORLD)
-            
-            # ATTEMPT PERSISTENCE: Load inventory from last campaign if available
-            if db and user_id:
-                try:
-                    campaign_inv = db.get_last_campaign_inventory(user_id)
-                    if campaign_inv:
-                        game_state.inventory = campaign_inv
-                        st.toast("🎒 Inventar din campanie recuperat!", icon="📦")
-                except Exception as e:
-                    print(f"Inventory carry-over failed: {e}")
+            with st.spinner("Se pregătește lumea..."):
+                set_game_mode(game_state, GameMode.FREE_WORLD)
+                
+                # ATTEMPT PERSISTENCE: Load inventory from last campaign if available
+                if db and user_id:
+                    try:
+                        campaign_inv = db.get_last_campaign_inventory(user_id)
+                        if campaign_inv:
+                            game_state.inventory = campaign_inv
+                            st.toast("🎒 Inventar din campanie recuperat!", icon="📦")
+                    except Exception as e:
+                        print(f"Inventory carry-over failed: {e}")
 
-            # Setup custom intro text for Free World based on choices
-            # Note: Class/Faction not chosen yet, so we just set a placeholder or generic intro that will be updated later?
-            # Actually, if we reorder flow, we select Mode FIRST. So we don't know Class/Faction yet.
-            # We will update the intro text AFTER Faction selection for Free World.
-            
-            new_sid = None
-            if db and user_id:
-                new_sid = db.save_game_state(user_id, game_state, db_session_id)
-            if new_sid:
-                st.session_state.db_session_id = new_sid
-            st.rerun()
+                # Setup custom intro text for Free World based on choices
+                # Note: Class/Faction not chosen yet, so we just set a placeholder or generic intro that will be updated later?
+                # Actually, if we reorder flow, we select Mode FIRST. So we don't know Class/Faction yet.
+                # We will update the intro text AFTER Faction selection for Free World.
+                
+                new_sid = None
+                if db and user_id:
+                    new_sid = db.save_game_state(user_id, game_state, db_session_id)
+                if new_sid:
+                    st.session_state.db_session_id = new_sid
+                st.rerun()
 
         return False
 
@@ -512,8 +454,9 @@ def render_character_creation(game_state, db=None, user_id=None, db_session_id=N
                     
                     if is_current:
                         if st.button("⚔️ Intră", key=f"ep_enter_{i}", type="primary", use_container_width=True):
-                            st.session_state.show_campaign_structure = False
-                            st.rerun()
+                            with st.spinner(f"Intrare în Episodul {i}..."):
+                                st.session_state.show_campaign_structure = False
+                                st.rerun()
                     elif is_completed:
                         st.button("✅ Complet", key=f"ep_done_{i}", disabled=True, use_container_width=True)
                     else:
@@ -558,17 +501,18 @@ def render_character_creation(game_state, db=None, user_id=None, db_session_id=N
                     st.caption(f"📊 {stats_str}")
                     
                     if st.button(f"Alege {cls_type.value}", key=f"btn_cls_{idx}", use_container_width=True, disabled=not is_available):
-                        apply_character_class_stats(game_state, cls_type)
+                        with st.spinner("Se aplică abilitățile..."):
+                            apply_character_class_stats(game_state, cls_type)
 
-                        # If Free World, maybe update intro text partially? No wait until Faction.
+                            # If Free World, maybe update intro text partially? No wait until Faction.
 
-                        new_sid = None
-                        if db and user_id:
-                            new_sid = db.save_game_state(user_id, game_state, db_session_id)
+                            new_sid = None
+                            if db and user_id:
+                                new_sid = db.save_game_state(user_id, game_state, db_session_id)
 
-                        if new_sid:
-                            st.session_state.db_session_id = new_sid
-                        st.rerun()
+                            if new_sid:
+                                st.session_state.db_session_id = new_sid
+                            st.rerun()
         return False
 
     # 3. FACTION SELECTION
@@ -612,28 +556,29 @@ def render_character_creation(game_state, db=None, user_id=None, db_session_id=N
             st.markdown(card_html, unsafe_allow_html=True)
             
             if st.button(f"🛡️ Mă alătur: {fac_type.value.upper()}", key=f"btn_fac_{idx}", type="primary", use_container_width=True, disabled=not is_available):
-                apply_faction_modifiers(game_state.character, fac_type)
-                
-                # FINAL STEP: Update Intro Text if Free World
-                if game_state.character.game_mode == GameMode.FREE_WORLD:
-                        intro_text = f"Ești un **{game_state.character.character_class.value}** loial facțiunii **{game_state.character.faction.value}**.\n\n"
-                        intro_text += f"Ai pornit la drum cu abilitatea ta de bază: *{game_state.character.special_ability}*.\n"
-                        intro_text += "Valahia se întinde în fața ta, plină de pericole și oportunități. Încotro te îndrepți?"
-                        
-                        # We update the story text only if it hasn't advanced
-                        if len(game_state.story) > 0 and "Ce vrei să faci?" in game_state.story[0]['text']:
-                            # Or overwrite generic intro
-                            # Let's keep it simple and just set it
-                            game_state.story[0]['text'] = intro_text
+                with st.spinner("Se oficializează jurământul..."):
+                    apply_faction_modifiers(game_state.character, fac_type)
+                    
+                    # FINAL STEP: Update Intro Text if Free World
+                    if game_state.character.game_mode == GameMode.FREE_WORLD:
+                            intro_text = f"Ești un **{game_state.character.character_class.value}** loial facțiunii **{game_state.character.faction.value}**.\n\n"
+                            intro_text += f"Ai pornit la drum cu abilitatea ta de bază: *{game_state.character.special_ability}*.\n"
+                            intro_text += "Valahia se întinde în fața ta, plină de pericole și oportunități. Încotro te îndrepți?"
+                            
+                            # We update the story text only if it hasn't advanced
+                            if len(game_state.story) > 0 and "Ce vrei să faci?" in game_state.story[0]['text']:
+                                # Or overwrite generic intro
+                                # Let's keep it simple and just set it
+                                game_state.story[0]['text'] = intro_text
 
-                # CRITICAL: Save state to DB immediately
-                new_sid = None
-                if db and user_id:
-                    new_sid = db.save_game_state(user_id, game_state, db_session_id)
-                
-                if new_sid:
-                    st.session_state.db_session_id = new_sid
-                st.rerun()
+                    # CRITICAL: Save state to DB immediately
+                    new_sid = None
+                    if db and user_id:
+                        new_sid = db.save_game_state(user_id, game_state, db_session_id)
+                    
+                    if new_sid:
+                        st.session_state.db_session_id = new_sid
+                    st.rerun()
             
             st.markdown("---")
         return False

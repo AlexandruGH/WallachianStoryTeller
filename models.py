@@ -111,6 +111,9 @@ class NarrativeResponse(BaseModel):
     # Audio context for dynamic sound system
     audio_context: List[str] = Field(default_factory=list, description="List of SFX events to play")
     music_context: Optional[str] = Field(default=None, description="Background music type to play")
+    
+    new_summary: Optional[str] = Field(default=None, description="Updated summary of the story so far, including latest events")
+    event_summary: Optional[str] = Field(default=None, description="Summary of just this event (for cache partial updates)")
 
 class GameState(BaseModel):
     character: CharacterStats
@@ -118,6 +121,7 @@ class GameState(BaseModel):
     story: List[Dict[str, Any]]
     turn: int
     last_image_turn: int
+    story_summary: Optional[str] = Field(default=None, description="Running summary of the entire adventure")
 
     # @field_validator('inventory')
     # @classmethod

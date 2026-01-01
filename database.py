@@ -70,8 +70,13 @@ class Database:
     def get_active_game_session(self, user_id: str) -> Optional[Dict[str, Any]]:
         """Get the most recent active game session for user"""
         try:
+            print(f"[DB] Fetching active session for {user_id}...")
             response = self.client.table('game_sessions').select('*').eq('user_id', user_id).eq('is_active', True).order('updated_at', desc=True).limit(1).execute()
-            return response.data[0] if response.data else None
+            if response.data:
+                print(f"[DB] Found active session: {response.data[0].get('session_id')}")
+                return response.data[0]
+            print(f"[DB] No active session found for {user_id}")
+            return None
         except Exception as e:
             print(f"❌ Error getting active game session: {e}")
             return None
@@ -97,6 +102,23 @@ class Database:
             print(f"❌ Error setting active session: {e}")
             return False
 
+    def _sanitize_story_data(self, story: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Sanitize story data to ensure JSON serialization (handle bytes)"""
+        import base64
+        sanitized_story = []
+        for msg in story:
+            new_msg = msg.copy()
+            # Convert bytes images to Base64 Data URIs
+            if "image" in new_msg and isinstance(new_msg["image"], bytes):
+                try:
+                    b64 = base64.b64encode(new_msg["image"]).decode('utf-8')
+                    new_msg["image"] = f"data:image/png;base64,{b64}"
+                except Exception as e:
+                    print(f"⚠️ Failed to encode image for DB: {e}")
+                    new_msg["image"] = None
+            sanitized_story.append(new_msg)
+        return sanitized_story
+
     def create_game_session(self, user_id: str, game_state: GameState) -> Optional[str]:
         """Create new game session and return session ID"""
         try:
@@ -108,7 +130,7 @@ class Database:
             session_data = {
                 'session_id': session_id,
                 'user_id': user_id,
-                'story_data': game_state.story,
+                'story_data': self._sanitize_story_data(game_state.story),
                 'character_stats': game_state.character.model_dump(mode='json'),
                 'inventory': [item.model_dump(mode='json') for item in game_state.inventory],
                 'current_turn': game_state.turn,
@@ -128,7 +150,7 @@ class Database:
         """Update existing game session"""
         try:
             session_data = {
-                'story_data': game_state.story,
+                'story_data': self._sanitize_story_data(game_state.story),
                 'character_stats': game_state.character.model_dump(mode='json'),
                 'inventory': [item.model_dump(mode='json') for item in game_state.inventory],
                 'current_turn': game_state.turn,
@@ -253,15 +275,22 @@ class Database:
     def load_user_game(self, user_id: str) -> tuple[Optional[GameState], Optional[str]]:
         """Load user's active game session"""
         try:
+            print(f"[DB] Loading user game for {user_id}...")
             # Ensure user profile exists
             self.ensure_user_exists(user_id)
 
             # Get active session
             session = self.get_active_game_session(user_id)
             if session:
+                print(f"[DB] Loading session data for {session['session_id']}...")
                 game_state = self.load_game_session(session['session_id'])
-                return game_state, session['session_id']
+                if game_state:
+                    print(f"[DB] Game state loaded successfully")
+                    return game_state, session['session_id']
+                else:
+                    print(f"[DB] Failed to parse game state from session")
 
+            print("[DB] No loadable game found")
             return None, None
         except Exception as e:
             print(f"❌ Error loading user game: {e}")

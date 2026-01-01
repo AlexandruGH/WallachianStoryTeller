@@ -212,20 +212,26 @@ def generate_with_api(prompt: str, character_class=None, faction=None, episode=N
     # 1.1 Check Cache Second (Text Fallback)
     # Extract last user message from prompt to check Source Cache
     # Heuristic: Context ends before "STATISTICI CRITICE:"
+    # CRITICAL: Skip text fallback if we have a custom summary history, to preserve context/memory.
+    # We only use fallback for "Început de drum" (generic start).
     try:
-        context_part = prompt.split("STATISTICI CRITICE:")[0]
-        lines = context_part.strip().split('\n')
-        last_user_line = None
-        for line in reversed(lines):
-            if line.strip().upper().startswith("USER:"):
-                last_user_line = line.strip()[5:].strip() # Remove "USER:"
-                break
+        has_custom_history = "REZUMAT POVESTE ANTERIOARĂ:" in prompt
+        
+        if not has_custom_history:
+            context_part = prompt.split("STATISTICI CRITICE:")[0]
+            lines = context_part.strip().split('\n')
+            last_user_line = None
+            for line in reversed(lines):
+                if line.strip().upper().startswith("USER:"):
+                    last_user_line = line.strip()[5:].strip() # Remove "USER:"
+                    break
 
-        if last_user_line:
-            # print(f"[CACHE] Checking text fallback for: '{last_user_line[:30]}...'")
-            text_hit = CacheManager.get_by_text(last_user_line)
-            if text_hit:
-                return text_hit
+            if last_user_line:
+                # print(f"[CACHE] Checking text fallback for: '{last_user_line[:30]}...'")
+                text_hit = CacheManager.get_by_text(last_user_line)
+                if text_hit:
+                    print(f"[CACHE] Text fallback hit for: '{last_user_line[:20]}...'")
+                    return text_hit
     except Exception as e:
         print(f"[CACHE] Text fallback check failed: {e}")
 

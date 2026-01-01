@@ -69,7 +69,7 @@ class Config:
 
     @staticmethod
     def build_dnd_prompt(story: List[Dict], character: Dict, legend_scale: int = 5, 
-                         game_mode: str = None, current_episode: int = 0) -> str:
+                         game_mode: str = None, current_episode: int = 0, story_summary: str = None) -> str:
         """Construiește prompt pentru LLM folosind structuri de date simple (dict/list)"""
         from models import NarrativeResponse # Import local
         from campaign import get_current_episode # Import local
@@ -86,8 +86,13 @@ class Config:
         else:
             style_prefix = "Stil echilibrat istoric și legendar. "
         
-        # Construire context narativ din ultimele replici
-        context = "\n".join([f"{m['role'].upper()}: {m['text']}" for m in story[-4:]])
+        # Construire context narativ (Rezumat + Dialog Recent)
+        context_msgs = story[-2:] if len(story) >= 2 else story
+        chat_context = "\n".join([f"{m['role'].upper()}: {m['text']}" for m in context_msgs])
+        
+        summary_section = f"REZUMAT POVESTE ANTERIOARĂ:\n{story_summary}\n" if story_summary else "REZUMAT POVESTE: Început de drum.\n"
+        
+        context = f"{summary_section}\nULTIMELE REPLICI:\n{chat_context}"
         
         # Construire Info caracter
         char_health = character.get('health', 100)
@@ -173,6 +178,7 @@ class Config:
             f"\n{style_prefix}{restrictions}\n{campaign_context}"            
             "REGULI OBLIGATORII:\n"
             "- 'narrative': 2-3 propoziții, fără greșeli gramaticale, în română medievală\n"
+            "- 'new_summary': Actualizează rezumatul poveștii cu noile evenimente (max 4-5 fraze). Păstrează detaliile cheie despre NPC-uri întâlnite, locații vizitate și task-uri curente.\n"
             "- 'suggestions': Listă de EXACT 2-3 string-uri REALISTE și DETALIATE, fără numere, fără bullet points\n"
             "  SUGESTII REALISTE: Gândește-te ca un OM cu experiență medievală care cunoaște Valahia secolului XV\n"
             "  - Fiecare sugestie trebuie să fie CONCRETĂ, PRAGMATICĂ și CONTEXTUALĂ pentru epoca și locul actual\n"
