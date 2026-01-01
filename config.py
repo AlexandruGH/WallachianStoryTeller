@@ -28,43 +28,28 @@ class Config:
         # Propoziții istorice
         historical_sentences = [
             "Prin forță și teroare, a restabilit ordinea internă și a consolidat autoritatea domnească.",
-            "Cetățile de la poalele Carpaților au fost întărite sub domnia lui, pentru a apăra țara de invazii.",
+            "Cetățile de poalele Carpaților au fost întărite sub domnia lui, pentru a apăra țara de invazii.",
             "Metodele sale dure i-au adus atât respect, cât și teamă în rândul dușmanilor și al supușilor.",
             "A impus În țară o ordine strictă, pedepsind aspru hoția și nelegiuirea.",
             "Cronici vechi îl descriu ca pe un strateg necruțător, dar drept."
         ]
 
-        # Propoziții legendare
-        legendary_sentences = [
-            "Se spune că umbrele nopții prindeau viață în prezența lui.",
-            "Bătrânii șoptesc că putea chema creaturi ascunse în bezna pădurilor.",
-            "Legenda afirmă că aerul se răcea brusc când Vlad se mânia.",
-            "Unii credeau că străvechi spirite îl protejau în luptă.",
-            "Se povestește că sângele dușmanilor îi întărea puterea."
-        ]
-
         # Transformăm scale într-un raport 0-1
         ratio = min(max(scale / 10.0, 0), 1)
 
-        # Număr de propoziții istorice vs legendare
-        num_hist = max(1, int((1 - ratio) * 3))  
-        num_leg = max(1, int(ratio * 3))         
+        # Număr de propoziții istorice (doar istorice acum)
+        num_hist = max(1, int((1 - ratio) * 3) + int(ratio * 3))
 
-        # Alegem propoziții random
-        chosen_hist = random.sample(historical_sentences, num_hist)
-        chosen_leg = random.sample(legendary_sentences, num_leg)
+        # Alegem propoziții random doar din istorice
+        chosen_hist = random.sample(historical_sentences, min(num_hist, len(historical_sentences)))
 
-        # Le mixăm
-        mixed_sentences = chosen_hist + chosen_leg
-        random.shuffle(mixed_sentences)
-
-        mixed_text = " ".join(mixed_sentences)
+        mixed_text = " ".join(chosen_hist)
 
         # Intro narativ
         return (
         "Vlad Țepeș Drăculea, domn al Țării Românești. "
         + mixed_text
-        + "\n\n"        
+        + "\n\n"
         )
 
     @staticmethod
@@ -178,7 +163,7 @@ class Config:
             f"\n{style_prefix}{restrictions}\n{campaign_context}"            
             "REGULI OBLIGATORII:\n"
             "- 'narrative': 2-3 propoziții, fără greșeli gramaticale, în română medievală\n"
-            "- 'new_summary': Actualizează rezumatul poveștii cu noile evenimente (max 4-5 fraze). Păstrează detaliile cheie despre NPC-uri întâlnite, locații vizitate și task-uri curente.\n"
+            "- 'new_summary': Actualizează rezumatul poveștii cu noile evenimente (max 10 fraze). Păstrează detaliile cheie despre NPC-uri întâlnite, locații vizitate și task-uri curente.\n"
             "- 'suggestions': Listă de EXACT 2-3 string-uri REALISTE și DETALIATE, fără numere, fără bullet points\n"
             "  SUGESTII REALISTE: Gândește-te ca un OM cu experiență medievală care cunoaște Valahia secolului XV\n"
             "  - Fiecare sugestie trebuie să fie CONCRETĂ, PRAGMATICĂ și CONTEXTUALĂ pentru epoca și locul actual\n"

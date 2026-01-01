@@ -1533,8 +1533,9 @@ def handle_player_input(story_placeholder=None, sidebar_container=None, input_pl
                     "suggestions": next_episode_data.get("initial_suggestions", [])
                 })
 
-            # Queue image generation
-            if (current_turn - st.session_state.last_image_turn) >= Config.IMAGE_INTERVAL:
+            # Queue image generation - skip if error message or first turn
+            error_message = "**🔒 Serviciul de Narare este Momentan Indisponibil**"
+            if error_message not in corrected_narrative and current_turn > 0 and (current_turn - st.session_state.last_image_turn) >= Config.IMAGE_INTERVAL:
                 print(f"[IMAGE] Queueing image for turn {current_turn} (last_image_turn: {st.session_state.last_image_turn})")
                 st.session_state.image_queue.append((corrected_narrative, current_turn))
                 st.session_state.last_image_turn = current_turn
@@ -1698,10 +1699,12 @@ def handle_player_input(story_placeholder=None, sidebar_container=None, input_pl
                 })
 
             if (current_turn - st.session_state.last_image_turn) >= Config.IMAGE_INTERVAL:
-                st.session_state.image_queue.append((corrected_narrative, current_turn))
-                st.session_state.last_image_turn = current_turn
-                # Start image worker after queuing
-                start_image_worker()
+                error_message = "**🔒 Serviciul de Narare este Momentan Indisponibil**"
+                if error_message not in corrected_narrative and current_turn > 0:
+                    st.session_state.image_queue.append((corrected_narrative, current_turn))
+                    st.session_state.last_image_turn = current_turn
+                    # Start image worker after queuing
+                    start_image_worker()
 
 
             gs.turn += 1

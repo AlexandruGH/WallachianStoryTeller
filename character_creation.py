@@ -1,6 +1,7 @@
 import streamlit as st
 from models import CharacterClassType, FactionType, CharacterStats, GameMode, InventoryItem, ItemType
 from typing import Dict, Any, Optional
+from config import Config
 
 # =========================
 # — Character Data Definitions
@@ -561,14 +562,24 @@ def render_character_creation(game_state, db=None, user_id=None, db_session_id=N
                     
                     # FINAL STEP: Update Intro Text if Free World
                     if game_state.character.game_mode == GameMode.FREE_WORLD:
-                            intro_text = f"Ești un **{game_state.character.character_class.value}** loial facțiunii **{game_state.character.faction.value}**.\n\n"
-                            intro_text += f"Ai pornit la drum cu abilitatea ta de bază: *{game_state.character.special_ability}*.\n"
-                            intro_text += "Valahia se întinde în fața ta, plină de pericole și oportunități. Încotro te îndrepți?"
-                            
+                            # Start with Vlad Tepes story
+                            intro_text = Config.make_intro_text(5)
+
+                            # Use the original italic_flavour and insert character details
+                            italic_flavour = (
+                                f"Personaj (TU): Ești un {game_state.character.character_class.value} loial facțiunii {game_state.character.faction.value}, aflat în anul 1456. Te afli la marginea cetății Târgoviște, pe o noapte rece de toamnă. "
+                                "Flăcările torțelor dansează în vânt, proiectând umbre lungi pe zidurile masive. "
+                                "Porțile de stejar se ridică încet, cu un scârțâit apăsat, iar aerul miroase "
+                                "a fum, fier și pământ ud. În depărtare se aud cai și voci ale străjerilor. "
+                                f"Ai pornit la drum cu abilitatea ta de bază: {game_state.character.special_ability}. "
+                                "Fiecare decizie poate naște o legendă sau poate rămâne doar o filă de cronică...*\n\n"
+                                "Ce vrei să faci?"
+                            )
+
+                            intro_text += italic_flavour
+
                             # We update the story text only if it hasn't advanced
-                            if len(game_state.story) > 0 and "Ce vrei să faci?" in game_state.story[0]['text']:
-                                # Or overwrite generic intro
-                                # Let's keep it simple and just set it
+                            if len(game_state.story) > 0:
                                 game_state.story[0]['text'] = intro_text
 
                     # CRITICAL: Save state to DB immediately
